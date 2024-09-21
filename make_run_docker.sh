@@ -1,6 +1,6 @@
 #!/bin/bash
-docker run --rm -v $(PWD):/app -it agodio/itba-so-multi-platform:3.0 bash -c "cd /app/TP2/Toolchain && make all" 
-docker run --rm -v $(PWD):/app -it agodio/itba-so-multi-platform:3.0 bash -c "cd /app/TP2/ && make all"
+docker run --rm -v $(PWD):/app -it agodio/itba-so-multi-platform:3.0 bash -c "cd /app/Toolchain && make all" 
+docker run --rm -v $(PWD):/app -it agodio/itba-so-multi-platform:3.0 bash -c "cd /app/ && make all"
 
 # Agrega un parametro para que se ejecute en modo debug
 if [ "$1" = "-w" ]; then
