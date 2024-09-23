@@ -31,4 +31,5 @@ void* my_mm_init() {
     }
     current = 0;
     start = MM_START;
+    return start;
 }
