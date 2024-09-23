@@ -59,7 +59,7 @@ int main()
 
 	my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); 	// Inicializar el gestor de memoria
 
-	char* argv[]= {"10000"};
+	char* argv[]= {"1000"};
 	test_mm(1, argv);
 
 	_setUser(); 	// Cambiar a modo usuario

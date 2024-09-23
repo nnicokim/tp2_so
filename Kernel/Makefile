@@ -14,7 +14,6 @@ LOADERSRC=loader.asm
 
 LOADEROBJECT=$(LOADERSRC:.asm=.o)
 STATICLIBS=
-GCCFLAGS=-g -m64 -fno-exceptions -std=c99 -Wall -fno-common -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -fno-builtin-malloc -fno-builtin-free -fno-builtin-realloc
 
 all: $(KERNEL)
 

@@ -8,7 +8,6 @@
 #define BLOCK_SIZE 10
 #define BLOCK_COUNT 10
 
-
 /**
   Sets up the memory manager
 */
