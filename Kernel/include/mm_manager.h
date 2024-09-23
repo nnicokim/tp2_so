@@ -5,12 +5,14 @@
 #include <stdlib.h>
 
 #define HEAP_START ((void *) 0xA00000)  // 10 Mb
+#define BLOCK_SIZE 10
+#define BLOCK_COUNT 10
 
 
 /**
   Sets up the memory manager
 */
-void* my_mm_init();
+void* my_mm_init(void* ptrs, int size);
 
 /**
  * @brief   Allocates size bytes
@@ -27,6 +29,6 @@ void* mymalloc(size_t size);
  * 
  * @param   ptr Pointer to the memory block to be freed
 */
-void mm_free(void * ptr);
+void myfree(void * ptr);
 
 #endif

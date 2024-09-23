@@ -57,7 +57,7 @@ int main()
 {
 	load_idt(); 	// Cargar la tabla de descriptores de interrupciones (IDT)
 
-	my_mm_init(); 	// Inicializar el gestor de memoria
+	my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); 	// Inicializar el gestor de memoria
 
 	char* argv[]= {"10000"};
 	test_mm(1, argv);
