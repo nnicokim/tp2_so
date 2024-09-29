@@ -55,16 +55,16 @@ void *initializeKernelBinary()
 
 int main()
 {
-	load_idt(); 	// Cargar la tabla de descriptores de interrupciones (IDT)
+	load_idt(); // Cargar la tabla de descriptores de interrupciones (IDT)
 
-	my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); 	// Inicializar el gestor de memoria
+	my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); // Inicializar el gestor de memoria
 
-	char* argv[]= {"1000"};
+	char *argv[] = {"1000"};
 	test_mm(1, argv);
 
-	_setUser(); 	// Cambiar a modo usuario
+	_setUser(); // Cambiar a modo usuario
 
-	printArray("You shouldn't be here chief..."); 	// Imprimir un mensaje (esto no debería ocurrir)
+	printArray("You shouldn't be here chief..."); 
 
 	return 0;
 }
