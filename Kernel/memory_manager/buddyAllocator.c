@@ -4,6 +4,9 @@
 #include <math.h>
 #include <buddyAllocator.h>
 
+void* heap_start;
+size_t heap_size;
+
 // Lista de bloques libres organizada por niveles de tamaño
 Block* free_list[MAX_LEVELS];
 
@@ -16,17 +19,20 @@ int find_level(size_t size) {
     return level;
 }
 
-void init_buddy_allocator(size_t size) {
+void init_buddy_allocator(void *ptr, size_t s) {
+    heap_start = ptr;
+    heap_size = s;
+
     for (int i = 0; i < MAX_LEVELS; i++) {
         free_list[i] = NULL;
     }
     
-    Block* initial_block = (Block*) malloc(size);
-    initial_block->size = size;
+    Block* initial_block = (Block*) heap_start;
+    initial_block->size = heap_size;
     initial_block->is_free = true;
     initial_block->next = NULL;
     
-    int level = find_level(size);
+    int level = find_level(heap_size);
     free_list[level] = initial_block;
 }
 

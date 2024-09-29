@@ -7,6 +7,7 @@
 /* Ir ajustando a lo largo del tp */
 #define MAX_LEVELS 10  // max nros de niveles que podemos manejar
 #define MIN_BLOCK_SIZE 32  // Tamaño minimo de un bloque (en bytes) 
+#define HEAP_START ((void *) 0xA00000)  // 10 Mb
 
 // Estructura de un bloque de memoria
 typedef struct Block {
@@ -22,9 +23,10 @@ extern Block* free_list[MAX_LEVELS];
 
 /**
  * Inicializa el buddy allocator con un bloque de memoria de tamaño 'size'.
+ * @param ptr: Puntero al bloque de memoria.
  * @param size: Tamaño total del bloque inicial.
  */
-void init_buddy_allocator(size_t size);
+void init_buddy_allocator(void *ptr, size_t size);
 
 /**
  * Encuentra el nivel más pequeño que puede acomodar un bloque del tamaño 'size'.

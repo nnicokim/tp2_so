@@ -13,6 +13,7 @@
 #include <time.h>
 #include <mm_manager.h>
 #include "tests/test_util.h"
+#include <buddyAllocator.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -57,10 +58,10 @@ int main()
 {
 	load_idt(); // Cargar la tabla de descriptores de interrupciones (IDT)
 
-	my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); // Inicializar el gestor de memoria
+	// my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); // Inicializar el gestor de memoria
 
 	size_t total_memory = 1024;  // Memoria total disponible para el buddy allocator
-    init_buddy_allocator(total_memory);
+    init_buddy_allocator(HEAP_START, total_memory);
 
 	char *argv[] = {"1000"};
 	test_mm(1, argv);
