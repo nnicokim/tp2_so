@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <buddyAllocator.h>
+#include <stdint.h>
 
 void* heap_start;
 size_t heap_size;
