@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "keyboarddriver.h": "c"
+        "keyboarddriver.h": "c",
+        "queue.h": "c"
     }
 }
