@@ -1,6 +1,7 @@
-#include "stack.h"
+#include "./include/stack.h"
+#include <stdio.h>
 
-void initialize(Stack *stack)
+void initializeStack(Stack *stack)
 {
     stack->top = -1;
 }
@@ -9,8 +10,7 @@ void push(Stack *stack, int data)
 {
     if (isFull(stack))
     {
-        fprintf(stderr, "Error: Stack is full.\n");
-        exit(1);
+        return;
     }
     stack->top++;
     stack->data[stack->top] = data;
@@ -20,8 +20,7 @@ int pop(Stack *stack)
 {
     if (isEmpty(stack))
     {
-        fprintf(stderr, "Error: Empty stack.\n");
-        exit(1);
+        return -1;
     }
     int toReturn = stack->data[stack->top];
     stack->top--;
@@ -42,8 +41,7 @@ int peek(Stack *stack)
 {
     if (isEmpty(stack))
     {
-        fprintf(stderr, "Error: Empty stack.\n");
-        exit(1);
+        return -1;
     }
     return stack->data[stack->top];
 }

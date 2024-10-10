@@ -1,10 +1,7 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#define MAX 200
+#define MAX 192 // 64 * 3
 
 typedef struct Stack
 {
@@ -12,7 +9,7 @@ typedef struct Stack
     int top;
 } Stack;
 
-void initialize(Stack *stack);
+void initStack(Stack *stack);
 void push(Stack *stack, int data);
 int pop(Stack *stack);
 int isEmpty(Stack *stack);

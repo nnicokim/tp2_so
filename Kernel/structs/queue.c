@@ -1,6 +1,9 @@
 // Cola de procesos (Round-Robin)
 
-#include <queue.h>
+#include "./include/queue.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "../memory_manager/include/mm_manager.h"
 
 void initializeQueue(Queue *queue)
 {
@@ -13,11 +16,10 @@ void addQueue(Queue *queue, PCB *pcb)
 {
     // implementar algun malloc nuestro si NO se puede usar el de la libreria
 
-    QueueNode *newNode = (QueueNode *)malloc(sizeof(QueueNode));
+    QueueNode *newNode = (QueueNode *)mymalloc(sizeof(QueueNode));
     if (newNode == NULL)
     {
-        fprintf(stderr, "Error: Cannot add to Queue.\n");
-        exit(1);
+        return;
     }
     newNode->pcb = pcb;
     newNode->next = NULL;
@@ -38,8 +40,7 @@ PCB *removeQueue(Queue *queue)
 {
     if (isEmptyQueue(queue))
     {
-        fprintf(stderr, "Error: Empty Queue.\n");
-        exit(1);
+        return NULL;
     }
 
     QueueNode *temp = queue->first;
@@ -50,7 +51,7 @@ PCB *removeQueue(Queue *queue)
     {
         queue->last = NULL;
     }
-    free(temp);
+    myfree(temp);
     queue->size--;
 
     return pcb;

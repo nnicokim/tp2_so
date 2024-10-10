@@ -11,9 +11,12 @@
 #include <interrupts.h>
 #include <sound.h>
 #include <time.h>
-#include <mm_manager.h>
+#include "./memory_manager/include/mm_manager.h"
 // #include "./include/test_mm.h"
-#include <buddyAllocator.h>
+// #include "./memory_manager/include/buddyAllocator.h"
+#include "./structs/include/stack.h"
+#include "./structs/include/pcb.h"
+#include "./structs/include/queue.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -60,15 +63,20 @@ int main()
 
 	load_idt(); // Cargar la tabla de descriptores de interrupciones (IDT)
 
-	// my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); // Inicializar el gestor de memoria
+	my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); // Inicializar el gestor de memoria
 
-	size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
-	init_buddy_allocator(HEAP_START, total_memory);
+	// size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
+	// init_buddy_allocator(HEAP_START, total_memory);
+	Stack *stack = mymalloc(0xA00324);
+
+	// initStack(&stack);
+	// size_t queue[64];		 // Dudoso
+	// initializeQueue(&queue); // List/Queue de PCBs
 
 	_sti(); // Habilitar interrupciones
 
-	char *argv[] = {"1000"};
-	test_mm(1, argv);
+	// char *argv[] = {"1000"};
+	// test_mm(1, argv);
 
 	_setUser(); // Cambiar a modo usuario
 
