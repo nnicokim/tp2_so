@@ -14,8 +14,6 @@ void initializeQueue(Queue *queue)
 
 void addQueue(Queue *queue, PCB *pcb)
 {
-    // implementar algun malloc nuestro si NO se puede usar el de la libreria
-
     QueueNode *newNode = (QueueNode *)mymalloc(sizeof(QueueNode));
     if (newNode == NULL)
     {

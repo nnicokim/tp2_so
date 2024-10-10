@@ -17,6 +17,7 @@
 #include "./structs/include/stack.h"
 #include "./structs/include/pcb.h"
 #include "./structs/include/queue.h"
+#include "./scheduler/include/scheduler.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -67,11 +68,22 @@ int main()
 
 	// size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
 	// init_buddy_allocator(HEAP_START, total_memory);
+
 	Stack *stack = mymalloc(0xA00324);
 
-	// initStack(&stack);
-	// size_t queue[64];		 // Dudoso
-	// initializeQueue(&queue); // List/Queue de PCBs
+	initStack(&stack);
+
+	initScheduler();
+
+	// Creamos el proceso 0 (Kernel)
+	PCB PCBkernel;
+	initPCB(&PCBkernel, KERNEL_PID, KERNEL_PID, 0);
+	addQueue(&PCBqueue, &PCBkernel);
+
+	// Creamos el proceso IDLE
+	PCB PCBidle;
+	initPCB(&PCBidle, IDLE_PID, KERNEL_PID, 0);
+	addQueue(&PCBqueue, &PCBidle);
 
 	_sti(); // Habilitar interrupciones
 

@@ -1,7 +1,7 @@
 #include "./include/stack.h"
 #include <stdio.h>
 
-void initializeStack(Stack *stack)
+void initStack(Stack *stack)
 {
     stack->top = -1;
 }

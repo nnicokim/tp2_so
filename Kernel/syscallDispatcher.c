@@ -2,9 +2,14 @@
 #include <videoDriver.h>
 #include <registers.h>
 #include <time.h>
-#include <keyboardDriver.h> 
+#include <keyboardDriver.h>
 #include <clock.h>
 #include <sound.h>
+#include <naiveConsole.h>
+#include "./structs/include/pcb.h"
+#include "./structs/include/queue.h"
+#include "./scheduler/include/scheduler.h"
+#include "./structs/include/stack.h"
 
 #define STDIN 0
 #define STDOUT 1
@@ -187,6 +192,15 @@ uint64_t ksys_draw_rect(uint64_t color, uint64_t x, uint64_t y, uint64_t size_x,
 
 uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t x, uint64_t y, uint64_t arr)
 {
-    drawArray(fontColor, backgroundColor, x, y, (char *) arr);
+    drawArray(fontColor, backgroundColor, x, y, (char *)arr);
     return 0;
 }
+
+// uint64_t ksys_createProcess( ... ) {
+
+// PCB newPCB;
+// initPCB(&newPCB, , , );
+// addQueue(&PCBqueue, &newPCB);
+
+// return 0;
+//}

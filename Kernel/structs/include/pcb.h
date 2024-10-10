@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+#define KERNEL_PID 0
+#define IDLE_PID 1
+
 #define READY 0
 #define RUNNING 1
 #define BLOCKED 2
@@ -13,7 +16,7 @@
 
 typedef struct PCB
 {
-    pid_t pid;
+    pid_t pid; // ver si se puede usar pid_t o hay que usar int.
     pid_t ppid;
     int state;
     void *stack;
