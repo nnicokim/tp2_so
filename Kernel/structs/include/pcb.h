@@ -18,10 +18,11 @@ typedef struct PCB
     int state;
     int priority;
 
-    uint64_t RSP;
+    uint64_t RSP; // puntero al stack donde se pushearon todos los registros/datos
     uint64_t RBP;
 
     uint64_t registers[R_NUM]; // registros del proceso
+                               //(ver si se puede hacer esto o si se pushean directo al stack)
 
     void *baseAddress; // direccion base del proceso (memoria virtual)
     size_t limit;

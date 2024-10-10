@@ -12,7 +12,7 @@
 #include <sound.h>
 #include <time.h>
 #include <mm_manager.h>
-#include "tests/test_util.h"
+// #include "./include/test_mm.h"
 #include <buddyAllocator.h>
 
 extern uint8_t text;
@@ -56,19 +56,23 @@ void *initializeKernelBinary()
 
 int main()
 {
+	_cli(); // Deshabilitar interrupciones
+
 	load_idt(); // Cargar la tabla de descriptores de interrupciones (IDT)
 
 	// my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); // Inicializar el gestor de memoria
 
-	size_t total_memory = 1024;  // Memoria total disponible para el buddy allocator
-    init_buddy_allocator(HEAP_START, total_memory);
+	size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
+	init_buddy_allocator(HEAP_START, total_memory);
+
+	_sti(); // Habilitar interrupciones
 
 	char *argv[] = {"1000"};
 	test_mm(1, argv);
 
 	_setUser(); // Cambiar a modo usuario
 
-	printArray("You shouldn't be here chief..."); 
+	printArray("You shouldn't be here chief...");
 
 	return 0;
 }
