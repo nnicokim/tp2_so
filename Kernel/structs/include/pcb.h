@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#define KERNEL_PID 0
+#define SHELL_PID 0
 #define IDLE_PID 1
 
 #define READY 0

@@ -75,14 +75,14 @@ int main()
 
 	initScheduler();
 
-	// Creamos el proceso 0 (Kernel)
-	PCB PCBkernel;
-	initPCB(&PCBkernel, KERNEL_PID, KERNEL_PID, 0);
-	addQueue(&PCBqueue, &PCBkernel);
+	// Creamos el proceso 0 (Shell)
+	PCB PCBshell;
+	initPCB(&PCBshell, SHELL_PID, SHELL_PID, 0);
+	addQueue(&PCBqueue, &PCBshell);
 
 	// Creamos el proceso IDLE
 	PCB PCBidle;
-	initPCB(&PCBidle, IDLE_PID, KERNEL_PID, 0);
+	initPCB(&PCBidle, IDLE_PID, SHELL_PID, 0);
 	addQueue(&PCBqueue, &PCBidle);
 
 	_sti(); // Habilitar interrupciones

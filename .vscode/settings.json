@@ -3,6 +3,8 @@
         "keyboarddriver.h": "c",
         "queue.h": "c",
         "buddyallocator.h": "c",
-        "stack.h": "c"
+        "stack.h": "c",
+        "stdint.h": "c",
+        "types.h": "c"
     }
 }
