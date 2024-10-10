@@ -36,6 +36,10 @@ uint64_t ksys_getTime();
 uint64_t ksys_draw_square(uint64_t color, uint64_t x, uint64_t y, uint64_t size);
 uint64_t ksys_draw_rect(uint64_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_t size_y);
 uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t x, uint64_t y, uint64_t arr);
+// ksys_createProcess
+uint64_t ksys_getCurrentpid();
+uint64_t ksys_getCurrentPpid();
+// ksys_killProcess
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -204,3 +208,15 @@ uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t 
 
 // return 0;
 //}
+
+uint64_t ksys_getCurrentpid()
+{
+    return getCurrentPid();
+}
+
+uint64_t ksys_getCurrentppid()
+{
+    return getCurrentPPid();
+}
+
+// uint64_t ksys_killProcess( ... ) {

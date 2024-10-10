@@ -9,5 +9,7 @@ extern Queue PCBqueue;    // Lista de PCBs
 extern Queue round_robin; // Lista de los procesos en round-robin
 
 void initScheduler();
+int getCurrentPid();
+int getCurrentPPid();
 
 #endif

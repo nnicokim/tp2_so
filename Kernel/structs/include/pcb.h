@@ -5,8 +5,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#define SHELL_PID 0
-#define IDLE_PID 1
+#define KERNEL_PID 0
+#define SHELL_PID 1
+#define IDLE_PID 2
 
 #define READY 0
 #define RUNNING 1
