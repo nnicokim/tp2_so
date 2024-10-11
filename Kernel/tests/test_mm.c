@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <buddyAllocator.h>
 
 #define MAX_BLOCKS 10
 
@@ -30,9 +31,11 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     total = 0;
 
     // Request as many blocks as we can
-    while (rq < MAX_BLOCKS && total < max_memory) {
+    // while (rq < MAX_BLOCK && total < max_memory) {
+      while (total < max_memory) {
       mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
-      mm_rqs[rq].address = mymalloc(mm_rqs[rq].size);
+      // mm_rqs[rq].address = mymalloc(mm_rqs[rq].size);
+      mm_rqs[rq].address = buddy_allocate(mm_rqs[rq].size);
 
       if (mm_rqs[rq].address) {
         total += mm_rqs[rq].size;
@@ -56,6 +59,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     // Free
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
-        myfree(mm_rqs[i].address);
+        // myfree(mm_rqs[i].address);
+        buddy_free(mm_rqs[i].address);
   }
 }

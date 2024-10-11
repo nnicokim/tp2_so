@@ -1,0 +1,36 @@
+#include "./include/pcb.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include "../include/naiveConsole.h"
+
+void initPCB(PCB *pcb, pid_t pid, pid_t ppid, int priority)
+{
+    pcb->pid = pid;
+    pcb->ppid = ppid;
+    pcb->state = READY;
+    pcb->priority = priority;
+    pcb->RSP = 0;
+    pcb->RBP = 0;
+
+    pcb->baseAddress = NULL;
+    pcb->limit = 0;
+}
+
+// void printPCB(PCB *pcb)
+// {
+//     ncPrint("PID: %d\n", pcb->pid);
+//     ncPrint("PPID: %d\n", pcb->ppid);
+//     ncPrint("State: %d\n", pcb->state);
+//     ncPrint("Priority: %d\n", pcb->priority);
+//     ncPrint("RSP: %d\n", pcb->RSP);
+//     ncPrint("RBP: %d\n", pcb->RBP);
+
+//     ncPrint("Base Address: %p\n", pcb->baseAddress);
+//     ncPrint("Limit: %d\n", pcb->limit);
+// }
+
+int compare_PCB(const PCB *pcb1, const PCB *pcb2)
+{
+    return pcb1->pid - pcb2->pid;
+}

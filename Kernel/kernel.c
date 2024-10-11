@@ -11,8 +11,13 @@
 #include <interrupts.h>
 #include <sound.h>
 #include <time.h>
-#include <mm_manager.h>
-#include "tests/test_util.h"
+#include "./memory_manager/include/mm_manager.h"
+// #include "./include/test_mm.h"
+// #include "./memory_manager/include/buddyAllocator.h"
+#include "./structs/include/stack.h"
+#include "./structs/include/pcb.h"
+#include "./structs/include/queue.h"
+#include "./scheduler/include/scheduler.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -55,16 +60,44 @@ void *initializeKernelBinary()
 
 int main()
 {
-	load_idt(); 	// Cargar la tabla de descriptores de interrupciones (IDT)
+	_cli(); // Deshabilitar interrupciones
 
-	my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); 	// Inicializar el gestor de memoria
+	load_idt(); // Cargar la tabla de descriptores de interrupciones (IDT)
 
-	char* argv[]= {"1000"};
-	test_mm(1, argv);
+	my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); // Inicializar el gestor de memoria
 
-	_setUser(); 	// Cambiar a modo usuario
+	// size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
+	// init_buddy_allocator(HEAP_START, total_memory);
 
-	printArray("You shouldn't be here chief..."); 	// Imprimir un mensaje (esto no debería ocurrir)
+	Stack *stack = mymalloc(0xA00324);
+
+	initStack(&stack);
+
+	initScheduler();
+
+	// Creamos el proceso 0 (Kernel)
+	PCB PCBkernel;
+	initPCB(&PCBkernel, KERNEL_PID, KERNEL_PID, 0);
+	addQueue(&PCBqueue, &PCBkernel);
+
+	// Creamos el proceso 1 (Shell)
+	PCB PCBshell;
+	initPCB(&PCBshell, SHELL_PID, KERNEL_PID, 0);
+	addQueue(&PCBqueue, &PCBshell);
+
+	// Creamos el proceso 2 (IDLE)
+	PCB PCBidle;
+	initPCB(&PCBidle, IDLE_PID, KERNEL_PID, 0);
+	addQueue(&PCBqueue, &PCBidle);
+
+	_sti(); // Habilitar interrupciones
+
+	// char *argv[] = {"1000"};
+	// test_mm(1, argv);
+
+	_setUser(); // Cambiar a modo usuario
+
+	printArray("You shouldn't be here chief...");
 
 	return 0;
 }
