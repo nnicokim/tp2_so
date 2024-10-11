@@ -18,7 +18,8 @@ typedef struct Queue
 
 void initializeQueue(Queue *queue);
 void addQueue(Queue *queue, PCB *pcb);
-PCB *removeQueue(Queue *queue);
+void removeFromQueue(Queue *queue, int pid);
+PCB *deQueue(Queue *queue);
 int isEmptyQueue(Queue *queue);
 PCB *get(Queue *queue, int pid);
 void freeQueue(Queue *queue);

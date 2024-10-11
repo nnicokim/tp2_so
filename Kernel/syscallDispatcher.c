@@ -12,6 +12,7 @@
 #include "./structs/include/stack.h"
 #include "./structs/include/circularList.h"
 #include "./memory_manager/include/mm_manager.h"
+#include "./structs/include/circularList.h"
 
 #define STDIN 0
 #define STDOUT 1
@@ -41,12 +42,12 @@ uint64_t ksys_getTime();
 uint64_t ksys_draw_square(uint64_t color, uint64_t x, uint64_t y, uint64_t size);
 uint64_t ksys_draw_rect(uint64_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_t size_y);
 uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t x, uint64_t y, uint64_t arr);
-// ksys_createProcess
+uint64_t ksys_createProcess(void (*program)(int, char **), int argc, char **argv);
 uint64_t ksys_blockProcess(int pid);
 uint64_t ksys_unblockProcess(int pid);
 uint64_t ksys_getCurrentpid();
 uint64_t ksys_getCurrentPpid();
-// ksys_killProcess
+uint64_t ksys_killProcess(int pid);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -87,8 +88,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return 0;
 
     // Syscalls nuevas (SO)
-    // case 16:
-    //     return ksys_createProcess(...);
+    case 16:
+        return ksys_createProcess(rdi, rsi, rdx);
     case 17:
         return ksys_blockProcess(rdi);
     case 18:
@@ -97,6 +98,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_getCurrentpid();
     case 20:
         return ksys_getCurrentPpid();
+    case 21:
+        return ksys_killProcess(rdi);
     }
     return 0;
 }
@@ -218,7 +221,9 @@ uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t 
     return 0;
 }
 
-uint64_t ksys_createProcess()
+// ChatGPT tira que ese es el tipo de variable de un puntero a un programa que recibe un int y un char **
+// Asigno stack, pcb, scheduler y stackframe. Algo mas falta?
+uint64_t ksys_createProcess(void (*program)(int, char **), int argc, char **argv)
 {
     // Stack
     void *newStack = mymalloc(PAGE);
@@ -230,10 +235,17 @@ uint64_t ksys_createProcess()
     initPCB(&newPCB, processID++, getCurrentPid, 1); // ver que prioridad se le pasa
     addQueue(&PCBqueue, &newPCB);
     newPCB.stack = newStack;
+    newPCB.baseAddress = newStack;
+    newPCB.limit = PAGE;
+
     // Stack nuevo -> RSP = RBP
     newPCB.RSP = (uint64_t)newStack + PAGE;
     newPCB.RBP = (uint64_t)newStack + PAGE;
 
+    // Añado al scheduler
+    addCircularList(&round_robin, newPCB.pid);
+
+    initStackFrame(argc, argv, program, processID - 1);
     return 0;
 }
 
@@ -257,4 +269,20 @@ uint64_t ksys_getCurrentppid()
     return getCurrentPPid();
 }
 
-// uint64_t ksys_killProcess( ... ) {
+// Faltaria implementar la parte de las prioridades (cuando lo hagamos)
+uint64_t ksys_killProcess(int pid)
+{
+    if (pid == 0 || pid == 1 || pid == 2)
+    {
+        return -1;
+    }
+    PCB *pcb = get(&PCBqueue, pid);
+    if (pcb == NULL || pcb->state == FINISHED)
+    {
+        return -1;
+    }
+    pcb->state = FINISHED;
+    removeCircularList(&round_robin, pid);
+    removeFromQueue(&PCBqueue, pid);
+    return 0;
+}

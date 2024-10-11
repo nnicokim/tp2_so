@@ -34,7 +34,37 @@ void addQueue(Queue *queue, PCB *pcb)
     queue->size++;
 }
 
-PCB *removeQueue(Queue *queue)
+void removeFromQueue(Queue *queue, int pid)
+{
+    QueueNode *current = queue->first;
+    QueueNode *prev = NULL;
+
+    while (current != NULL)
+    {
+        if (current->pcb->pid == pid)
+        {
+            if (prev == NULL)
+            {
+                queue->first = current->next;
+            }
+            else
+            {
+                prev->next = current->next;
+            }
+            if (current->next == NULL)
+            {
+                queue->last = prev;
+            }
+            myfree(current);
+            queue->size--;
+            return;
+        }
+        prev = current;
+        current = current->next;
+    }
+}
+
+PCB *deQueue(Queue *queue)
 {
     if (isEmptyQueue(queue))
     {
