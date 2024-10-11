@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include "../include/naiveConsole.h"
 
-void initPCB(PCB *pcb, pid_t pid, pid_t ppid, int priority)
+void initPCB(PCB *pcb, int pid, int ppid, int priority)
 {
     pcb->pid = pid;
     pcb->ppid = ppid;

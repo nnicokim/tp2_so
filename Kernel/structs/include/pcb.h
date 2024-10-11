@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <unistd.h>
-#include <sys/types.h>
 
 #define KERNEL_PID 0
 #define SHELL_PID 1
@@ -17,8 +16,8 @@
 
 typedef struct PCB
 {
-    pid_t pid; // ver si se puede usar pid_t o hay que usar int.
-    pid_t ppid;
+    int pid; // ver si se puede usar pid_t o hay que usar int.
+    int ppid;
     int state;
     void *stack;
     int priority;
@@ -31,7 +30,7 @@ typedef struct PCB
 
 } PCB;
 
-void initPCB(PCB *pcb, pid_t pid, pid_t ppid, int priority);
+void initPCB(PCB *pcb, int pid, int ppid, int priority);
 void printPCB(PCB *pcb);
 int compare_PCB(const PCB *pcb1, const PCB *pcb2);
 

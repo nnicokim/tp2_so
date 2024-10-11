@@ -37,6 +37,8 @@ uint64_t ksys_draw_square(uint64_t color, uint64_t x, uint64_t y, uint64_t size)
 uint64_t ksys_draw_rect(uint64_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_t size_y);
 uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t x, uint64_t y, uint64_t arr);
 // ksys_createProcess
+uint64_t ksys_blockProcess(int pid);
+uint64_t ksys_unblockProcess(int pid);
 uint64_t ksys_getCurrentpid();
 uint64_t ksys_getCurrentPpid();
 // ksys_killProcess
@@ -78,6 +80,18 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
     case 15:
         flushBuffer();
         return 0;
+
+    // Syscalls nuevas (SO)
+    // case 16:
+    //     return ksys_createProcess(...);
+    case 17:
+        return ksys_blockProcess(rdi);
+    case 18:
+        return ksys_unblockProcess(rdi);
+    case 19:
+        return ksys_getCurrentpid();
+    case 20:
+        return ksys_getCurrentPpid();
     }
     return 0;
 }
@@ -121,7 +135,6 @@ uint64_t ksys_write(uint64_t fd, uint64_t buffer, uint64_t count)
 
 uint64_t ksys_getTime()
 {
-    // char * reserve = "";
     char reserve[TIME_STR]; // en reserve queda guardado el time en formato hh:mm:ss
     timeToStr(reserve);
     // print(reserve);   ver cual funcion uso para imprimir el string
@@ -208,6 +221,16 @@ uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t 
 
 // return 0;
 //}
+
+uint64_t ksys_blockProcess(int pid)
+{
+    return blockProcess(pid);
+}
+
+uint64_t ksys_unblockProcess(int pid)
+{
+    return unblockProcess(pid);
+}
 
 uint64_t ksys_getCurrentpid()
 {

@@ -2,20 +2,51 @@
 
 #include "./include/scheduler.h"
 
-QueueNode *current;
+CircularListNode *current;
 
 void initScheduler()
 {
-    initializeQueue(&PCBqueue);    // Lista de PCBs
-    initializeQueue(&round_robin); // Lista de los procesos en round-robin
+    initializeQueue(&PCBqueue);           // Lista de PCBs
+    initializeCircularList(&round_robin); // Lista de los procesos en round-robin
+}
+
+int blockProcess(int pid)
+{
+    PCB *pcb = get(&PCBqueue, pid);
+    if (pcb->state == BLOCKED || pcb->state == FINISHED)
+    {
+        return -1;
+    }
+    pcb->state = BLOCKED;
+    removeCircularList(&round_robin, pid);
+    return 1;
+}
+
+int unblockProcess(int pid)
+{
+    PCB *pcb = get(&PCBqueue, pid);
+    if (pcb->state != BLOCKED)
+    {
+        return -1;
+    }
+    pcb->state = READY;
+    addCircularList(&round_robin, pid);
+    return 1;
 }
 
 int getCurrentPid()
 {
-    return current->pcb->pid;
+    return current->pid;
 }
 
 int getCurrentPPid()
 {
-    return current->pcb->ppid;
+    int currentPid = getCurrentPid();
+    PCB *pcb = get(&PCBqueue, currentPid);
+    return pcb->ppid;
+}
+
+CircularListNode *getCurrentProcess()
+{
+    return current;
 }
