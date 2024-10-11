@@ -10,16 +10,21 @@
 #include "./structs/include/queue.h"
 #include "./scheduler/include/scheduler.h"
 #include "./structs/include/stack.h"
+#include "./structs/include/circularList.h"
+#include "./memory_manager/include/mm_manager.h"
 
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
 #define LASTIN 3
 #define TIME_STR 10
+#define PAGE 0x1000
 
 extern char getScanCode();
 extern int getTime(int timeUnit);
 extern void _hlt();
+
+static int processID = 3;
 
 uint64_t ksys_read(uint64_t fd, uint64_t buffer, uint64_t count);
 uint64_t ksys_write(uint64_t fd, uint64_t buffer, uint64_t count);
@@ -213,14 +218,24 @@ uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t 
     return 0;
 }
 
-// uint64_t ksys_createProcess( ... ) {
+uint64_t ksys_createProcess()
+{
+    // Stack
+    void *newStack = mymalloc(PAGE);
+    if (newStack == NULL)
+    {
+        return -1;
+    }
+    PCB newPCB;
+    initPCB(&newPCB, processID++, getCurrentPid, 1); // ver que prioridad se le pasa
+    addQueue(&PCBqueue, &newPCB);
+    newPCB.stack = newStack;
+    // Stack nuevo -> RSP = RBP
+    newPCB.RSP = (uint64_t)newStack + PAGE;
+    newPCB.RBP = (uint64_t)newStack + PAGE;
 
-// PCB newPCB;
-// initPCB(&newPCB, , , );
-// addQueue(&PCBqueue, &newPCB);
-
-// return 0;
-//}
+    return 0;
+}
 
 uint64_t ksys_blockProcess(int pid)
 {

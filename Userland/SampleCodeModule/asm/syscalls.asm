@@ -103,6 +103,7 @@ _get_font_size:
     mov rsp, rbp 
     pop rbp 
     ret
+    
 _beep: 
     push rbp
     mov rbp, rsp 

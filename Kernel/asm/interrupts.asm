@@ -116,6 +116,20 @@ SECTION .text
 	iretq
 %endmacro
 
+%macro NoRAXirqHandlerMaster 1
+	pushStateNoRAX
+
+	mov rdi, %1 ; pasaje de parametro
+	call irqDispatcher
+
+	; signal pic EOI (End of Interrupt)
+	mov al, 20h
+	out 20h, al
+
+	popStateNoRAX
+	iretq
+%endmacro
+
 %macro exceptionHandler 1
 	push rax
     saveRegs
