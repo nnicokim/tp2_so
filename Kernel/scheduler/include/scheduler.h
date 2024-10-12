@@ -8,6 +8,7 @@
 
 extern Queue PCBqueue;           // Lista de PCBs
 extern CircularList round_robin; // Lista de los procesos en round-robin
+extern CircularListNode *current;
 
 void initScheduler();
 int blockProcess(int pid);

@@ -24,6 +24,7 @@
 extern char getScanCode();
 extern int getTime(int timeUnit);
 extern void _hlt();
+extern void forceTimerTick();
 
 static int processID = 3;
 
@@ -267,7 +268,7 @@ uint64_t ksys_getCurrentpid()
     return getCurrentPid();
 }
 
-uint64_t ksys_getCurrentppid()
+uint64_t ksys_getCurrentPpid()
 {
     return getCurrentPPid();
 }

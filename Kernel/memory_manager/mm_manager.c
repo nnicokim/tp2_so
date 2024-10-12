@@ -5,14 +5,14 @@
 #define MM_START ((void *)0xA00000) // 10 Mb
 
 void *start;
-int size, current;
+int size, currentBlock;
 void *free_ptrs[BLOCK_COUNT];
 
 void *mymalloc(size_t size)
 {
-    if (current < BLOCK_COUNT && size <= BLOCK_SIZE)
+    if (currentBlock < BLOCK_COUNT && size <= BLOCK_SIZE)
     {
-        return free_ptrs[current++];
+        return free_ptrs[currentBlock++];
     }
     else
         return NULL;
@@ -22,7 +22,7 @@ void myfree(void *ptr)
 {
     if (ptr == NULL || ptr < start) // Podemos meter chequeos como si esta dentro del rango para ganar confianza
         return;
-    free_ptrs[--current] = ptr;
+    free_ptrs[--currentBlock] = ptr;
 }
 
 void *my_mm_init(void *ptrs, int s)
@@ -33,6 +33,6 @@ void *my_mm_init(void *ptrs, int s)
     {
         free_ptrs[i] = start + i * BLOCK_SIZE; // Ensure each block is distinct
     }
-    current = 0;
+    currentBlock = 0;
     return start;
 }

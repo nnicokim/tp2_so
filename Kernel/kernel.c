@@ -28,6 +28,9 @@ extern uint8_t endOfKernel;
 
 static const uint64_t PageSize = 0x1000;
 
+Queue PCBqueue;			  // Definición de la lista de PCBs
+CircularList round_robin; // Definición de la lista de procesos en round-robin
+
 static void *const sampleCodeModuleAddress = (void *)0x400000;
 static void *const sampleDataModuleAddress = (void *)0x500000;
 
@@ -69,9 +72,10 @@ int main()
 	// size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
 	// init_buddy_allocator(HEAP_START, total_memory);
 
-	Stack *stack = mymalloc(0xA00324);
+	// Para que carajo nos sirve este stack? XD
+	// Stack *stack = mymalloc(0xA00324);
 
-	initStack(&stack);
+	// initStack(&stack);
 
 	initScheduler();
 
