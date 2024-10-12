@@ -50,6 +50,7 @@ uint64_t ksys_getCurrentpid();
 uint64_t ksys_getCurrentPpid();
 uint64_t ksys_killProcess(int pid);
 uint64_t ksys_leaveCPU();
+uint64_t sys_waitPid(int pid);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -104,6 +105,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_killProcess(rdi);
     case 22:
         return ksys_leaveCPU();
+    case 23:
+        return sys_waitPid(rdi);
     }
     return 0;
 }
@@ -296,4 +299,17 @@ uint64_t ksys_leaveCPU()
 {
     forceTimerTick();
     return 0;
+}
+
+// El proceso padre se bloquea hasta que el hijo termine
+uint64_t sys_waitPid(int pid)
+{
+    PCB *childProcess = get(&PCBqueue, pid);
+    if (childProcess->state == FINISHED)
+    {
+        return;
+    }
+    int parentProcess = getCurrentPid();
+    blockProcess(parentProcess);
+    forceTick();
 }
