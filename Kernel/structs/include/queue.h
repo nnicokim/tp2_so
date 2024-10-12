@@ -16,6 +16,8 @@ typedef struct Queue
     int size;
 } Queue;
 
+extern Queue PCBqueue;
+
 void initializeQueue(Queue *queue);
 void addQueue(Queue *queue, PCB *pcb);
 void removeFromQueue(Queue *queue, int pid);

@@ -110,7 +110,7 @@ void freeQueue(Queue *queue)
 {
     while (!isEmptyQueue(queue))
     {
-        removeQueue(queue);
+        deQueue(queue);
     }
 }
 
