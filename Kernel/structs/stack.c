@@ -1,7 +1,7 @@
 #include "./include/stack.h"
 #include <stdio.h>
 
-void initStackFrame(int argc, char **argv, void *program, uint64_t pid)
+void initStackFrame(int argc, char **argv, void (*program)(int, char **), uint64_t pid)
 {
     PCB *currentProcess = get(&PCBqueue, pid);
     StackFrame *stack = (StackFrame *)(currentProcess->RSP);

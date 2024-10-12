@@ -48,6 +48,7 @@ uint64_t ksys_unblockProcess(int pid);
 uint64_t ksys_getCurrentpid();
 uint64_t ksys_getCurrentPpid();
 uint64_t ksys_killProcess(int pid);
+uint64_t ksys_leaveCPU();
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -100,6 +101,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_getCurrentPpid();
     case 21:
         return ksys_killProcess(rdi);
+    case 22:
+        return ksys_leaveCPU();
     }
     return 0;
 }
@@ -270,6 +273,7 @@ uint64_t ksys_getCurrentppid()
 }
 
 // Faltaria implementar la parte de las prioridades (cuando lo hagamos)
+// Ver si hay que hacer algo con el stack. Faltaria algo mas?
 uint64_t ksys_killProcess(int pid)
 {
     if (pid == 0 || pid == 1 || pid == 2)
@@ -284,5 +288,11 @@ uint64_t ksys_killProcess(int pid)
     pcb->state = FINISHED;
     removeCircularList(&round_robin, pid);
     removeFromQueue(&PCBqueue, pid);
+    return 0;
+}
+
+uint64_t ksys_leaveCPU()
+{
+    forceTimerTick();
     return 0;
 }

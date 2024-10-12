@@ -7,8 +7,9 @@
 #include "../scheduler/include/scheduler.h"
 #include "./circularList.h"
 
-#define MAX 192 // 64 * 3
+#define MAX 192 // 64 * 3. Si se pasa, deberia tirar algun error al usuario.
 
+/* Creo que en vez de este Stack (el posta), conviene hacer un array de tamaño MAX */
 typedef struct Stack
 {
     int data[MAX];
@@ -50,6 +51,7 @@ int peek(Stack *stack);
 void clearStack(Stack *stack);
 int stackSize(Stack *stack);
 
-void initStackFrame(int argc, char **argv, void *program, uint64_t pid);
+// ChatGPT tira que ese es el tipo de variable de un puntero a un programa que recibe un int y un char **
+void initStackFrame(int argc, char **argv, void (*program)(int, char **), uint64_t pid);
 
 #endif

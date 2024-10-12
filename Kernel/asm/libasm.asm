@@ -161,3 +161,13 @@ outb:
 	mov rsp, rbp
 	pop rbp
 	ret
+
+getRSP:
+	xor rax, rax
+	mov rax, rsp
+	ret
+
+; Para el scheduler o kill
+forceTimerTick
+	int 20h
+	ret
