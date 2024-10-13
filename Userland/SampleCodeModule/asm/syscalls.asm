@@ -14,6 +14,16 @@ GLOBAL _print_rect
 GLOBAL _get_time
 GLOBAL _draw_array
 GLOBAL _flush_buffer
+
+GLOBAL _createProcess
+GLOBAL _blockProcess
+GLOBAL _unblockProcess
+GLOBAL _getCurrentpid
+GLOBAL _getCurrentPpid
+GLOBAL _killProcess
+GLOBAL _leaveCPU
+GLOBAL _waitPid
+
 section .text
 
 _write:
@@ -190,4 +200,76 @@ _flush_buffer:
 
     mov rsp, rbp 
     pop rbp 
+    ret
+
+_createProcess:
+    push rbp
+    mov rbp, rsp
+    mov rax, 16
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+    
+_blockProcess:
+    push rbp
+    mov rbp, rsp
+    mov rax, 17
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_unblockProcess:
+    push rbp
+    mov rbp, rsp
+    mov rax, 18
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_getCurrentpid:
+    push rbp
+    mov rbp, rsp
+    mov rax, 19
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_getCurrentPpid:
+    push rbp
+    mov rbp, rsp
+    mov rax, 20
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_killProcess:
+    push rbp
+    mov rbp, rsp
+    mov rax, 21
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_leaveCPU:
+    push rbp
+    mov rbp, rsp
+    mov rax, 22
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_waitPid:
+    push rbp
+    mov rbp, rsp
+    mov rax, 23
+    int 80h
+    mov rsp, rbp
+    pop rbp
     ret
