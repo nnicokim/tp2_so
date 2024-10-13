@@ -39,6 +39,6 @@ $(LOADEROBJECT):
 	$(ASM) $(ASMFLAGS) $(LOADERSRC) -o $(LOADEROBJECT)
 
 clean:
-	rm -rf asm/*.o *.o *.bin *.elf tests/*.o
+	rm -rf asm/*.o *.o *.bin *.elf tests/*.o obj memory_manager/*.o memory_manager/obj scheduler/*.o scheduler/obj ipc/*.o ipc/obj structs/*.o structs/obj
 
 .PHONY: all clean 
