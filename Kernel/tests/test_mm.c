@@ -1,10 +1,10 @@
 #include "syscall.h"
-#include "test_util.h"
-#include "../include/mm_manager.h"
+#include "./include/test_util.h"
+//#include "./include/mm_manager.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <buddyAllocator.h>
+//#include <buddyAllocator.h>
 
 #define MAX_BLOCKS 10
 

@@ -16,14 +16,14 @@
 
 typedef struct PCB
 {
-    int pid; // ver si se puede usar pid_t o hay que usar int.
-    int ppid;
-    int state;
-    void *stack;
-    int priority;
+    unsigned int pid; // Process ID
+    unsigned int ppid; // Parent Process ID
+    int state; // Process state
+    void *stack; // Stack pointer
+    int priority; // Process priority
 
     uint64_t RSP; // puntero al stack donde se pushearon todos los registros/datos
-    uint64_t RBP;
+    uint64_t RBP; // puntero al base pointer
 
     void *baseAddress; // direccion base del proceso (memoria virtual)
     size_t limit;
