@@ -23,6 +23,7 @@ GLOBAL _getCurrentPpid
 GLOBAL _killProcess
 GLOBAL _leaveCPU
 GLOBAL _waitPid
+GLOBAL _test_mm
 
 section .text
 
@@ -269,6 +270,15 @@ _waitPid:
     push rbp
     mov rbp, rsp
     mov rax, 23
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_test_mm:
+    push rbp
+    mov rbp, rsp
+    mov rax, 24
     int 80h
     mov rsp, rbp
     pop rbp

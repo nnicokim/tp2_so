@@ -13,6 +13,7 @@
 #include "./structs/include/circularList.h"
 #include "./memory_manager/include/mm_manager.h"
 #include "./structs/include/circularList.h"
+#include "./tests/include/test_mm.h"
 
 #define STDIN 0
 #define STDOUT 1
@@ -107,6 +108,9 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_leaveCPU();
     case 23:
         return sys_waitPid(rdi);
+
+    case 24:
+        return test_mm(rdi, rsi);
     }
     return 0;
 }
