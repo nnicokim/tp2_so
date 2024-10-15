@@ -20,8 +20,9 @@ void *mymalloc(size_t size)
 
 void myfree(void *ptr)
 {
-    if (ptr == NULL || ptr < start) // Podemos meter chequeos como si esta dentro del rango para ganar confianza
-        return;
+    // Podemos meter chequeos como si esta dentro del rango para ganar confianza
+    if (ptr == NULL || ptr < start)
+        return NULL;
     free_ptrs[--currentBlock] = ptr;
 }
 

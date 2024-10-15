@@ -122,3 +122,8 @@ int usys_test_mm(uint64_t argc, char *argv[])
 {
     return _test_mm(argc, argv);
 }
+
+int usys_test_processes(uint64_t argc, char *argv[])
+{
+    return _test_processes(argc, argv);
+}

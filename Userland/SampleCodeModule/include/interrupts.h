@@ -53,4 +53,5 @@ uint64_t _waitPid(int pid);
 
 uint64_t _test_mm(uint64_t argc, char *argv[]);
 
+uint64_t _test_processes(uint64_t argc, char *argv[]);
 #endif

@@ -1,5 +1,6 @@
 #include "./include/circularList.h"
 #include "../memory_manager/include/mm_manager.h"
+#include "../include/videoDriver.h"
 
 void initializeCircularList(CircularList *list)
 {
@@ -28,32 +29,31 @@ void addCircularList(CircularList *list, int pid)
     list->size++;
 }
 
-void removeCircularList(CircularList *list, int pid)
+void removeFromCircularList(CircularList *list, int pid)
 {
     CircularListNode *current = list->head;
-    if (list->size == 1)
-    {
-        myfree(current);
-        list->head = NULL;
-        list->size = 0;
-        return;
-    }
     for (int i = 0; i < list->size; i++)
     {
-        if (current->pid == pid)
+        if (current->pid != pid)
         {
-            CircularListNode *prev = current->prev;
-            CircularListNode *next = current->next;
-            prev->next = next;
-            next->prev = prev;
-            if (current == list->head)
-            {
-                list->head = next;
-            }
-            myfree(current);
-            list->size--;
-            return;
+            current = current->next;
+            continue;
+        };
+
+        CircularListNode *prev = current->prev;
+        CircularListNode *next = current->next;
+        prev->next = next;
+        next->prev = prev;
+        if (current == list->head)
+        {
+            list->head = next;
         }
-        current = current->next;
+        myfree(current);
+        list->size--;
+        return;
     }
+
+    printArray("No se encontro del circularList.");
+    printDec(pid);
+    printArray("\n");
 }

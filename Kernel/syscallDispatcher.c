@@ -14,20 +14,20 @@
 #include "./memory_manager/include/mm_manager.h"
 #include "./structs/include/circularList.h"
 #include "./tests/include/test_mm.h"
+#include "./tests/include/test_processes.h"
 
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
 #define LASTIN 3
 #define TIME_STR 10
+
 #define PAGE 0x1000
 
 extern char getScanCode();
 extern int getTime(int timeUnit);
 extern void _hlt();
 extern void forceTimerTick();
-
-static int processID = 3;
 
 uint64_t ksys_read(uint64_t fd, uint64_t buffer, uint64_t count);
 uint64_t ksys_write(uint64_t fd, uint64_t buffer, uint64_t count);
@@ -111,6 +111,9 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
 
     case 24:
         return test_mm(rdi, rsi);
+
+    case 25:
+        return test_processes(rdi, rsi);
     }
     return 0;
 }
@@ -232,32 +235,9 @@ uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t 
     return 0;
 }
 
-// ChatGPT tira que ese es el tipo de variable de un puntero a un programa que recibe un int y un char **
-// Asigno stack, pcb, scheduler y stackframe. Algo mas falta?
 uint64_t ksys_createProcess(void (*program)(int, char **), int argc, char **argv)
 {
-    // Stack
-    void *newStack = mymalloc(PAGE);
-    if (newStack == NULL)
-    {
-        return -1;
-    }
-    PCB newPCB;
-    initPCB(&newPCB, processID++, getCurrentPid, 1); // ver que prioridad se le pasa
-    addQueue(&PCBqueue, &newPCB);
-    newPCB.stack = newStack;
-    newPCB.baseAddress = newStack;
-    newPCB.limit = PAGE;
-
-    // Stack nuevo -> RSP = RBP
-    newPCB.RSP = (uint64_t)newStack + PAGE;
-    newPCB.RBP = (uint64_t)newStack + PAGE;
-
-    // Añado al scheduler
-    addCircularList(&round_robin, newPCB.pid);
-
-    initStackFrame(argc, argv, program, processID - 1);
-    return 0;
+    return createProcess(program, argc, argv);
 }
 
 uint64_t ksys_blockProcess(int pid)
@@ -284,19 +264,7 @@ uint64_t ksys_getCurrentPpid()
 // Ver si hay que hacer algo con el stack. Faltaria algo mas?
 uint64_t ksys_killProcess(int pid)
 {
-    if (pid == 0 || pid == 1 || pid == 2)
-    {
-        return -1;
-    }
-    PCB *pcb = get(&PCBqueue, pid);
-    if (pcb == NULL || pcb->state == FINISHED)
-    {
-        return -1;
-    }
-    pcb->state = FINISHED;
-    removeCircularList(&round_robin, pid);
-    removeFromQueue(&PCBqueue, pid);
-    return 0;
+    return killProcess(pid);
 }
 
 uint64_t ksys_leaveCPU()

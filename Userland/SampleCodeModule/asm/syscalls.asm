@@ -24,6 +24,7 @@ GLOBAL _killProcess
 GLOBAL _leaveCPU
 GLOBAL _waitPid
 GLOBAL _test_mm
+GLOBAL _test_processes
 
 section .text
 
@@ -279,6 +280,15 @@ _test_mm:
     push rbp
     mov rbp, rsp
     mov rax, 24
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_test_processes:
+    push rbp
+    mov rbp, rsp
+    mov rax, 25
     int 80h
     mov rsp, rbp
     pop rbp

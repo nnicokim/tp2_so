@@ -1,9 +1,11 @@
 // Cola de procesos (Round-Robin)
 
 #include "./include/queue.h"
+#include <videoDriver.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "../memory_manager/include/mm_manager.h"
+#include <time.h>
 
 void initializeQueue(Queue *queue)
 {
@@ -15,11 +17,13 @@ void initializeQueue(Queue *queue)
 void addQueue(Queue *queue, PCB *pcb)
 {
     QueueNode *newNode = (QueueNode *)mymalloc(sizeof(QueueNode));
+    PCB *newPCB = copyPCB(pcb, NULL);
+
     if (newNode == NULL)
     {
         return;
     }
-    newNode->pcb = pcb;
+    newNode->pcb = newPCB;
     newNode->next = NULL;
 
     if (isEmptyQueue(queue))
@@ -55,6 +59,9 @@ void removeFromQueue(Queue *queue, int pid)
             {
                 queue->last = prev;
             }
+
+            myfree(current->pcb->stack);
+            freePCB(current->pcb);
             myfree(current);
             queue->size--;
             return;
@@ -79,6 +86,7 @@ PCB *deQueue(Queue *queue)
     {
         queue->last = NULL;
     }
+    freePCB(temp->pcb);
     myfree(temp);
     queue->size--;
 
@@ -93,7 +101,6 @@ int isEmptyQueue(Queue *queue)
 PCB *get(Queue *queue, int pid)
 {
     QueueNode *current = queue->first;
-
     while (current != NULL)
     {
         if (current->pcb->pid == pid)

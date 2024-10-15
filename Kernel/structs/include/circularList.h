@@ -22,6 +22,6 @@ extern CircularList round_robin;
 
 void initializeCircularList(CircularList *list);
 void addCircularList(CircularList *list, int pid);
-void removeCircularList(CircularList *list, int pid);
+void removeFromCircularList(CircularList *list, int pid);
 
 #endif // CIRCULAR_LIST_H

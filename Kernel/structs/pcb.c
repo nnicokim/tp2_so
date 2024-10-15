@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <videoDriver.h>
 #include "../include/naiveConsole.h"
+#include "../memory_manager/include/mm_manager.h"
 
 void initPCB(PCB *pcb, int pid, int ppid, int priority)
 {
@@ -15,6 +17,28 @@ void initPCB(PCB *pcb, int pid, int ppid, int priority)
 
     pcb->baseAddress = NULL;
     pcb->limit = 0;
+}
+
+PCB *copyPCB(PCB *pcb, PCB *newPCB)
+{
+    if (!newPCB)
+        newPCB = (PCB *)mymalloc(sizeof(PCB));
+
+    newPCB->pid = pcb->pid;
+    newPCB->ppid = pcb->ppid;
+    newPCB->state = pcb->state;
+    newPCB->priority = pcb->priority;
+    newPCB->RSP = pcb->RSP;
+    newPCB->RBP = pcb->RBP;
+    newPCB->baseAddress = pcb->baseAddress;
+    newPCB->limit = pcb->limit;
+
+    return newPCB;
+}
+
+void freePCB(PCB *pcb)
+{
+    myfree(pcb);
 }
 
 // void printPCB(PCB *pcb)

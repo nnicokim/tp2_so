@@ -9,6 +9,19 @@
         "types.h": "c",
         "circularlist.h": "c",
         "interrupts.h": "c",
-        "videodriver.h": "c"
+        "videodriver.h": "c",
+        "test_processes.h": "c",
+        "scheduler.h": "c",
+        "pcb.h": "c",
+        "shell.h": "c",
+        "user_lib.h": "c",
+        "user_syscalls.h": "c",
+        "ucolors.h": "c",
+        "istream": "c",
+        "locale": "c",
+        "tuple": "c",
+        "mm_manager.h": "c",
+        "stdlib.h": "c",
+        "stdio.h": "c"
     }
 }

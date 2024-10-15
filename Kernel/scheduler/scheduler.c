@@ -1,13 +1,67 @@
 // Algoritmo: Round-Robin con prioridades
-
+#include <videoDriver.h>
 #include "./include/scheduler.h"
 
 CircularListNode *current;
+static int processID = 3;
 
 void initScheduler()
 {
     initializeQueue(&PCBqueue);           // Lista de PCBs
     initializeCircularList(&round_robin); // Lista de los procesos en round-robin
+}
+
+uint64_t createProcess(void (*program)(int, char **), int argc, char **argv)
+{
+    void *newStack = mymalloc(PAGE);
+    // Stack
+    if (newStack == NULL)
+    {
+        printArray("createProcess: ERROR creating process. Could not allocate stack for process.");
+        printDec(processID);
+        printArray("\n");
+        return -1;
+    }
+    PCB newPCB;
+    initPCB(&newPCB, processID++, getCurrentPid(), 1); // ver que prioridad se le pasa
+    addQueue(&PCBqueue, &newPCB);
+
+    newPCB.stack = newStack;
+    newPCB.baseAddress = newStack;
+    newPCB.limit = PAGE;
+
+    // Stack nuevo -> RSP = RBP
+    newPCB.RSP = (uint64_t)newStack + PAGE;
+    newPCB.RBP = (uint64_t)newStack + PAGE;
+
+    // Añado al scheduler
+    addCircularList(&round_robin, newPCB.pid);
+    initStackFrame(argc, argv, program, processID - 1);
+
+    return newPCB.pid;
+}
+
+uint64_t killProcess(int pid)
+{
+    if (pid == 0 || pid == 1 || pid == 2)
+    {
+        return -1;
+    }
+    PCB *pcb = get(&PCBqueue, pid);
+    if (pcb == NULL || pcb->state == FINISHED)
+    {
+        printArray("killProcess: ERROR: Process with PID: ");
+        printDec(pid);
+        printArray(" not found\n");
+        return -1;
+    }
+
+    if (pcb->state != BLOCKED)
+        removeFromCircularList(&round_robin, pid);
+    pcb->state = FINISHED;
+    // removeFromCircularList(&round_robin, pid);
+    removeFromQueue(&PCBqueue, pid);
+    return 0; // que devuelva el codigo de exit
 }
 
 int blockProcess(int pid)
@@ -18,7 +72,7 @@ int blockProcess(int pid)
         return -1;
     }
     pcb->state = BLOCKED;
-    removeCircularList(&round_robin, pid);
+    removeFromCircularList(&round_robin, pid);
     return 1;
 }
 

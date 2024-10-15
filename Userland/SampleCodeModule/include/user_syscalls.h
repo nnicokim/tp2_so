@@ -56,4 +56,5 @@ int usys_waitPid(int pid);
 
 int usys_test_mm(uint64_t argc, char *argv[]);
 
+int usys_test_processes(uint64_t argc, char *argv[]);
 #endif
