@@ -130,3 +130,36 @@ CircularListNode *getCurrentProcess()
 {
     return current;
 }
+
+void schedule(){
+    if (current == NULL)
+    {
+        current = round_robin.head;
+    }
+    else
+    {
+        current = current->next;
+    }
+    if (current == NULL)
+    {
+        printArray("schedule: ERROR: current is NULL\n");
+        return;
+    }
+    PCB *pcb = get(&PCBqueue, current->pid);
+    if (pcb == NULL)
+    {
+        printArray("schedule: ERROR: PCB is NULL\n");
+        return;
+    }
+    if (pcb->state == READY)
+    {
+        printArray("schedule: Process with PID: ");
+        printDec(current->pid);
+        printArray(" scheduled\n");
+        return;
+    }
+    else
+    {
+        schedule();
+    }
+}

@@ -1,6 +1,7 @@
 #include <time.h>
 #include <stdint.h>
 #include <keyboardDriver.h>
+#include "./scheduler/include/scheduler.h"
 
 static void int_20();
 static void int_21();
@@ -19,6 +20,7 @@ void irqDispatcher(uint64_t irq) {
 
 void int_20() {
 	timer_handler();
+	schedule();
 }
 
 void int_21() { 
