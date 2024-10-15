@@ -74,6 +74,9 @@ void removeFromCircularList(CircularList *list, int pid)
         }
         myfree(current);
         list->size--;
+        if(list->size == 0){
+            list->head = NULL;
+        }
         return;
     }
     printArray("El proceso con pid: ");
