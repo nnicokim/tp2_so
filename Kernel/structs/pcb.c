@@ -58,3 +58,9 @@ int compare_PCB(const PCB *pcb1, const PCB *pcb2)
 {
     return pcb1->pid - pcb2->pid;
 }
+
+void switchToProcess(int processID) {
+    PCB *nextProcess = &processTable[processID];
+    load_context((StackFrame *)nextProcess->RSP);
+    currentProcess = processID;
+}

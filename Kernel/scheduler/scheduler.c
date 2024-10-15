@@ -1,6 +1,7 @@
 // Algoritmo: Round-Robin con prioridades
 #include <videoDriver.h>
 #include "./include/scheduler.h"
+#include "../structs/include/pcb.h"
 
 CircularListNode *current;
 static int processID = 3;
@@ -23,7 +24,21 @@ uint64_t createProcess(char *program, int argc, char **argv)
         printArray("\n");
         return -1;
     }
+
+    int new_pid = -1;
+    for (int i = 0; i < MAX_PROCESSES; i++) {
+        if (processTable[i].state == 0) { // Assuming 0 means "unused"
+            new_pid = i;
+            break;
+        }
+    }
+
+    if (new_pid == -1) {
+        return -1; // No available slot
+    }
+
     PCB newPCB;
+    processTable[new_pid] = newPCB;
     initPCB(&newPCB, processID++, getCurrentPid(), 1); // ver que prioridad se le pasa
     addQueue(&PCBqueue, &newPCB);
 
@@ -40,7 +55,7 @@ uint64_t createProcess(char *program, int argc, char **argv)
     printArray("addCircularList: Process with PID: ");
     printDec(newPCB.pid);
     printArray(" created :) \n");
-    // initStackFrame(argc, argv, program, processID - 1);
+    initStackFrame(argc, argv, program, processID - 1);
 
     return newPCB.pid;
 }
@@ -132,34 +147,8 @@ CircularListNode *getCurrentProcess()
 }
 
 void schedule(){
-    if (current == NULL)
-    {
-        current = round_robin.head;
-    }
-    else
-    {
-        current = current->next;
-    }
-    if (current == NULL)
-    {
-        printArray("schedule: ERROR: current is NULL\n");
-        return;
-    }
-    PCB *pcb = get(&PCBqueue, current->pid);
-    if (pcb == NULL)
-    {
-        printArray("schedule: ERROR: PCB is NULL\n");
-        return;
-    }
-    if (pcb->state == READY)
-    {
-        printArray("schedule: Process with PID: ");
-        printDec(current->pid);
-        printArray(" scheduled\n");
-        return;
-    }
-    else
-    {
-        schedule();
-    }
+    PCB *current = &processTable[currentProcess];
+    save_context((StackFrame *)current->RSP);
+    currentProcess = (currentProcess + 1) % MAX_PROCESSES;
+    switchToProcess(currentProcess);
 }

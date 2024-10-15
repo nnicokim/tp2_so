@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <unistd.h>
+#include "../include/stack.h"
 
 #define KERNEL_PID 0
 #define SHELL_PID 1
@@ -28,18 +29,24 @@ typedef struct PCB
     void *stack;       // Stack pointer
     int priority;      // Process priority
 
-    uint64_t RSP; // puntero al stack donde se pushearon todos los registros/datos
-    uint64_t RBP; // puntero al base pointer
+    uint64_t *RSP; // puntero al stack donde se pushearon todos los registros/datos
+    uint64_t *RBP; // puntero al base pointer
 
     void *baseAddress; // direccion base del proceso (memoria virtual)
     size_t limit;
 
 } PCB;
 
+extern PCB processTable[20];
+extern int currentProcess;
+
 void initPCB(PCB *pcb, int pid, int ppid, int priority);
 PCB *copyPCB(PCB *pcb, PCB *newPCB);
 void freePCB(PCB *pcb);
 void printPCB(PCB *pcb);
 int compare_PCB(const PCB *pcb1, const PCB *pcb2);
+extern void save_context(StackFrame *frame);
+extern void load_context(StackFrame *frame);
+void switchToProcess(int processID);
 
 #endif
