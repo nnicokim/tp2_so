@@ -284,4 +284,5 @@ uint64_t sys_waitPid(int pid)
     int parentProcess = getCurrentPid();
     blockProcess(parentProcess);
     forceTimerTick();
+    return 0;
 }

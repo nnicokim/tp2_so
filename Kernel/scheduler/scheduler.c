@@ -11,7 +11,7 @@ void initScheduler()
     initializeCircularList(&round_robin); // Lista de los procesos en round-robin
 }
 
-uint64_t createProcess(void (*program)(int, char **), int argc, char **argv)
+uint64_t createProcess(void *(*program)(int, char **), int argc, char **argv)
 {
     void *newStack = mymalloc(PAGE);
     // Stack
@@ -36,6 +36,9 @@ uint64_t createProcess(void (*program)(int, char **), int argc, char **argv)
 
     // Añado al scheduler
     addCircularList(&round_robin, newPCB.pid);
+    printArray("addCircularList: Process with PID: ");
+    printDec(newPCB.pid);
+    printArray(" created\n");
     initStackFrame(argc, argv, program, processID - 1);
 
     return newPCB.pid;
@@ -61,6 +64,9 @@ uint64_t killProcess(int pid)
     pcb->state = FINISHED;
     // removeFromCircularList(&round_robin, pid);
     removeFromQueue(&PCBqueue, pid);
+    printArray("killProcess: Process with PID: ");
+    printDec(pid);
+    printArray(" killed\n");
     return 0; // que devuelva el codigo de exit
 }
 
@@ -71,8 +77,14 @@ int blockProcess(int pid)
     {
         return -1;
     }
+    printArray("blockProcess: Process with State: ");
+    printDec(pcb->state);
+    printArray("\n");
     pcb->state = BLOCKED;
     removeFromCircularList(&round_robin, pid);
+    printArray("blockProcess: Process with PID: ");
+    printDec(pid);
+    printArray(" blocked\n");
     return 1;
 }
 
@@ -85,6 +97,12 @@ int unblockProcess(int pid)
     }
     pcb->state = READY;
     addCircularList(&round_robin, pid);
+    if (pcb->pid == 12)
+    {
+        printArray("unblockProcess: Process with PID: ");
+        printDec(pid);
+        printArray(" unblocked\n");
+    }
     return 1;
 }
 

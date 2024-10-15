@@ -1,6 +1,7 @@
 #include "./include/circularList.h"
 #include "../memory_manager/include/mm_manager.h"
 #include "../include/videoDriver.h"
+#include <time.h>
 
 void initializeCircularList(CircularList *list)
 {
@@ -11,6 +12,11 @@ void initializeCircularList(CircularList *list)
 void addCircularList(CircularList *list, int pid)
 {
     CircularListNode *newNode = (CircularListNode *)mymalloc(sizeof(CircularListNode));
+    if (newNode == NULL)
+    {
+        printArray("addCircularList: ERROR creating CircularListNode\n");
+        return;
+    }
     newNode->pid = pid;
     if (list->head == NULL)
     {
@@ -27,12 +33,22 @@ void addCircularList(CircularList *list, int pid)
         list->head->prev = newNode;
     }
     list->size++;
+    if (pid == 12)
+    {
+        printArray("Se agrego el proceso 12.\n");
+        timer_wait(1);
+    }
 }
 
 void removeFromCircularList(CircularList *list, int pid)
 {
     CircularListNode *current = list->head;
-    for (int i = 0; i < list->size; i++)
+    if (pid == 12)
+    {
+        printArray("Buscando el proceso 12...\n");
+    }
+
+    for (int i = 0; i <= list->size; i++)
     {
         if (current->pid != pid)
         {
@@ -50,10 +66,13 @@ void removeFromCircularList(CircularList *list, int pid)
         }
         myfree(current);
         list->size--;
+        if (pid == 12)
+        {
+            printArray("Proceso 12 encontrado y borrado!\n");
+        }
         return;
     }
-
-    printArray("No se encontro del circularList.");
+    printArray("El proceso con pid: ");
     printDec(pid);
-    printArray("\n");
+    printArray(" -> No se encontro del circularList.\n");
 }
