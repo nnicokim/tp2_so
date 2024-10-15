@@ -33,20 +33,11 @@ void addCircularList(CircularList *list, int pid)
         list->head->prev = newNode;
     }
     list->size++;
-    if (pid == 12)
-    {
-        printArray("Se agrego el proceso 12.\n");
-        timer_wait(1);
-    }
 }
 
 void removeFromCircularList(CircularList *list, int pid)
 {
     CircularListNode *current = list->head;
-    if (pid == 12)
-    {
-        printArray("Buscando el proceso 12...\n");
-    }
 
     for (int i = 0; i <= list->size; i++)
     {
@@ -66,10 +57,6 @@ void removeFromCircularList(CircularList *list, int pid)
         }
         myfree(current);
         list->size--;
-        if (pid == 12)
-        {
-            printArray("Proceso 12 encontrado y borrado!\n");
-        }
         return;
     }
     printArray("El proceso con pid: ");

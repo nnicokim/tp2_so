@@ -17,7 +17,7 @@ uint64_t createProcess(void *(*program)(int, char **), int argc, char **argv)
     // Stack
     if (newStack == NULL)
     {
-        printArray("createProcess: ERROR creating process. Could not allocate stack for process.");
+        printArray("createProcess: ERROR creating process. Could not allocate Stack for process.");
         printDec(processID);
         printArray("\n");
         return -1;
