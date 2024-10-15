@@ -33,20 +33,37 @@ void addCircularList(CircularList *list, int pid)
         list->head->prev = newNode;
     }
     list->size++;
+    printArray("Size de la lista luego del ADD: ");
+    printDec(list->size);
+    printArray("\n");
+    timer_wait_ms(200);
 }
 
 void removeFromCircularList(CircularList *list, int pid)
 {
     CircularListNode *current = list->head;
+    if (list->size == 0 || list->head == NULL)
+    {
+        printArray("removeFromCircularList: ERROR: CircularList is empty\n");
+        return;
+    }
 
     for (int i = 0; i <= list->size; i++)
     {
-        if (current->pid != pid)
+        if (current->pid != pid) // Se muere aca despues de la 1ra comparacion
         {
             current = current->next;
+            if (pid == 13)
+            {
+                printArray("Sigo buscando al PROCESO 13...\n");
+            }
             continue;
         };
 
+        if (pid == 13)
+        {
+            printArray("Encontre EL PROCESO 13 de la CIRCULAR LIST.\n");
+        }
         CircularListNode *prev = current->prev;
         CircularListNode *next = current->next;
         prev->next = next;
@@ -62,4 +79,5 @@ void removeFromCircularList(CircularList *list, int pid)
     printArray("El proceso con pid: ");
     printDec(pid);
     printArray(" -> No se encontro del circularList.\n");
+    return;
 }

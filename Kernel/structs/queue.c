@@ -21,6 +21,7 @@ void addQueue(Queue *queue, PCB *pcb)
 
     if (newNode == NULL)
     {
+        printArray("addQueue: ERROR creating QueueNode\n");
         return;
     }
     newNode->pcb = newPCB;
@@ -69,6 +70,7 @@ void removeFromQueue(Queue *queue, int pid)
         prev = current;
         current = current->next;
     }
+    printArray("No se encontro el PCB en el Queue.\n");
 }
 
 PCB *deQueue(Queue *queue)

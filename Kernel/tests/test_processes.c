@@ -3,6 +3,7 @@
 #include "include/test_util.h"
 #include <videoDriver.h>
 #include "../scheduler/include/scheduler.h"
+#include <time.h>
 
 typedef struct P_rq
 {
@@ -28,6 +29,8 @@ int64_t test_processes(uint64_t argc, char *argv[])
 
     while (1)
     {
+        clearScreen();
+
         // Create max_processes processes
         for (rq = 0; rq < max_processes; rq++)
         {
@@ -46,6 +49,10 @@ int64_t test_processes(uint64_t argc, char *argv[])
             }
         }
 
+        timer_wait(2);
+        printArray("test_processes: All processes created!!!\n");
+        printArray("Ahora: Killing, blocking and unblocking processes\n");
+
         // Randomly kills, blocks or unblocks processes until every one has been killed
         while (alive > 0)
         {
@@ -54,11 +61,18 @@ int64_t test_processes(uint64_t argc, char *argv[])
             {
                 action = GetUniform(100) % 2;
 
+                printDec(action);
+                printArray(" -> Action.\n");
+
                 switch (action)
                 {
                 case 0:
                     if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED)
                     {
+                        printArray("Running o Blocked, a matar al proceso: ");
+                        printDec(p_rqs[rq].pid);
+                        printArray(" !!!\n");
+                        // Muere aca la shell (tratando de matar al proceso 13)
                         if (killProcess(p_rqs[rq].pid) == -1)
                         {
                             printArray("test_processes: ERROR killing process with PID: ");
@@ -68,6 +82,18 @@ int64_t test_processes(uint64_t argc, char *argv[])
                         }
                         p_rqs[rq].state = FINISHED;
                         alive--;
+
+                        if (alive == 0)
+                        {
+                            printArray("test_processes: All processes killed!!!\n");
+                            timer_wait(2);
+                        }
+                        if (p_rqs[rq].state == FINISHED)
+                        {
+                            printArray("Process with PID: ");
+                            printDec(p_rqs[rq].pid);
+                            printArray(" killed\n");
+                        }
                     }
                     break;
 

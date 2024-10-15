@@ -11,7 +11,8 @@ void initScheduler()
     initializeCircularList(&round_robin); // Lista de los procesos en round-robin
 }
 
-uint64_t createProcess(void *(*program)(int, char **), int argc, char **argv)
+// uint64_t createProcess(void (*program)(int, char **), int argc, char **argv)
+uint64_t createProcess(char *program, int argc, char **argv)
 {
     void *newStack = mymalloc(PAGE);
     // Stack
@@ -38,8 +39,8 @@ uint64_t createProcess(void *(*program)(int, char **), int argc, char **argv)
     addCircularList(&round_robin, newPCB.pid);
     printArray("addCircularList: Process with PID: ");
     printDec(newPCB.pid);
-    printArray(" created\n");
-    initStackFrame(argc, argv, program, processID - 1);
+    printArray(" created :) \n");
+    // initStackFrame(argc, argv, program, processID - 1);
 
     return newPCB.pid;
 }
@@ -55,31 +56,38 @@ uint64_t killProcess(int pid)
     {
         printArray("killProcess: ERROR: Process with PID: ");
         printDec(pid);
-        printArray(" not found\n");
+        printArray(" not found :( \n");
         return -1;
     }
 
     if (pcb->state != BLOCKED)
+    {
         removeFromCircularList(&round_robin, pid);
+        printArray("Se removio de la lista de round-robin en Kill y no en BlockProcess.\n");
+    }
     pcb->state = FINISHED;
-    // removeFromCircularList(&round_robin, pid);
     removeFromQueue(&PCBqueue, pid);
     printArray("killProcess: Process with PID: ");
     printDec(pid);
     printArray(" killed\n");
+    if (pid == 13)
+    {
+        printArray("SE MURIO EL PROCESO 13\n");
+    }
     return 0; // que devuelva el codigo de exit
 }
 
 int blockProcess(int pid)
 {
-    PCB *pcb = get(&PCBqueue, pid);
-    if (pcb->state == BLOCKED || pcb->state == FINISHED)
+    if (pid == 0 || pid == 1 || pid == 2)
     {
         return -1;
     }
-    printArray("blockProcess: Process with State: ");
-    printDec(pcb->state);
-    printArray("\n");
+    PCB *pcb = get(&PCBqueue, pid);
+    if (pcb->state == BLOCKED || pcb->state == FINISHED || pcb == NULL)
+    {
+        return -1;
+    }
     pcb->state = BLOCKED;
     removeFromCircularList(&round_robin, pid);
     printArray("blockProcess: Process with PID: ");

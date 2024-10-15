@@ -5,8 +5,8 @@
 
 typedef struct CircularListNode
 {
-    struct CircularList *next;
-    struct CircularList *prev;
+    struct CircularListNode *next;
+    struct CircularListNode *prev;
     int pid;
 } CircularListNode;
 
