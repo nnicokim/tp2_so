@@ -83,21 +83,22 @@ int main()
 	PCB PCBkernel;
 	initPCB(&PCBkernel, KERNEL_PID, KERNEL_PID, 0);
 	addQueue(&PCBqueue, &PCBkernel);
+	addCircularList(&round_robin, PCBkernel.pid);
 
 	// Creamos el proceso 1 (Shell)
 	PCB PCBshell;
 	initPCB(&PCBshell, SHELL_PID, KERNEL_PID, 0);
 	addQueue(&PCBqueue, &PCBshell);
+	addCircularList(&round_robin, PCBshell.pid);
+
 
 	// Creamos el proceso 2 (IDLE)
 	PCB PCBidle;
 	initPCB(&PCBidle, IDLE_PID, KERNEL_PID, 0);
 	addQueue(&PCBqueue, &PCBidle);
+	addCircularList(&round_robin, PCBidle.pid);
 
 	_sti(); // Habilitar interrupciones
-
-	// char *argv[] = {"1000"};
-	// test_mm(1, argv);
 
 	_setUser(); // Cambiar a modo usuario
 

@@ -5,6 +5,8 @@
 #include <videoDriver.h>
 #include "../include/naiveConsole.h"
 #include "../memory_manager/include/mm_manager.h"
+#include "./include/stack.h"
+#include "./include/queue.h"
 
 void initPCB(PCB *pcb, int pid, int ppid, int priority)
 {
@@ -60,7 +62,13 @@ int compare_PCB(const PCB *pcb1, const PCB *pcb2)
 }
 
 void switchToProcess(int processID) {
-    PCB *nextProcess = &processTable[processID];
-    load_context((StackFrame *)nextProcess->RSP);
-    currentProcess = processID;
+    PCB *pcb = get(&PCBqueue, processID);
+    if (pcb == NULL) {
+        printArray("switchToProcess: ERROR: Process with PID: ");
+        printDec(processID);
+        printArray(" not found\n");
+        return;
+    }
+    load_context(pcb->stack);
+
 }

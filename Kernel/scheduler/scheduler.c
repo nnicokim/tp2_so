@@ -5,7 +5,7 @@
 #include "../structs/include/stack.h"
 
 
-CircularListNode *current;
+CircularListNode *current=NULL;
 static int processID = 3;
 
 void initScheduler()
@@ -27,20 +27,7 @@ uint64_t createProcess(char *program, int argc, char **argv)
         return -1;
     }
 
-    int new_pid = -1;
-    for (int i = 0; i < MAX_PROCESSES; i++) {
-        if (processTable[i].state == 0) { // Assuming 0 means "unused"
-            new_pid = i;
-            break;
-        }
-    }
-
-    if (new_pid == -1) {
-        return -1; // No available slot
-    }
-
     PCB newPCB;
-    processTable[new_pid] = newPCB;
     initPCB(&newPCB, processID++, getCurrentPid(), 1); // ver que prioridad se le pasa
     addQueue(&PCBqueue, &newPCB);
 
@@ -149,8 +136,11 @@ CircularListNode *getCurrentProcess()
 }
 
 void schedule(){
-    PCB *current = &processTable[currentProcess];
-    save_context((StackFrame *)current->RSP);
-    currentProcess = (currentProcess + 1) % MAX_PROCESSES;
-    switchToProcess(currentProcess);
+    if(current == NULL){
+        current = round_robin.head;
+    } else {
+        current = current->next;
+    }
+    save_context((StackFrame *)current->pcb->RSP);
+    switchToProcess(current->pid);
 }
