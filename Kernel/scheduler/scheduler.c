@@ -4,8 +4,9 @@
 #include "../structs/include/pcb.h"
 #include "../structs/include/stack.h"
 
+extern void forceTimerTick();
 
-CircularListNode *current=NULL;
+CircularListNode *current = NULL;
 static int processID = 2;
 
 void initScheduler()
@@ -131,24 +132,42 @@ CircularListNode *getCurrentProcess()
     return current;
 }
 
-void schedule(){
-    if(current == NULL){
+void schedule()
+{
+    if (current == NULL)
+    {
         current = round_robin.head;
-    } else if(current->next != NULL){ // Si es el ultimo de la lista
+    }
+    else if (current->next != NULL)
+    { // Si es el ultimo de la lista
         current = current->next;
         PCB *pcb = get(&PCBqueue, current->pid);
-    if (pcb == NULL)
-    {
-        printArray("schedule: ERROR: Process with PID: ");
-        printDec(processID);
-        printArray(" not found\n");
-        return;
+        if (pcb == NULL)
+        {
+            printArray("schedule: ERROR: Process with PID: ");
+            printDec(processID);
+            printArray(" not found\n");
+            return;
+        }
+        StackFrame *frame = (StackFrame *)(pcb->RSP);
+        // save_context(frame);
+        // switchToProcess(current->pid); //STACK PUSHEADO PARA EL OGT
     }
-    StackFrame *frame = (StackFrame *)(pcb->RSP);
-   // save_context(frame);
-    //switchToProcess(current->pid); //STACK PUSHEADO PARA EL OGT
-    }else{
+    else
+    {
         current = round_robin.head;
     }
+}
 
+void my_exit()
+{
+    PCB *pcb = get(&PCBqueue, getCurrentPid());
+    if (pcb == NULL || pcb->state == FINISHED)
+    {
+        printArray("Could not exit process\n");
+        forceTimerTick();
+        return;
+    }
+    killProcess(pcb->pid);
+    forceTimerTick();
 }

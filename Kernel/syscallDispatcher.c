@@ -52,6 +52,7 @@ uint64_t ksys_getCurrentPpid();
 uint64_t ksys_killProcess(int pid);
 uint64_t ksys_leaveCPU();
 uint64_t sys_waitPid(int pid);
+uint64_t ksys_myExit();
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -114,6 +115,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
 
     case 25:
         return test_processes(rdi, rsi);
+    case 26:
+        return ksys_myExit();
     }
     return 0;
 }
@@ -284,5 +287,11 @@ uint64_t sys_waitPid(int pid)
     int parentProcess = getCurrentPid();
     blockProcess(parentProcess);
     forceTimerTick();
+    return 0;
+}
+
+uint64_t ksys_myExit()
+{
+    my_exit();
     return 0;
 }
