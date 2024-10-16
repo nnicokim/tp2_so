@@ -6,7 +6,7 @@
 
 
 CircularListNode *current=NULL;
-static int processID = 3;
+static int processID = 2;
 
 void initScheduler()
 {
@@ -74,10 +74,6 @@ uint64_t killProcess(int pid)
     printArray("killProcess: Process with PID: ");
     printDec(pid);
     printArray(" killed\n");
-    if (pid == 13)
-    {
-        printArray("SE MURIO EL PROCESO 13\n");
-    }
     return 0; // que devuelva el codigo de exit
 }
 
@@ -138,9 +134,21 @@ CircularListNode *getCurrentProcess()
 void schedule(){
     if(current == NULL){
         current = round_robin.head;
-    } else {
+    } else if(current->next != NULL){ // Si es el ultimo de la lista
         current = current->next;
+        PCB *pcb = get(&PCBqueue, current->pid);
+    if (pcb == NULL)
+    {
+        printArray("schedule: ERROR: Process with PID: ");
+        printDec(processID);
+        printArray(" not found\n");
+        return;
     }
-    save_context((StackFrame *)current->pcb->RSP);
-    switchToProcess(current->pid);
+    StackFrame *frame = (StackFrame *)(pcb->RSP);
+   // save_context(frame);
+    //switchToProcess(current->pid); //STACK PUSHEADO PARA EL OGT
+    }else{
+        current = round_robin.head;
+    }
+
 }

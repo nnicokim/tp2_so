@@ -36,8 +36,6 @@ typedef struct PCB
 
 } PCB;
 
-extern PCB processTable[20];
-extern int currentProcess;
 
 void initPCB(PCB *pcb, int pid, int ppid, int priority);
 PCB *copyPCB(PCB *pcb, PCB *newPCB);
