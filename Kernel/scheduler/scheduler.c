@@ -2,6 +2,8 @@
 #include <videoDriver.h>
 #include "./include/scheduler.h"
 #include "../structs/include/pcb.h"
+#include "../structs/include/stack.h"
+
 
 CircularListNode *current;
 static int processID = 3;

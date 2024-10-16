@@ -50,6 +50,8 @@ int isFull(Stack *stack);
 int peek(Stack *stack);
 void clearStack(Stack *stack);
 int stackSize(Stack *stack);
+extern void save_context(StackFrame *frame);
+extern void load_context(StackFrame *frame);
 
 // ChatGPT tira que ese es el tipo de variable de un puntero a un programa que recibe un int y un char **
 void initStackFrame(int argc, char **argv, void (*program)(int, char **), uint64_t pid);

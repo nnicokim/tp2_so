@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <unistd.h>
-#include "../include/stack.h"
 
 #define KERNEL_PID 0
 #define SHELL_PID 1
@@ -45,8 +44,6 @@ PCB *copyPCB(PCB *pcb, PCB *newPCB);
 void freePCB(PCB *pcb);
 void printPCB(PCB *pcb);
 int compare_PCB(const PCB *pcb1, const PCB *pcb2);
-extern void save_context(StackFrame *frame);
-extern void load_context(StackFrame *frame);
 void switchToProcess(int processID);
 
 #endif
