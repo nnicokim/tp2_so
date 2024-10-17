@@ -89,13 +89,12 @@ int main()
 	initPCB(&PCBshell, SHELL_PID, KERNEL_PID, 0);
 	addQueue(&PCBqueue, &PCBshell);
 
-
 	// Creamos el proceso 2 (IDLE)
 	PCB PCBidle;
-	createProcess("_hlt()", 0, NULL);
-	/*initPCB(&PCBidle, IDLE_PID, KERNEL_PID, 0);
+	// createProcess("_hlt()", 0, NULL);
+	initPCB(&PCBidle, IDLE_PID, KERNEL_PID, 0);
 	addQueue(&PCBqueue, &PCBidle);
-	addCircularList(&round_robin, PCBidle.pid);*/
+	addCircularList(&round_robin, PCBidle.pid);
 
 	_sti(); // Habilitar interrupciones
 

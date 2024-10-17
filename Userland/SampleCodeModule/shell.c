@@ -15,6 +15,7 @@ void inforeg();
 void clear_shell();
 void beep();
 void test_processes();
+void test_mm();
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -33,6 +34,7 @@ static Command commands[] = {
     {"clear", clear_shell, "Limpia la shell"},
     {"beep", beep, "Emite un beep"},
     {"tpr", test_processes, "Testea los procesos"},
+    {"tmm", test_mm, "Testea el gestor de memoria"},
 };
 
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
@@ -257,4 +259,10 @@ void test_processes()
 {
     char *argvAux[] = {"10"};
     usys_test_processes(1, argvAux);
+}
+
+void test_mm()
+{
+    char *argvmm[] = {"1000"};
+    usys_test_mm(1, argvmm);
 }

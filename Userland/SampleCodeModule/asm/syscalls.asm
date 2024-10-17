@@ -293,3 +293,12 @@ _test_processes:
     mov rsp, rbp
     pop rbp
     ret
+
+_myExit:
+    push rbp
+    mov rbp, rsp
+    mov rax, 26
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
