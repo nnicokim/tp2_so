@@ -16,6 +16,7 @@ void clear_shell();
 void beep();
 void test_processes();
 void test_mm();
+void test_prio();
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -35,6 +36,7 @@ static Command commands[] = {
     {"beep", beep, "Emite un beep"},
     {"tpr", test_processes, "Testea los procesos"},
     {"tmm", test_mm, "Testea el gestor de memoria"},
+    {"tprio", test_prio, "Testea la prioridad de los procesos"},
 };
 
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
@@ -265,4 +267,10 @@ void test_mm()
 {
     char *argvmm[] = {"1000"};
     usys_test_mm(1, argvmm);
+}
+
+void test_prio()
+{
+    char *argvPrio[] = {"10"};
+    usys_test_prio(1, argvPrio);
 }

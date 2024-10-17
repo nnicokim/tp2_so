@@ -15,6 +15,7 @@
 #include "./structs/include/circularList.h"
 #include "./tests/include/test_mm.h"
 #include "./tests/include/test_processes.h"
+#include "./tests/include/test_prio.h"
 
 #define STDIN 0
 #define STDOUT 1
@@ -115,6 +116,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return test_processes(rdi, rsi);
     case 26:
         return ksys_myExit();
+    case 27:
+        return test_prio(rdi, rsi);
     }
 
     return 0;

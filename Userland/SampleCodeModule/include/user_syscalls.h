@@ -62,4 +62,6 @@ int usys_test_processes(uint64_t argc, char *argv[]);
 
 int usys_myExit();
 
+int usys_test_prio(uint64_t argc, char *argv[]);
+
 #endif

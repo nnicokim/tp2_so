@@ -137,3 +137,8 @@ int usys_myExit()
 {
     return _myExit();
 }
+
+int usys_test_prio(uint64_t argc, char *argv[])
+{
+    return _test_prio(argc, argv);
+}

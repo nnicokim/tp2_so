@@ -302,3 +302,12 @@ _myExit:
     mov rsp, rbp
     pop rbp
     ret
+
+_test_prio:
+    push rbp
+    mov rbp, rsp
+    mov rax, 27
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
