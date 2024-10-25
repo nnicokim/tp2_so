@@ -137,3 +137,8 @@ int usys_test_prio(uint64_t argc, char *argv[])
 {
     return _test_prio(argc, argv);
 }
+
+int usys_my_nice(int pid, int new_prio)
+{
+    return _my_nice(pid, new_prio);
+}

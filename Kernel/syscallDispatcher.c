@@ -54,6 +54,7 @@ uint64_t ksys_killProcess(int pid);
 uint64_t ksys_leaveCPU();
 uint64_t ksys_waitPid(int pid);
 uint64_t ksys_myExit();
+uint64_t ksys_my_nice(uint64_t pid, uint64_t newPrio);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -118,6 +119,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_myExit();
     case 27:
         return test_prio(rdi, rsi);
+    case 28:
+        return ksys_my_nice(rdi, rsi);
     }
 
     return 0;
@@ -284,7 +287,7 @@ uint64_t ksys_waitPid(int pid)
     PCB *childProcess = get(&PCBqueue, pid);
     if (childProcess->state == FINISHED)
     {
-        return;
+        return -1;
     }
     int parentProcess = getCurrentPid();
     blockProcess(parentProcess);
@@ -295,5 +298,11 @@ uint64_t ksys_waitPid(int pid)
 uint64_t ksys_myExit()
 {
     my_exit();
+    return 0;
+}
+
+uint64_t ksys_my_nice(uint64_t pid, uint64_t newPrio)
+{
+    my_nice(pid, newPrio);
     return 0;
 }

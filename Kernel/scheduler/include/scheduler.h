@@ -24,5 +24,6 @@ uint64_t createProcess(char *program, int argc, char **argv);
 uint64_t killProcess(int pid);
 uint64_t *schedule();
 uint64_t *change_context(int pid);
+void my_nice(uint64_t pid, uint64_t newPrio);
 void my_exit();
 #endif

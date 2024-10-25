@@ -263,14 +263,14 @@ void test_processes()
     usys_test_processes(1, argvAux);
 }
 
-void test_mm()
-{
-    char *argvmm[] = {"1000"};
-    usys_test_mm(1, argvmm);
-}
-
 void test_prio()
 {
     char *argvPrio[] = {"10"};
     usys_test_prio(1, argvPrio);
+}
+
+void test_mm()
+{
+    char *argvmm[] = {"1000"};
+    usys_test_mm(1, argvmm);
 }

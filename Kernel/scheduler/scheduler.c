@@ -175,11 +175,31 @@ uint64_t *change_context(int pid)
     push(&stack, frame[0]); // revisar
 
     // agrego al Round-robin
-    addCircularList(&round_robin, pid);
+    if (pcb->state != BLOCKED || pcb->priority == 0)
+        addCircularList(&round_robin, pid);
+    else
+    {
+        if (pcb->state != BLOCKED)
+        {
+            for (int i = 0; i < pcb->priority; i++)
+                addCircularList(&round_robin, pid);
+        }
+    }
 
     // save_context(frame); ???
 
     return pcb->RSP;
+}
+
+void my_nice(uint64_t pid, uint64_t newPrio)
+{
+    PCB *pcb = get(&PCBqueue, pid);
+    pcb->priority = newPrio;
+    printArray("my_nice: Process with PID: ");
+    printDec(pid);
+    printArray(" priority changed to: ");
+    printDec(newPrio);
+    printArray("\n");
 }
 
 void my_exit()

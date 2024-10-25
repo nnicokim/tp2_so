@@ -314,3 +314,11 @@ _test_prio:
     pop rbp
     ret
     
+_my_nice:
+    push rbp
+    mov rbp, rsp
+    mov rax, 28
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
