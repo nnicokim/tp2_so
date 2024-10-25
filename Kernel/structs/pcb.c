@@ -14,6 +14,7 @@ void initPCB(PCB *pcb, int pid, int ppid, int priority)
     pcb->ppid = ppid;
     pcb->state = READY;
     pcb->priority = priority;
+    pcb->runningCounter = 0;
     pcb->RSP = 0;
     pcb->RBP = 0;
 
@@ -30,6 +31,7 @@ PCB *copyPCB(PCB *pcb, PCB *newPCB)
     newPCB->ppid = pcb->ppid;
     newPCB->state = pcb->state;
     newPCB->priority = pcb->priority;
+    newPCB->runningCounter = pcb->runningCounter;
     newPCB->RSP = pcb->RSP;
     newPCB->RBP = pcb->RBP;
     newPCB->baseAddress = pcb->baseAddress;
@@ -61,14 +63,15 @@ int compare_PCB(const PCB *pcb1, const PCB *pcb2)
     return pcb1->pid - pcb2->pid;
 }
 
-void switchToProcess(int processID) {
+void switchToProcess(int processID)
+{
     PCB *pcb = get(&PCBqueue, processID);
-    if (pcb == NULL) {
+    if (pcb == NULL)
+    {
         printArray("switchToProcess: ERROR: Process with PID: ");
         printDec(processID);
         printArray(" not found\n");
         return;
     }
     load_context(pcb->stack);
-
 }

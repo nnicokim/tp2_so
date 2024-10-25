@@ -27,6 +27,7 @@ typedef struct PCB
     int state;         // Process state
     void *stack;       // Stack pointer
     int priority;      // Process priority
+    unsigned int runningCounter;
 
     uint64_t *RSP; // puntero al stack donde se pushearon todos los registros/datos
     uint64_t *RBP; // puntero al base pointer
@@ -35,7 +36,6 @@ typedef struct PCB
     size_t limit;
 
 } PCB;
-
 
 void initPCB(PCB *pcb, int pid, int ppid, int priority);
 PCB *copyPCB(PCB *pcb, PCB *newPCB);

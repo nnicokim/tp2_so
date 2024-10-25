@@ -162,16 +162,22 @@ uint64_t *schedule()
     return rsp;
 }
 
+// Depues vemos el tema de las prioridades !!!
 uint64_t *change_context(int pid)
-{ // cambiar estado del proceso - cambiar el stackframe
+{ // cambiar estado del proceso - cambiar el stackframe - agregar al round-robin
+
     PCB *pcb = get(&PCBqueue, pid);
     pcb->state = RUNNING;
+    pcb->runningCounter++;
 
+    // cambio el stackFrame
     StackFrame *frame = (StackFrame *)(pcb->RSP);
-    // push del stackframe
     push(&stack, frame[0]); // revisar
 
-    // save_context(frame);
+    // agrego al Round-robin
+    addCircularList(&round_robin, pid);
+
+    // save_context(frame); ???
 
     return pcb->RSP;
 }
