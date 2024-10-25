@@ -305,7 +305,7 @@ _myExit:
     pop rbp
     ret
 
-_test_prio:
+_sys_test_prio:
     push rbp
     mov rbp, rsp
     mov rax, 27

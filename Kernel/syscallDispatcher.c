@@ -120,7 +120,9 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
     case 26:
         return ksys_myExit();
     case 27:
-        return test_prio(rdi, rsi);
+        // return test_prio(rdi, rsi);
+        sys_test_prio();
+        return 0;
     case 28:
         return ksys_my_nice(rdi, rsi);
     case 29:

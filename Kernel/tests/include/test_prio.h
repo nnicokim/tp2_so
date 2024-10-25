@@ -16,6 +16,6 @@
 #define HIGHEST 2 // TODO: Change as required
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
-uint64_t test_prio(uint64_t argc, char *argvAux[]); // originalmente era de tipo void y sim params
-
+// uint64_t test_prio(uint64_t argc, char *argvAux[]); // originalmente era de tipo void y sim params
+void sys_test_prio();
 #endif

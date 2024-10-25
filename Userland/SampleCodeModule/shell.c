@@ -265,8 +265,9 @@ void test_processes()
 
 void test_prio()
 {
-    char *argvPrio[] = {"10"};
-    usys_test_prio(1, argvPrio);
+    print("Testeando prioridades...\n");
+    // char *argvPrio[] = {"10"};
+    usys_test_prio();
 }
 
 void test_mm()

@@ -1,7 +1,8 @@
 #include "./include/test_prio.h"
 #include "../include/videoDriver.h"
 
-uint64_t test_prio(uint64_t argc, char *argvAux[])
+// uint64_t test_prio(uint64_t argc, char *argvAux[])
+void sys_test_prio()
 {
     printArray(" Aunque sea arranca? \n");
 
@@ -39,6 +40,5 @@ uint64_t test_prio(uint64_t argc, char *argvAux[])
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         killProcess(pids[i]);
-    rintArray("\nALL DONE!!!\n");
-    return 0;
+    printArray("\nALL DONE!!!\n");
 }
