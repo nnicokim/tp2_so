@@ -55,6 +55,8 @@ uint64_t ksys_leaveCPU();
 uint64_t ksys_waitPid(int pid);
 uint64_t ksys_myExit();
 uint64_t ksys_my_nice(uint64_t pid, uint64_t newPrio);
+uint64_t ksys_increase_priority(int pid);
+uint64_t ksys_decrease_priority(int pid);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -121,6 +123,10 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return test_prio(rdi, rsi);
     case 28:
         return ksys_my_nice(rdi, rsi);
+    case 29:
+        return ksys_increase_priority(rdi);
+    case 30:
+        return ksys_decrease_priority(rdi);
     }
 
     return 0;
@@ -305,4 +311,14 @@ uint64_t ksys_my_nice(uint64_t pid, uint64_t newPrio)
 {
     my_nice(pid, newPrio);
     return 0;
+}
+
+uint64_t ksys_increase_priority(int pid)
+{
+    return increase_priority(pid);
+}
+
+uint64_t ksys_decrease_priority(int pid)
+{
+    return decrease_priority(pid);
 }

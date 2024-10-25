@@ -25,5 +25,7 @@ uint64_t killProcess(int pid);
 uint64_t *schedule();
 uint64_t *change_context(int pid);
 void my_nice(uint64_t pid, uint64_t newPrio);
+int increase_priority(int pid);
+int decrease_priority(int pid);
 void my_exit();
 #endif

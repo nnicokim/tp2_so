@@ -202,6 +202,22 @@ void my_nice(uint64_t pid, uint64_t newPrio)
     printArray("\n");
 }
 
+int increase_priority(int pid)
+{
+    PCB *pcb = get(&PCBqueue, pid);
+    pcb->priority++;
+    return pcb->priority;
+}
+
+int decrease_priority(int pid)
+{
+    PCB *pcb = get(&PCBqueue, pid);
+    if (pcb->priority == 0)
+        return pcb->priority;
+    pcb->priority--;
+    return pcb->priority;
+}
+
 void my_exit()
 {
     PCB *pcb = get(&PCBqueue, getCurrentPid());

@@ -322,3 +322,21 @@ _my_nice:
     mov rsp, rbp
     pop rbp
     ret
+
+_increase_priority:
+    push rbp
+    mov rbp, rsp
+    mov rax, 29
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_decrease_priority:
+    push rbp
+    mov rbp, rsp
+    mov rax, 30
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret

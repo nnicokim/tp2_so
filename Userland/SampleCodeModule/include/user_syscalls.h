@@ -64,4 +64,8 @@ int usys_test_prio(uint64_t argc, char *argv[]);
 
 int usys_my_nice(int pid, int new_prio);
 
+int usys_increase_priority(int pid);
+
+int usys_decrease_priority(int pid);
+
 #endif

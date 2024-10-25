@@ -142,3 +142,13 @@ int usys_my_nice(int pid, int new_prio)
 {
     return _my_nice(pid, new_prio);
 }
+
+int usys_increase_priority(int pid)
+{
+    return _increase_priority(pid);
+}
+
+int usys_decrease_priority(int pid)
+{
+    return _decrease_priority(pid);
+}
