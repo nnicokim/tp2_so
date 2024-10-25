@@ -25,6 +25,8 @@ GLOBAL _leaveCPU
 GLOBAL _waitPid
 GLOBAL _test_mm
 GLOBAL _test_processes
+GLOBAL _myExit
+GLOBAL _test_prio
 
 section .text
 
@@ -311,3 +313,4 @@ _test_prio:
     mov rsp, rbp
     pop rbp
     ret
+    

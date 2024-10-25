@@ -19,9 +19,9 @@ void addQueue(Queue *queue, PCB *pcb)
     QueueNode *newNode = (QueueNode *)mymalloc(sizeof(QueueNode));
     PCB *newPCB = copyPCB(pcb, NULL);
 
-    if (newNode == NULL)
+    if (newNode == NULL || newPCB == NULL)
     {
-        printArray("addQueue: ERROR creating QueueNode\n");
+        printArray("addQueue: ERROR creating QueueNode or PCB\n");
         return;
     }
     newNode->pcb = newPCB;

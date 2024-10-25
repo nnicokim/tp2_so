@@ -1,5 +1,8 @@
 #include "./include/test_prio.h"
+#include "include/syscall.h"
+#include "include/test_util.h"
 #include "../include/videoDriver.h"
+#include "../scheduler/include/scheduler.h"
 
 void test_prio()
 {
@@ -8,19 +11,19 @@ void test_prio()
     uint64_t i;
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        pids[i] = my_create_process("endless_loop_print", 0, argv);
+        pids[i] = createProcess("endless_loop_print", 0, argv);
 
     bussy_wait(WAIT);
     printArray("\nCHANGING PRIORITIES...\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        my_nice(pids[i], prio[i]);
+        my_nice(pids[i], prio[i]); // falta implementar la syscall
 
     bussy_wait(WAIT);
     printArray("\nBLOCKING...\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        my_block(pids[i]);
+        blockProcess(pids[i]);
 
     printArray("CHANGING PRIORITIES WHILE BLOCKED...\n");
 
@@ -30,11 +33,11 @@ void test_prio()
     printArray("UNBLOCKING...\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        my_unblock(pids[i]);
+        unblockProcess(pids[i]);
 
     bussy_wait(WAIT);
     printArray("\nKILLING...\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        my_kill(pids[i]);
+        killProcess(pids[i]);
 }

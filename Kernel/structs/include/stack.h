@@ -9,13 +9,6 @@
 
 #define MAX 192 // 64 * 3. Si se pasa, deberia tirar algun error al usuario.
 
-/* Creo que en vez de este Stack (el posta), conviene hacer un array de tamaño MAX */
-typedef struct Stack
-{
-    int data[MAX];
-    int top;
-} Stack;
-
 typedef struct StackFrame
 {
     // State of the process
@@ -41,10 +34,15 @@ typedef struct StackFrame
     uint64_t ss;     // 0
     // El align no hace falta ya que el mm me lo da alineado
 } StackFrame;
+typedef struct Stack
+{
+    StackFrame stackFrames[MAX];
+    int top;
+} Stack;
 
 void initStack(Stack *stack);
-void push(Stack *stack, int data);
-int pop(Stack *stack);
+void push(Stack *stack, StackFrame data);
+StackFrame pop(Stack *stack);
 int isEmpty(Stack *stack);
 int isFull(Stack *stack);
 int peek(Stack *stack);

@@ -28,6 +28,8 @@ extern uint8_t endOfKernel;
 
 static const uint64_t PageSize = 0x1000;
 
+extern Stack *stack; // Definición del stack
+
 Queue PCBqueue;			  // Definición de la lista de PCBs
 CircularList round_robin; // Definición de la lista de procesos en round-robin
 
@@ -73,9 +75,9 @@ int main()
 	// init_buddy_allocator(HEAP_START, total_memory);
 
 	// Para que carajo nos sirve este stack? XD
-	// Stack *stack = mymalloc(0xA00324);
+	stack = mymalloc(0xA00324);
 
-	// initStack(&stack);
+	initStack(&stack);
 
 	initScheduler();
 

@@ -22,5 +22,7 @@ CircularListNode *getCurrentProcess();
 // uint64_t createProcess(void (*program)(int, char **), int argc, char **argv);
 uint64_t createProcess(char *program, int argc, char **argv);
 uint64_t killProcess(int pid);
-void schedule();
+uint64_t *schedule();
+uint64_t *change_context(int pid);
+void my_exit();
 #endif

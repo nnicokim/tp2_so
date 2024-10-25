@@ -6,6 +6,8 @@
 
 extern void forceTimerTick();
 
+Stack *stack;
+
 CircularListNode *current = NULL;
 static int processID = 2;
 
@@ -132,31 +134,46 @@ CircularListNode *getCurrentProcess()
     return current;
 }
 
-void schedule()
+uint64_t *schedule()
 {
+    uint64_t *rsp;
     if (current == NULL)
     {
         current = round_robin.head;
+        PCB *pcb = get(&PCBqueue, current->pid);
+        rsp = change_context(current->pid);
     }
     else if (current->next != NULL)
-    { // Si es el ultimo de la lista
-        current = current->next;
+    {
         PCB *pcb = get(&PCBqueue, current->pid);
-        if (pcb == NULL)
-        {
-            printArray("schedule: ERROR: Process with PID: ");
-            printDec(processID);
-            printArray(" not found\n");
-            return;
-        }
-        StackFrame *frame = (StackFrame *)(pcb->RSP);
-        // save_context(frame);
-        // switchToProcess(current->pid); //STACK PUSHEADO PARA EL OGT
+        pcb->state = READY;
+        current = current->next;
+        pcb = get(&PCBqueue, current->pid);
+        rsp = change_context(current->pid);
     }
     else
     {
+        PCB *pcb = get(&PCBqueue, current->pid);
+        pcb->state = READY;
         current = round_robin.head;
+        pcb = get(&PCBqueue, current->pid);
+        rsp = change_context(current->pid);
     }
+    return rsp;
+}
+
+uint64_t *change_context(int pid)
+{ // cambiar estado del proceso - cambiar el stackframe
+    PCB *pcb = get(&PCBqueue, pid);
+    pcb->state = RUNNING;
+
+    StackFrame *frame = (StackFrame *)(pcb->RSP);
+    // push del stackframe
+    push(&stack, frame[0]); // revisar
+
+    // save_context(frame);
+
+    return pcb->RSP;
 }
 
 void my_exit()
