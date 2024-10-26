@@ -134,7 +134,7 @@ CircularListNode *getCurrentProcess()
     return current;
 }
 
-uint64_t *schedule()
+uint64_t *schedule() // void
 {
     uint64_t *rsp;
     if (current == NULL)
@@ -171,22 +171,20 @@ uint64_t *change_context(int pid)
     pcb->runningCounter++;
 
     // cambio el stackFrame
+    // save_context(frame); ???
+
     StackFrame *frame = (StackFrame *)(pcb->RSP);
     push(stack, frame[0]); // revisar
+    // sacar del stack el contexto del proceso a correr
 
     // agrego al Round-robin
     if (pcb->state != BLOCKED || pcb->priority == 0)
         addCircularList(&round_robin, pid);
-    else
+    else if (pcb->state != BLOCKED)
     {
-        if (pcb->state != BLOCKED)
-        {
-            for (int i = 0; i < pcb->priority; i++)
-                addCircularList(&round_robin, pid);
-        }
+        for (int i = 0; i < pcb->priority; i++)
+            addCircularList(&round_robin, pid);
     }
-
-    // save_context(frame); ???
 
     return pcb->RSP;
 }
