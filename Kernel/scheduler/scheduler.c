@@ -135,50 +135,36 @@ CircularListNode *getCurrentProcess()
     return current;
 }
 
-uint64_t *schedule() // void
+void sleepCurrent()
 {
-    uint64_t *rsp;
     if (current == NULL)
     {
         current = round_robin.head;
-        // PCB *pcb = get(&PCBqueue, current->pid);
-        rsp = change_context(current->pid);
+        return;
     }
-    else if (current->next != NULL)
-    {
-        PCB *pcb = get(&PCBqueue, current->pid);
-        pcb->state = READY;
-        current = current->next;
-        pcb = get(&PCBqueue, current->pid);
-        rsp = change_context(current->pid);
-    }
-    else
-    {
-        PCB *pcb = get(&PCBqueue, current->pid);
-        pcb->state = READY;
-        current = round_robin.head;
-        pcb = get(&PCBqueue, current->pid);
-        rsp = change_context(current->pid);
-    }
-    return rsp;
+    PCB *pcb = get(&PCBqueue, current->pid);
+    pcb->state = READY;
+    save_current_context(pcb->s_frame);
+    current = current->next != NULL ? current->next : round_robin.head;
+}
+
+void schedule() // void
+{
+    sleepCurrent();
+    change_context(current->pid);
 }
 
 // Depues vemos el tema de las prioridades !!!
-uint64_t *change_context(int pid)
+void change_context(int pid)
 { // cambiar estado del proceso - cambiar el stackframe - agregar al round-robin
 
     PCB *pcb = get(&PCBqueue, pid);
     pcb->state = RUNNING;
     pcb->runningCounter++;
 
-    // Guardo el contexto anterior (Los registros de la CPU)
-    // save_context(frame); ???
-
-    // Agarro el stack frame anterior. (Los registros del proceso anterior)
-    // Donde se guardaron los datos?
+    // Agarro el stack frame del proceso.
     StackFrame *frame = pcb->s_frame;
-    push(frame); // revisar
-    // sacar del stack el contexto del proceso a correr
+    load_current_context(frame);
 
     // agrego al Round-robin
     if (pcb->state != BLOCKED || pcb->priority == 0)
@@ -188,8 +174,6 @@ uint64_t *change_context(int pid)
         for (int i = 0; i < pcb->priority; i++)
             addCircularList(&round_robin, pid);
     }
-
-    return pcb->s_frame;
 }
 
 void my_nice(uint64_t pid, uint64_t newPrio)

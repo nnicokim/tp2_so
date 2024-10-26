@@ -28,6 +28,7 @@
         "stdio.h": "c",
         "syscall.h": "c",
         "test_prio.h": "c",
-        "queue": "c"
+        "queue": "c",
+        "unistd.h": "c"
     }
 }
