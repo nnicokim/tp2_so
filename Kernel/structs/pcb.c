@@ -15,8 +15,7 @@ void initPCB(PCB *pcb, int pid, int ppid, int priority)
     pcb->state = READY;
     pcb->priority = priority;
     pcb->runningCounter = 0;
-    pcb->RSP = 0;
-    pcb->RBP = 0;
+    pcb->s_frame = NULL;
 
     pcb->baseAddress = NULL;
     pcb->limit = 0;
@@ -32,8 +31,7 @@ PCB *copyPCB(PCB *pcb, PCB *newPCB)
     newPCB->state = pcb->state;
     newPCB->priority = pcb->priority;
     newPCB->runningCounter = pcb->runningCounter;
-    newPCB->RSP = pcb->RSP;
-    newPCB->RBP = pcb->RBP;
+    newPCB->s_frame = pcb->s_frame;
     newPCB->baseAddress = pcb->baseAddress;
     newPCB->limit = pcb->limit;
 

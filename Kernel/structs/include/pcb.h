@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <unistd.h>
+#include "./stack.h"
 
 #define KERNEL_PID 0
 #define SHELL_PID 1
@@ -29,8 +30,7 @@ typedef struct PCB
     int priority;      // Process priority
     unsigned int runningCounter;
 
-    uint64_t *RSP; // puntero al stack donde se pushearon todos los registros/datos
-    uint64_t *RBP; // puntero al base pointer
+    StackFrame *s_frame; // puntero al stack donde se pushearon todos los registros/datos
 
     void *baseAddress; // direccion base del proceso (memoria virtual)
     size_t limit;

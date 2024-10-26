@@ -2,9 +2,8 @@
 #define STACK_H
 
 #include <stdint.h>
-#include "./pcb.h"
+// #include "./pcb.h"
 #include "../memory_manager/include/mm_manager.h"
-#include "../scheduler/include/scheduler.h"
 #include "./circularList.h"
 
 #define MAX 192 // 64 * 3. Si se pasa, deberia tirar algun error al usuario.
@@ -41,7 +40,7 @@ typedef struct Stack
 } Stack;
 
 void initStack(Stack *stack);
-void push(Stack *stack, StackFrame data);
+void push(StackFrame *stackFrame);
 StackFrame pop(Stack *stack);
 int isEmpty(Stack *stack);
 int isFull(Stack *stack);

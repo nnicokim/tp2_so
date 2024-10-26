@@ -1,10 +1,10 @@
-#include "./include/stack.h"
+#include "../scheduler/include/scheduler.h"
 #include <stdio.h>
 
 void initStackFrame(int argc, char **argv, void (*program)(int, char **), uint64_t pid)
 {
     PCB *currentProcess = get(&PCBqueue, pid);
-    StackFrame *stack = (StackFrame *)(currentProcess->RSP);
+    StackFrame *stack = (StackFrame *)(currentProcess->s_frame);
     stack->r15 = 0x001;
     stack->r14 = 0x002;
     stack->r13 = 0x003;
@@ -22,7 +22,7 @@ void initStackFrame(int argc, char **argv, void (*program)(int, char **), uint64
     stack->rip = (uint64_t)program;
     stack->cs = 0x8;
     stack->rflags = 0x202;
-    stack->rsp = (uint64_t)(currentProcess->RSP);
+    stack->rsp = (uint64_t)(stack->rsp);
     stack->ss = 0x0;
 }
 
@@ -31,14 +31,16 @@ void initStack(Stack *stack)
     stack->top = -1;
 }
 
-void push(Stack *stack, StackFrame data)
+void push(StackFrame *stackFrame)
 {
-    if (isFull(stack))
-    {
-        return;
-    }
-    stack->top++;
-    stack->stackFrames[stack->top] = data;
+    // Voy a ir a buscar al stack el StackFrame del data.
+
+    // if (isFull(stack))
+    // {
+    //     return;
+    // }
+    // stack->top++;
+    // stack->stackFrames[stack->top] = data;
 }
 
 StackFrame pop(Stack *stack)

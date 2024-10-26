@@ -6,6 +6,7 @@
 
 extern void forceTimerTick();
 
+int isSchedulerActive = 0;
 Stack *stack;
 
 CircularListNode *current = NULL;
@@ -15,12 +16,13 @@ void initScheduler()
 {
     initializeQueue(&PCBqueue);           // Lista de PCBs
     initializeCircularList(&round_robin); // Lista de los procesos en round-robin
+    isSchedulerActive = 1;
 }
 
 // uint64_t createProcess(void (*program)(int, char **), int argc, char **argv)
 uint64_t createProcess(char *program, int argc, char **argv)
 {
-    void *newStack = mymalloc(PAGE);
+    StackFrame *newStack = mymalloc(sizeof(StackFrame));
     // Stack
     if (newStack == NULL)
     {
@@ -39,8 +41,7 @@ uint64_t createProcess(char *program, int argc, char **argv)
     newPCB.limit = PAGE;
 
     // Stack nuevo -> RSP = RBP
-    newPCB.RSP = (uint64_t *)newStack + PAGE;
-    newPCB.RBP = (uint64_t *)newStack + PAGE;
+    newPCB.s_frame = newStack;
 
     // Añado al scheduler
     addCircularList(&round_robin, newPCB.pid);
@@ -170,11 +171,13 @@ uint64_t *change_context(int pid)
     pcb->state = RUNNING;
     pcb->runningCounter++;
 
-    // cambio el stackFrame
+    // Guardo el contexto anterior (Los registros de la CPU)
     // save_context(frame); ???
 
-    StackFrame *frame = (StackFrame *)(pcb->RSP);
-    push(stack, frame[0]); // revisar
+    // Agarro el stack frame anterior. (Los registros del proceso anterior)
+    // Donde se guardaron los datos?
+    StackFrame *frame = pcb->s_frame;
+    push(frame); // revisar
     // sacar del stack el contexto del proceso a correr
 
     // agrego al Round-robin
@@ -186,7 +189,7 @@ uint64_t *change_context(int pid)
             addCircularList(&round_robin, pid);
     }
 
-    return pcb->RSP;
+    return pcb->s_frame;
 }
 
 void my_nice(uint64_t pid, uint64_t newPrio)
