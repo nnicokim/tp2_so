@@ -1,6 +1,8 @@
 #include <stdio.h>
-#include "include/syscall.h"
-#include "include/test_util.h"
+// #include "include/syscall.h"
+// #include "include/test_util.h"
+#include <tests/test_util.h>
+#include <tests/syscall.h>
 #include <videoDriver.h>
 #include "../scheduler/include/scheduler.h"
 

@@ -54,4 +54,14 @@ uint64_t _waitPid(int pid);
 uint64_t _test_mm(uint64_t argc, char *argv[]);
 
 uint64_t _test_processes(uint64_t argc, char *argv[]);
+
+uint64_t _test_prio();
+
+uint64_t _myExit();
+
+uint64_t _my_nice(uint64_t pid, uint64_t newPrio);
+
+uint64_t _increase_priority(int pid);
+
+uint64_t _decrease_priority(int pid);
 #endif

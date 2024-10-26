@@ -27,6 +27,9 @@ GLOBAL _test_mm
 GLOBAL _test_processes
 GLOBAL _myExit
 GLOBAL _test_prio
+GLOBAL _my_nice
+GLOBAL _increase_priority
+GLOBAL _decrease_priority
 
 section .text
 
@@ -305,7 +308,7 @@ _myExit:
     pop rbp
     ret
 
-_sys_test_prio:
+_test_prio:
     push rbp
     mov rbp, rsp
     mov rax, 27

@@ -1,5 +1,7 @@
-#include "./include/test_util.h"
-#include "./include/test_mm.h"
+// #include "./include/test_util.h"
+// #include "./include/test_mm.h"
+#include <tests/test_util.h>
+#include <tests/test_mm.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

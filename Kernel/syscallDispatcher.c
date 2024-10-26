@@ -13,9 +13,9 @@
 #include "./structs/include/circularList.h"
 #include "./memory_manager/include/mm_manager.h"
 #include "./structs/include/circularList.h"
-#include "./tests/include/test_mm.h"
-#include "./tests/include/test_processes.h"
-#include "./tests/include/test_prio.h"
+#include <tests/test_mm.h>
+#include <tests/test_processes.h>
+#include <tests/test_prio.h>
 
 #define STDIN 0
 #define STDOUT 1

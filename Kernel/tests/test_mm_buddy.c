@@ -1,5 +1,6 @@
 #include "syscall.h"
-#include "./include/test_util.h"
+// #include "./include/test_util.h"
+#include <tests/test_util.h>
 // #include "./include/test_mm_buddy.h"
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,6 +1,8 @@
-#include "./include/test_prio.h"
+// #include "./include/test_prio.h"
+#include <tests/test_prio.h>
 #include "../include/videoDriver.h"
 
+int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 // uint64_t test_prio(uint64_t argc, char *argvAux[])
 void sys_test_prio()
 {
