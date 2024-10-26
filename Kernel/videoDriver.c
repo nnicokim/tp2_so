@@ -57,7 +57,8 @@ void drawPixel(uint32_t hexColor, uint64_t x, uint64_t y)
 {
 	if (x >= 0 && x < VBE_mode_info->width && y >= 0 && y < VBE_mode_info->height)
 	{
-		uint8_t *framebuffer = (uint8_t *)VBE_mode_info->framebuffer;
+		uint64_t aux = (uint64_t)VBE_mode_info->framebuffer;
+		uint8_t *framebuffer = (uint8_t *)aux;
 		uint64_t offset = (x * ((VBE_mode_info->bpp) / 8)) + (y * VBE_mode_info->pitch);
 		framebuffer[offset] = (hexColor) & 0xFF;
 		framebuffer[offset + 1] = (hexColor >> 8) & 0xFF;
@@ -69,7 +70,8 @@ void copyPixel(uint64_t new_x, uint64_t new_y, uint64_t old_x, uint64_t old_y)
 {
 	if (new_x >= 0 && new_x < VBE_mode_info->width && new_y >= 0 && new_y < VBE_mode_info->height)
 	{
-		uint8_t *framebuffer = (uint8_t *)VBE_mode_info->framebuffer;
+		uint64_t aux = (uint64_t)VBE_mode_info->framebuffer;
+		uint8_t *framebuffer = (uint8_t *)aux;
 		uint64_t oldOffset = (old_x * ((VBE_mode_info->bpp) / 8)) + (old_y * VBE_mode_info->pitch);
 		uint64_t offset = (new_x * ((VBE_mode_info->bpp) / 8)) + (new_y * VBE_mode_info->pitch);
 		framebuffer[offset] = framebuffer[oldOffset];
@@ -215,8 +217,9 @@ void deleteChar()
 
 void clearScreen()
 {
+	uint64_t aux = (uint64_t)VBE_mode_info->framebuffer;
 
-	memset(VBE_mode_info->framebuffer, 0, bufferlen);
+	memset((void *)aux, 0, bufferlen);
 
 	cursor_x = 0;
 	cursor_y = 0;
@@ -225,7 +228,8 @@ void clearScreen()
 // función auxiliar para limpiar la última línea de la pantalla
 static void clearLine()
 {
-	memset(VBE_mode_info->framebuffer + (VBE_mode_info->height - font_size * CHAR_HEIGHT) * 1024 * 3, 0, bufferlen - (VBE_mode_info->height - font_size * CHAR_HEIGHT) * 1024 * 3);
+	uint64_t aux = (uint64_t)VBE_mode_info->framebuffer;
+	memset((void *)(aux + (VBE_mode_info->height - font_size * CHAR_HEIGHT) * 1024 * 3), 0, bufferlen - (VBE_mode_info->height - font_size * CHAR_HEIGHT) * 1024 * 3);
 	cursor_y -= font_size * CHAR_HEIGHT;
 }
 
@@ -233,7 +237,8 @@ static void clearLine()
 void moveScreen()
 {
 	int y = font_size * CHAR_HEIGHT;
-	memcpy(VBE_mode_info->framebuffer, VBE_mode_info->framebuffer + y * 1024 * 3, bufferlen - y * 1024 * 3);
+	uint64_t aux = (uint64_t)VBE_mode_info->framebuffer;
+	memcpy((void *)aux, (void *)(aux + y * 1024 * 3), bufferlen - y * 1024 * 3);
 	clearLine();
 }
 

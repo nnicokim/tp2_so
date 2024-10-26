@@ -77,7 +77,7 @@ int main()
 	// Para que carajo nos sirve este stack? XD
 	stack = mymalloc(0xA00324);
 
-	initStack(&stack);
+	initStack(stack);
 
 	initScheduler();
 

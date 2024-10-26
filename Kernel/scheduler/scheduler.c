@@ -39,15 +39,15 @@ uint64_t createProcess(char *program, int argc, char **argv)
     newPCB.limit = PAGE;
 
     // Stack nuevo -> RSP = RBP
-    newPCB.RSP = (uint64_t)newStack + PAGE;
-    newPCB.RBP = (uint64_t)newStack + PAGE;
+    newPCB.RSP = (uint64_t *)newStack + PAGE;
+    newPCB.RBP = (uint64_t *)newStack + PAGE;
 
     // Añado al scheduler
     addCircularList(&round_robin, newPCB.pid);
     printArray("addCircularList: Process with PID: ");
     printDec(newPCB.pid);
     printArray(" created :) \n");
-    initStackFrame(argc, argv, program, processID - 1);
+    initStackFrame(argc, argv, (void *)program, processID - 1);
 
     return newPCB.pid;
 }
@@ -140,7 +140,7 @@ uint64_t *schedule()
     if (current == NULL)
     {
         current = round_robin.head;
-        PCB *pcb = get(&PCBqueue, current->pid);
+        // PCB *pcb = get(&PCBqueue, current->pid);
         rsp = change_context(current->pid);
     }
     else if (current->next != NULL)
@@ -172,7 +172,7 @@ uint64_t *change_context(int pid)
 
     // cambio el stackFrame
     StackFrame *frame = (StackFrame *)(pcb->RSP);
-    push(&stack, frame[0]); // revisar
+    push(stack, frame[0]); // revisar
 
     // agrego al Round-robin
     if (pcb->state != BLOCKED || pcb->priority == 0)

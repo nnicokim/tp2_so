@@ -22,7 +22,7 @@ void myfree(void *ptr)
 {
     // Podemos meter chequeos como si esta dentro del rango para ganar confianza
     if (ptr == NULL || ptr < start)
-        return NULL;
+        return;
     free_ptrs[--currentBlock] = ptr;
 }
 
