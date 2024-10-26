@@ -152,9 +152,9 @@ void schedule() // void
 {
     sleepCurrent();
     change_context(current->pid);
+    printArray(" y aca? \n");
 }
 
-// Depues vemos el tema de las prioridades !!!
 void change_context(int pid)
 { // cambiar estado del proceso - cambiar el stackframe - agregar al round-robin
 
@@ -162,11 +162,19 @@ void change_context(int pid)
     pcb->state = RUNNING;
     pcb->runningCounter++;
 
+    printArray("hola proceso: \n");
+
+    printDec(pcb->pid);
+
+    printArray(" \n");
+
     // Agarro el stack frame del proceso.
     StackFrame *frame = pcb->s_frame;
     load_current_context(frame);
 
-    // agrego al Round-robin
+    printArray(" Despues del Load_current... \n");
+
+    // agrego al Round-robin (con prioridades)
     if (pcb->state != BLOCKED || pcb->priority == 0)
         addCircularList(&round_robin, pid);
     else if (pcb->state != BLOCKED)

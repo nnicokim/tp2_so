@@ -2,7 +2,7 @@ GLOBAL save_current_context
 GLOBAL load_current_context
 
 SECTION .text
-save_current_context:
+save_current_context: ; push
     ; Armo el stack frame actual
     push rbp
     mov rbp, rsp
@@ -28,7 +28,7 @@ save_current_context:
     pop rbp
     ret
 
-load_current_context:
+load_current_context: ; pop
     ; Armo el stack frame actual
     push rbp
     mov rbp, rsp

@@ -74,10 +74,9 @@ int main()
 	// size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
 	// init_buddy_allocator(HEAP_START, total_memory);
 
-	// Para que carajo nos sirve este stack? XD
-	stack = mymalloc(0xA00324);
+	// stack = mymalloc(0xA00324); // en decimal: 10486564
 
-	initStack(stack);
+	// initStack(stack); // No estamos haciendo uso del stack.
 
 	initScheduler();
 

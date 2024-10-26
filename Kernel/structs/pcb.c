@@ -61,15 +61,15 @@ int compare_PCB(const PCB *pcb1, const PCB *pcb2)
     return pcb1->pid - pcb2->pid;
 }
 
-void switchToProcess(int processID)
-{
-    PCB *pcb = get(&PCBqueue, processID);
-    if (pcb == NULL)
-    {
-        printArray("switchToProcess: ERROR: Process with PID: ");
-        printDec(processID);
-        printArray(" not found\n");
-        return;
-    }
-    load_context(pcb->stack);
-}
+// void switchToProcess(int processID)
+// {
+//     PCB *pcb = get(&PCBqueue, processID);
+//     if (pcb == NULL)
+//     {
+//         printArray("switchToProcess: ERROR: Process with PID: ");
+//         printDec(processID);
+//         printArray(" not found\n");
+//         return;
+//     }
+//     load_context(pcb->stack);
+// }

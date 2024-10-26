@@ -30,4 +30,6 @@ void int_20()
 void int_21()
 {
 	keyboard_handler();
+	// if (isSchedulerActive)
+	// 	schedule();
 }
