@@ -103,7 +103,7 @@ SECTION .text
 	pop rbx
 %endmacro
 
-%macro irqHandlerMaster 1
+%macro irqHandlerMaster 1 ; ver como implementar lo que nos dijo Juan
 	pushState
 
 	mov rdi, %1 ; pasaje de parametro

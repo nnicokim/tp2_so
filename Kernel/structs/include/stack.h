@@ -1,3 +1,5 @@
+// Esta estructura volaria
+
 #ifndef STACK_H
 #define STACK_H
 
@@ -33,6 +35,7 @@ typedef struct StackFrame
     uint64_t ss;     // 0
     // El align no hace falta ya que el mm me lo da alineado
 } StackFrame;
+
 typedef struct Stack
 {
     StackFrame stackFrames[MAX];

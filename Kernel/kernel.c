@@ -74,11 +74,9 @@ int main()
 	// size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
 	// init_buddy_allocator(HEAP_START, total_memory);
 
-	// stack = mymalloc(0xA00324); // en decimal: 10486564
-
-	// initStack(stack); // No estamos haciendo uso del stack.
-
 	initScheduler();
+
+	/* En el primer llamado al int 20h, arranca a correr el scheduler */
 
 	// Creamos el proceso 0 (Kernel)
 	PCB PCBkernel;

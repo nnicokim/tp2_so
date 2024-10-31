@@ -23,8 +23,8 @@ void irqDispatcher(uint64_t irq)
 void int_20()
 {
 	timer_handler();
-	if (isSchedulerActive)
-		schedule();
+	// if (isSchedulerActive)
+	// 	schedule();
 }
 
 void int_21()

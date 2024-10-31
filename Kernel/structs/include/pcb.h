@@ -26,11 +26,11 @@ typedef struct PCB
     unsigned int pid;  // Process ID
     unsigned int ppid; // Parent Process ID
     int state;         // Process state
-    void *stack;       // Stack pointer
+    void *stack;       // Stack pointer de cada proceso
     int priority;      // Process priority
     unsigned int runningCounter;
 
-    StackFrame *s_frame; // puntero al stack donde se pushearon todos los registros/datos
+    // StackFrame *s_frame; // puntero al stack donde se pushearon todos los registros/datos
 
     void *baseAddress; // direccion base del proceso (memoria virtual)
     size_t limit;
