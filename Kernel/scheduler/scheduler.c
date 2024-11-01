@@ -4,6 +4,8 @@
 #include "../structs/include/pcb.h"
 #include "../structs/include/stack.h"
 
+#define PAGE 0x1000
+
 extern void forceTimerTick();
 
 int isSchedulerActive = 0;
@@ -19,40 +21,36 @@ void initScheduler()
     isSchedulerActive = 1;
 }
 
-// TODO LO QUE ES RELACIONADO AL STACKFRAME VOLACHI UNA VEZ QUE CONFIRMEMOS LOS CAMBIOS
-
 // uint64_t createProcess(void (*program)(int, char **), int argc, char **argv)
 uint64_t createProcess(char *program, int argc, char **argv)
 {
-    /* ¿Hay que crear un stack global? */
-    /* Stack global donde se pushearia literal todos los contenidos de todos los procesos */
-    StackFrame *newStack = mymalloc(sizeof(StackFrame));
-    // Stack
-    // if (newStack == NULL)
-    // {
-    //     printArray("createProcess: ERROR creating process. Could not allocate Stack for process.");
-    //     printDec(processID);
-    //     printArray("\n");
-    //     return -1;
-    // }
+    StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
+    void *newStack = mymalloc(PAGE);
+    // StackFrame
+    if (newStackFrame == NULL || newStack == NULL)
+    {
+        printArray("createProcess: ERROR creating process. Could not allocate Stack for process.");
+        printDec(processID);
+        printArray("\n");
+        return -1;
+    }
 
     PCB newPCB;
     initPCB(&newPCB, processID++, getCurrentPid(), 1); // ver que prioridad se le pasa
     addQueue(&PCBqueue, &newPCB);
 
-    newPCB.stack = newStack; // Aca hay que ver que puntero/direccion se le asigna a un proceso nuevo
-    newPCB.baseAddress = newStack;
+    // Stack nuevo -> RSP = RBP
+    newPCB.stack = initStackFrame(newStack, argc, argv, (void *)program, processID - 1);
+    newPCB.baseAddress = newPCB.stack;
     newPCB.limit = PAGE;
 
-    // Stack nuevo -> RSP = RBP
-    // newPCB.s_frame = newStack;
+    newPCB.s_frame = newStackFrame;
 
     // Añado al scheduler
     addCircularList(&round_robin, newPCB.pid);
     printArray("addCircularList: Process with PID: ");
     printDec(newPCB.pid);
     printArray(" created :) \n");
-    // initStackFrame(argc, argv, (void *)program, processID - 1);
 
     return newPCB.pid;
 }
@@ -156,8 +154,8 @@ void sleepCurrent()
 void *schedule() // void *
 {
     sleepCurrent();
-    change_context(current->pid);
-    printArray(" y aca? \n");
+    printArray("Cambiando contexto... \n");
+    return change_context(current->pid);
 }
 
 void *change_context(int pid)
@@ -167,16 +165,9 @@ void *change_context(int pid)
     while (pcb->state == BLOCKED)
     { // Me salteo todos los procesos bloqueados hasta llegar al proximo proceso READY
         current = current->next != NULL ? current->next : round_robin.head;
-        return;
     }
     pcb->state = RUNNING;
     pcb->runningCounter++;
-
-    printArray("Hola proceso: \n");
-
-    printDec(pcb->pid);
-
-    printArray(" \n");
 
     // Agarro el stack frame del proceso.
     // StackFrame *frame = pcb->s_frame;
@@ -190,6 +181,8 @@ void *change_context(int pid)
         for (int i = 0; i < pcb->priority; i++)
             addCircularList(&round_robin, pid);
     }
+
+    printArray("Contexto cambiado! \n");
     return pcb->stack;
 }
 

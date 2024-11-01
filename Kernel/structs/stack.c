@@ -3,7 +3,7 @@
 #include "../scheduler/include/scheduler.h"
 #include <stdio.h>
 
-void initStackFrame(int argc, char **argv, void (*program)(int, char **), uint64_t pid)
+void *initStackFrame(void *stackProcess, int argc, char **argv, void (*program)(int, char **), uint64_t pid)
 {
     PCB *currentProcess = get(&PCBqueue, pid);
     StackFrame *stack = (StackFrame *)(currentProcess->s_frame);
@@ -26,6 +26,8 @@ void initStackFrame(int argc, char **argv, void (*program)(int, char **), uint64
     stack->rflags = 0x202;
     stack->rsp = (uint64_t)(stack->rsp);
     stack->ss = 0x0;
+
+    return stackProcess + sizeof(StackFrame);
 }
 
 void initStack(Stack *stack)
