@@ -174,8 +174,9 @@ void *change_context(int pid)
     // load_current_context(frame);
 
     // agrego al Round-robin (con prioridades)
-    if (pcb->state != BLOCKED || pcb->priority == 0)
+    if (pcb->state != BLOCKED || pcb->priority == 0){
         addCircularList(&round_robin, pid);
+    }
     else if (pcb->state != BLOCKED)
     {
         for (int i = 0; i < pcb->priority; i++)
