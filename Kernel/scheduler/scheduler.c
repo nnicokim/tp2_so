@@ -3,8 +3,7 @@
 #include "./include/scheduler.h"
 #include "../structs/include/pcb.h"
 #include "../structs/include/stack.h"
-
-#define PAGE 0x1000
+#include "../memory_manager/include/mm_manager.h"
 
 extern void forceTimerTick();
 
@@ -41,7 +40,7 @@ uint64_t createProcess(char *program, int argc, char **argv)
 
     // Stack nuevo -> RSP = RBP
     newPCB.stack = initStackFrame(newStack, argc, argv, (void *)program, processID - 1);
-    newPCB.baseAddress = newPCB.stack;
+    newPCB.baseAddress = newStack;
     newPCB.limit = PAGE;
 
     newPCB.s_frame = newStackFrame;
@@ -77,6 +76,9 @@ uint64_t killProcess(int pid)
     }
     pcb->state = FINISHED;
     removeFromQueue(&PCBqueue, pid);
+    // Liberamos ambos stacks
+    myfree(pcb->baseAddress);
+    myfree(pcb->s_frame);
     printArray("killProcess: Process with PID: ");
     printDec(pid);
     printArray(" killed\n");
@@ -154,7 +156,9 @@ void sleepCurrent()
 void *schedule() // void *
 {
     sleepCurrent();
-    printArray("Cambiando contexto... \n");
+    printArray("Cambiando contexto del proceso: \n");
+    printDec(current->pid);
+    printArray("\n");
     return change_context(current->pid);
 }
 
@@ -174,7 +178,8 @@ void *change_context(int pid)
     // load_current_context(frame);
 
     // agrego al Round-robin (con prioridades)
-    if (pcb->state != BLOCKED || pcb->priority == 0){
+    if (pcb->state != BLOCKED || pcb->priority == 0)
+    {
         addCircularList(&round_robin, pid);
     }
     else if (pcb->state != BLOCKED)
