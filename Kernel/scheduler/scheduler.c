@@ -1,9 +1,6 @@
 // Algoritmo: Round-Robin con prioridades
 #include <videoDriver.h>
 #include "./include/scheduler.h"
-#include "../structs/include/pcb.h"
-#include "../structs/include/stack.h"
-#include "../memory_manager/include/mm_manager.h"
 
 extern void forceTimerTick();
 
@@ -11,7 +8,7 @@ int isSchedulerActive = 0;
 Stack *stack;
 
 CircularListNode *current = NULL;
-static int processID = 2;
+static int processID = 3;
 
 void initScheduler()
 {
@@ -35,11 +32,12 @@ uint64_t createProcess(char *program, int argc, char **argv)
     }
 
     PCB newPCB;
-    initPCB(&newPCB, processID++, getCurrentPid(), 1); // ver que prioridad se le pasa
+    initPCB(&newPCB, processID, getCurrentPid(), 1); // ver que prioridad se le pasa
     addQueue(&PCBqueue, &newPCB);
 
     // Stack nuevo -> RSP = RBP
-    newPCB.stack = initStackFrame(newStack, argc, argv, (void *)program, processID - 1);
+    newPCB.stack = initStackFrame(newStack, argc, argv, (void *)program, processID);
+    processID++;
     newPCB.baseAddress = newStack;
     newPCB.limit = PAGE;
 
@@ -47,11 +45,48 @@ uint64_t createProcess(char *program, int argc, char **argv)
 
     // Añado al scheduler
     addCircularList(&round_robin, newPCB.pid);
-    printArray("addCircularList: Process with PID: ");
+    printArray("Se creo el proceso con PID: ");
     printDec(newPCB.pid);
-    printArray(" created :) \n");
+    printArray(" :) \n");
 
     return newPCB.pid;
+}
+
+void idleProcess()
+{
+    while (TRUE)
+    {
+        _hlt();
+    }
+}
+
+void createIdleProcess(void (*f)())
+{
+    StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
+    void *newStack = mymalloc(PAGE);
+    // StackFrame
+    if (newStackFrame == NULL || newStack == NULL)
+    {
+        printArray("createProcess: ERROR creating process. Could not allocate Stack for process.");
+        printDec(processID);
+        printArray("\n");
+        return;
+    }
+
+    PCB PCBidle;
+    initPCB(&PCBidle, IDLE_PID, KERNEL_PID, 0);
+    addQueue(&PCBqueue, &PCBidle);
+
+    // Stack nuevo -> RSP = RBP
+    PCBidle.stack = initStackFrame(newStack, 0, NULL, f, IDLE_PID);
+    PCBidle.baseAddress = newStack;
+    PCBidle.limit = PAGE;
+
+    PCBidle.s_frame = newStackFrame;
+
+    // Añado al scheduler
+    addCircularList(&round_robin, IDLE_PID);
+    printArray("Se creo el proceso IDLE :) \n");
 }
 
 uint64_t killProcess(int pid)
@@ -148,7 +183,13 @@ void sleepCurrent()
     }
     PCB *pcb = get(&PCBqueue, current->pid);
     pcb->state = READY;
-    // save_current_context(pcb->s_frame);
+
+    // agrego al Round-robin asi vuelve a correr este proceso (con prioridades)
+    for (int i = 0; i <= pcb->priority; i++)
+        addCircularList(&round_robin, pcb->pid);
+    printArray("Se agrego al Round-robin en ChangeContext.\n");
+
+    // Siguiente proceso a correr
     current = current->next != NULL ? current->next : round_robin.head;
 }
 
@@ -156,37 +197,22 @@ void sleepCurrent()
 void *schedule() // void *
 {
     sleepCurrent();
-    printArray("Cambiando contexto del proceso: \n");
-    printDec(current->pid);
-    printArray("\n");
     return change_context(current->pid);
 }
 
 void *change_context(int pid)
-{ // cambiar estado del proceso - cambiar el stackframe - agregar al round-robin
-
+{
     PCB *pcb = get(&PCBqueue, pid);
+    printArray("Cambiando contexto del proceso con PID: ");
+    printDec(current->pid);
+    printArray("\n");
     while (pcb->state == BLOCKED)
     { // Me salteo todos los procesos bloqueados hasta llegar al proximo proceso READY
         current = current->next != NULL ? current->next : round_robin.head;
+        pcb = get(&PCBqueue, current->pid);
     }
     pcb->state = RUNNING;
     pcb->runningCounter++;
-
-    // Agarro el stack frame del proceso.
-    // StackFrame *frame = pcb->s_frame;
-    // load_current_context(frame);
-
-    // agrego al Round-robin (con prioridades)
-    if (pcb->state != BLOCKED || pcb->priority == 0)
-    {
-        addCircularList(&round_robin, pid);
-    }
-    else if (pcb->state != BLOCKED)
-    {
-        for (int i = 0; i < pcb->priority; i++)
-            addCircularList(&round_robin, pid);
-    }
 
     printArray("Contexto cambiado! \n");
     return pcb->stack;
@@ -206,6 +232,8 @@ void my_nice(uint64_t pid, uint64_t newPrio)
 int increase_priority(int pid)
 {
     PCB *pcb = get(&PCBqueue, pid);
+    if (pcb->priority == MAX_PRIORITY)
+        return pcb->priority;
     pcb->priority++;
     return pcb->priority;
 }

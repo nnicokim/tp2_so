@@ -65,7 +65,7 @@ void *initializeKernelBinary()
 
 int main()
 {
-	_cli(); // Deshabilitar interrupciones
+	// _cli(); // Deshabilitar interrupciones
 
 	load_idt(); // Cargar la tabla de descriptores de interrupciones (IDT)
 
@@ -74,6 +74,7 @@ int main()
 	// size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
 	// init_buddy_allocator(HEAP_START, total_memory);
 
+	printArray("Welcome to the Kernel!\n");
 	initScheduler();
 
 	/* En el primer llamado al int 20h, arranca a correr el scheduler */
@@ -91,12 +92,9 @@ int main()
 	// Creamos el proceso 2 (IDLE)
 	// createProcess("_hlt()", 0, NULL);
 
-	// PCB PCBidle;
-	// initPCB(&PCBidle, IDLE_PID, KERNEL_PID, 0);
-	// addQueue(&PCBqueue, &PCBidle);
-	// addCircularList(&round_robin, PCBidle.pid);
+	// createIdleProcess(idleProcess);
 
-	_sti(); // Habilitar interrupciones
+	// _sti(); // Habilitar interrupciones
 
 	_setUser(); // Cambiar a modo usuario
 
