@@ -279,7 +279,7 @@ _irq00Handler:
 ;Keyboard
 _irq01Handler:
 	push rax  
-	mov rax, 0 ; clean
+	mov rax, 0 
  
 	in al, 60h 
 

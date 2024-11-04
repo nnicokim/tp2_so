@@ -179,16 +179,16 @@ CircularListNode *getCurrentProcess()
     return current;
 }
 
-// void sleepCurrent()
+// void sleepCurrent(void *rsp)
 // {
 //     if (current == NULL)
 //     {
 //         current = round_robin.head;
 //         return;
 //     }
-//     // PCB *pcb = get(&PCBqueue, current->pid);
 //     PCB *pcb = &PCB_array[current->pid];
 //     pcb->state = READY;
+//     pcb->stack = rsp; // Guardo el RSP del proceso que va a dejar de correr
 
 //     // agrego al Round-robin asi vuelve a correr este proceso (con prioridades)
 //     for (int i = 0; i <= pcb->priority; i++)
@@ -200,15 +200,14 @@ CircularListNode *getCurrentProcess()
 // }
 
 // // Debemos devolver el RSP del proceso que comienza a correr
-// void *schedule() // void *
+// void *schedule(void *rsp) // void *
 // {
-//     sleepCurrent();
+//     sleepCurrent(rsp);
 //     return change_context(current->pid);
 // }
 
 // void *change_context(int pid)
 // {
-//     // PCB *pcb = get(&PCBqueue, pid);
 //     PCB *pcb = &PCB_array[pid];
 //     printArray("Cambiando contexto del proceso con PID: ");
 //     printDec(current->pid);
@@ -226,16 +225,16 @@ CircularListNode *getCurrentProcess()
 //     return pcb->stack;
 // }
 
-void *schedule() // Scheduler DUMMY
+void *schedule(void *rsp) // Scheduler DUMMY
 {
+    if (current == NULL)
+    {
+        current = round_robin.head;
+    }
     PCB *pcb = &PCB_array[current->pid];
-    // if (pcb->pid == 0 || pcb->pid == 1 || pcb->pid == 2) // Con esto vuelve a titilar el QEMU
-    // {
-    //     current = current->next != NULL ? current->next : round_robin.head;
-    //     return NULL;
-    // }
-    for (int i = 0; i <= pcb->priority; i++)
-        addCircularList(&round_robin, pcb->pid);
+    pcb->stack = rsp;                        // Guardo el RSP del proceso que va a dejar de correr
+    addCircularList(&round_robin, pcb->pid); // Sin prioridades
+
     printArray("Se agrego al Round-robin en ChangeContext con PID: \n");
     printDec(pcb->pid);
     printArray("\n");

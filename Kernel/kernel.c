@@ -82,18 +82,22 @@ int main()
 	// Creamos el proceso 0 (Kernel)
 	PCB PCBkernel;
 	initPCB(&PCBkernel, KERNEL_PID, KERNEL_PID, 0);
-	// addQueue(&PCBqueue, &PCBkernel);
 	PCB_array[KERNEL_PID] = PCBkernel;
+
+	/* Le armo un stack dummy al Kernel */
+	// void *newStack = mymalloc(PAGE);
+	// PCBkernel.stack = initStackFrame(newStack, 0, NULL, NULL, KERNEL_PID);
+	// PCBkernel.baseAddress = newStack;
+	// PCBkernel.limit = PAGE;
+	// StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
+	// PCBkernel.s_frame = newStackFrame;
 
 	// Creamos el proceso 1 (Shell)
 	PCB PCBshell;
 	initPCB(&PCBshell, SHELL_PID, KERNEL_PID, 0);
-	// addQueue(&PCBqueue, &PCBshell);
 	PCB_array[SHELL_PID] = PCBshell;
 
 	// Creamos el proceso 2 (IDLE)
-	// createProcess("_hlt()", 0, NULL);
-
 	// createIdleProcess(idleProcess);
 
 	_sti(); // Habilitar interrupciones
