@@ -28,7 +28,6 @@ extern uint8_t endOfKernel;
 
 static const uint64_t PageSize = 0x1000;
 
-// Queue PCBqueue;			  // Definición de la lista de PCBs
 CircularList round_robin;	  // Definición de la lista de procesos en round-robin
 PCB PCB_array[MAX_PROCESSES]; // Definición del Array de PCBs
 
@@ -75,20 +74,10 @@ int main()
 
 	initScheduler();
 
-	/* En el primer llamado al int 20h, arranca a correr el scheduler */
-
 	// Creamos el proceso 0 (Kernel)
 	PCB PCBkernel;
 	initPCB(&PCBkernel, KERNEL_PID, KERNEL_PID, 0);
 	PCB_array[KERNEL_PID] = PCBkernel;
-
-	/* Le armo un stack dummy al Kernel */
-	// void *newStack = mymalloc(PAGE);
-	// PCBkernel.stack = initStackFrame(newStack, 0, NULL, NULL, KERNEL_PID);
-	// PCBkernel.baseAddress = newStack;
-	// PCBkernel.limit = PAGE;
-	// StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
-	// PCBkernel.s_frame = newStackFrame;
 
 	// Creamos el proceso 1 (Shell)
 	PCB PCBshell;

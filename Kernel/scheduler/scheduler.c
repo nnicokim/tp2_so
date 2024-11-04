@@ -11,7 +11,6 @@ static int processID = 3;
 
 void initScheduler()
 {
-    // initializeQueue(&PCBqueue);           // Lista de PCBs
     initializeCircularList(&round_robin); // Lista de los procesos en round-robin
     isSchedulerActive = 1;
 }
@@ -32,7 +31,6 @@ uint64_t createProcess(char *program, int argc, char **argv)
 
     PCB newPCB;
     initPCB(&newPCB, processID, getCurrentPid(), 1); // ver que prioridad se le pasa
-    // addQueue(&PCBqueue, &newPCB);
     PCB_array[processID] = newPCB;
 
     // Stack nuevo -> RSP = RBP
@@ -75,7 +73,6 @@ void createIdleProcess(void (*f)())
 
     PCB PCBidle;
     initPCB(&PCBidle, IDLE_PID, KERNEL_PID, 0);
-    // addQueue(&PCBqueue, &PCBidle);
     PCB_array[IDLE_PID] = PCBidle;
 
     // Stack nuevo -> RSP = RBP
@@ -96,7 +93,6 @@ uint64_t killProcess(int pid)
     {
         return -1;
     }
-    // PCB *pcb = get(&PCBqueue, pid);
     PCB *pcb = &PCB_array[pid];
     if (pcb == NULL || pcb->state == FINISHED)
     {
@@ -112,7 +108,7 @@ uint64_t killProcess(int pid)
         printArray("Se removio de la lista de round-robin en Kill y no en BlockProcess.\n");
     }
     pcb->state = FINISHED;
-    // removeFromQueue(&PCBqueue, pid);
+
     // Liberamos ambos stacks
     myfree(pcb->baseAddress);
     myfree(pcb->s_frame);
@@ -128,7 +124,6 @@ int blockProcess(int pid)
     {
         return -1;
     }
-    // PCB *pcb = get(&PCBqueue, pid);
     PCB *pcb = &PCB_array[pid];
     if (pcb->state == BLOCKED || pcb->state == FINISHED || pcb == NULL)
     {
@@ -144,7 +139,6 @@ int blockProcess(int pid)
 
 int unblockProcess(int pid)
 {
-    // PCB *pcb = get(&PCBqueue, pid);
     PCB *pcb = &PCB_array[pid];
     if (pcb->state != BLOCKED)
     {
@@ -169,7 +163,6 @@ int getCurrentPid()
 int getCurrentPPid()
 {
     int currentPid = getCurrentPid();
-    // PCB *pcb = get(&PCBqueue, currentPid);
     PCB *pcb = &PCB_array[currentPid];
     return pcb->ppid;
 }
@@ -179,27 +172,7 @@ CircularListNode *getCurrentProcess()
     return current;
 }
 
-// void sleepCurrent(void *rsp)
-// {
-//     if (current == NULL)
-//     {
-//         current = round_robin.head;
-//         return rsp;
-//     }
-//     PCB *pcb = &PCB_array[current->pid];
-//     pcb->state = READY;
-//     pcb->stack = rsp; // Guardo el RSP del proceso que va a dejar de correr
-
-//     // agrego al Round-robin asi vuelve a correr este proceso (con prioridades)
-//     for (int i = 0; i <= pcb->priority; i++)
-//         addCircularList(&round_robin, pcb->pid);
-//     printArray("Se agrego al Round-robin en ChangeContext.\n");
-
-//     // Siguiente proceso a correr
-//     current = current->next != NULL ? current->next : round_robin.head;
-// }
-
-// // Debemos devolver el RSP del proceso que comienza a correr
+// Debemos devolver el RSP del proceso que comienza a correr
 void *schedule(void *rsp) // void *
 {
     if (current == NULL)
@@ -231,7 +204,6 @@ void *change_context(int pid)
     while (pcb->state == BLOCKED)
     { // Me salteo todos los procesos bloqueados hasta llegar al proximo proceso READY
         current = current->next != NULL ? current->next : round_robin.head;
-        // pcb = get(&PCBqueue, current->pid);
         pcb = &PCB_array[current->pid];
     }
     pcb->state = RUNNING;
@@ -271,7 +243,6 @@ void *change_context(int pid)
 
 void my_nice(uint64_t pid, uint64_t newPrio)
 {
-    // PCB *pcb = get(&PCBqueue, pid);
     PCB *pcb = &PCB_array[pid];
     pcb->priority = newPrio;
     printArray("my_nice: Process with PID: ");
@@ -283,7 +254,6 @@ void my_nice(uint64_t pid, uint64_t newPrio)
 
 int increase_priority(int pid)
 {
-    // PCB *pcb = get(&PCBqueue, pid);
     PCB *pcb = &PCB_array[pid];
     if (pcb->priority == MAX_PRIORITY)
         return pcb->priority;
@@ -293,7 +263,6 @@ int increase_priority(int pid)
 
 int decrease_priority(int pid)
 {
-    // PCB *pcb = get(&PCBqueue, pid);
     PCB *pcb = &PCB_array[pid];
     if (pcb->priority == 0)
         return pcb->priority;
@@ -303,7 +272,6 @@ int decrease_priority(int pid)
 
 void my_exit()
 {
-    // PCB *pcb = get(&PCBqueue, getCurrentPid());
     PCB *pcb = &PCB_array[getCurrentPid()];
     if (pcb == NULL || pcb->state == FINISHED)
     {

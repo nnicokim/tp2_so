@@ -1,5 +1,3 @@
-// Esta estructura volaria
-
 #ifndef STACK_H
 #define STACK_H
 
@@ -35,23 +33,6 @@ typedef struct StackFrame
     uint64_t ss;     // 0
     // El align no hace falta ya que el mm me lo da alineado
 } StackFrame;
-
-typedef struct Stack
-{
-    StackFrame stackFrames[MAX];
-    int top;
-} Stack;
-
-void initStack(Stack *stack);
-void push(StackFrame *stackFrame);
-StackFrame pop(Stack *stack);
-int isEmpty(Stack *stack);
-int isFull(Stack *stack);
-int peek(Stack *stack);
-void clearStack(Stack *stack);
-int stackSize(Stack *stack);
-extern void save_current_context(StackFrame *frame);
-extern void load_current_context(StackFrame *frame);
 
 // ChatGPT tira que ese es el tipo de variable de un puntero a un programa que recibe un int y un char **
 void *initStackFrame(void *stackProcess, int argc, char **argv, void (*program)(int, char **), uint64_t pid);

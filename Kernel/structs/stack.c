@@ -3,7 +3,6 @@
 
 void *initStackFrame(void *stackProcess, int argc, char **argv, void (*program)(int, char **), uint64_t pid)
 {
-    // PCB *currentProcess = get(&PCBqueue, pid);
     PCB *currentProcess = &PCB_array[pid];
     StackFrame *stack = (StackFrame *)(currentProcess->s_frame);
     stack->r15 = 0x001;
@@ -27,52 +26,4 @@ void *initStackFrame(void *stackProcess, int argc, char **argv, void (*program)(
     stack->ss = 0x0;
 
     return stackProcess + sizeof(StackFrame);
-}
-
-void initStack(Stack *stack)
-{
-    stack->top = -1;
-}
-
-void push(StackFrame *stackFrame)
-{
-    // Voy a ir a buscar al stack el StackFrame del data.
-
-    // if (isFull(stack))
-    // {
-    //     return;
-    // }
-    // stack->top++;
-    // stack->stackFrames[stack->top] = data;
-}
-
-StackFrame pop(Stack *stack)
-{
-    if (isEmpty(stack))
-    {
-        return (StackFrame){0}; // está devolviendo una instancia de la estructura StackFrame inicializada en cero
-    }
-    StackFrame toReturn = stack->stackFrames[stack->top];
-    stack->top--;
-    return toReturn;
-}
-
-int isEmpty(Stack *stack)
-{
-    return stack->top == -1;
-}
-
-int isFull(Stack *stack)
-{
-    return stack->top == MAX - 1;
-}
-
-void clearStack(Stack *stack)
-{
-    stack->top = -1;
-}
-
-int stackSize(Stack *stack)
-{
-    return stack->top + 1;
 }
