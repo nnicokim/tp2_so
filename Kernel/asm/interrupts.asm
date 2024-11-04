@@ -266,7 +266,7 @@ _irq00Handler:
 	call irqDispatcher   ; int 20h (timer handler) en irqDispatcher.c
 
 	mov rdi, rsp
-	call schedule
+	call schedule        ; El schedule esta causando el loop del qemu
 	mov rsp, rax
 
 	; signal pic EOI (End of Interrupt)

@@ -28,10 +28,9 @@ extern uint8_t endOfKernel;
 
 static const uint64_t PageSize = 0x1000;
 
-extern Stack *stack; // Definición del stack
-
-Queue PCBqueue;			  // Definición de la lista de PCBs
-CircularList round_robin; // Definición de la lista de procesos en round-robin
+// Queue PCBqueue;			  // Definición de la lista de PCBs
+CircularList round_robin;	  // Definición de la lista de procesos en round-robin
+PCB PCB_array[MAX_PROCESSES]; // Definición del Array de PCBs
 
 static void *const sampleCodeModuleAddress = (void *)0x400000;
 static void *const sampleDataModuleAddress = (void *)0x500000;
@@ -65,36 +64,39 @@ void *initializeKernelBinary()
 
 int main()
 {
-	// _cli(); // Deshabilitar interrupciones
+	_cli(); // Deshabilitar interrupciones
 
 	load_idt(); // Cargar la tabla de descriptores de interrupciones (IDT)
 
-	my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); // Inicializar el gestor de memoria
+	my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); // Inicializar el gestor de memoria (tenemos memoria de sobra)
 
 	// size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
 	// init_buddy_allocator(HEAP_START, total_memory);
 
-	printArray("Welcome to the Kernel!\n");
 	initScheduler();
+
+	printArray("Welcome to the Kernel!\n");
 
 	/* En el primer llamado al int 20h, arranca a correr el scheduler */
 
 	// Creamos el proceso 0 (Kernel)
 	PCB PCBkernel;
 	initPCB(&PCBkernel, KERNEL_PID, KERNEL_PID, 0);
-	addQueue(&PCBqueue, &PCBkernel);
+	// addQueue(&PCBqueue, &PCBkernel);
+	PCB_array[KERNEL_PID] = PCBkernel;
 
 	// Creamos el proceso 1 (Shell)
 	PCB PCBshell;
 	initPCB(&PCBshell, SHELL_PID, KERNEL_PID, 0);
-	addQueue(&PCBqueue, &PCBshell);
+	// addQueue(&PCBqueue, &PCBshell);
+	PCB_array[SHELL_PID] = PCBshell;
 
 	// Creamos el proceso 2 (IDLE)
 	// createProcess("_hlt()", 0, NULL);
 
 	// createIdleProcess(idleProcess);
 
-	// _sti(); // Habilitar interrupciones
+	_sti(); // Habilitar interrupciones
 
 	_setUser(); // Cambiar a modo usuario
 

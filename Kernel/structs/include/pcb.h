@@ -4,10 +4,13 @@
 #include <stdint.h>
 #include <unistd.h>
 #include "./stack.h"
+#include "../../scheduler/include/scheduler.h"
 
 #define KERNEL_PID 0
 #define SHELL_PID 1
 #define IDLE_PID 2
+
+#define MAX_PROCESSES 128 // 64 * 1024
 
 enum State
 {
@@ -37,11 +40,12 @@ typedef struct PCB
 
 } PCB;
 
+extern PCB PCB_array[MAX_PROCESSES]; // Array de PCBs
+
 void initPCB(PCB *pcb, int pid, int ppid, int priority);
 PCB *copyPCB(PCB *pcb, PCB *newPCB);
 void freePCB(PCB *pcb);
 void printPCB(PCB *pcb);
 int compare_PCB(const PCB *pcb1, const PCB *pcb2);
-void switchToProcess(int processID);
 
 #endif

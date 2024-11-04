@@ -292,7 +292,8 @@ uint64_t ksys_leaveCPU()
 // El proceso padre se bloquea hasta que el hijo termine
 uint64_t ksys_waitPid(int pid)
 {
-    PCB *childProcess = get(&PCBqueue, pid);
+    // PCB *childProcess = get(&PCBqueue, pid);
+    PCB *childProcess = &PCB_array[pid];
     if (childProcess->state == FINISHED)
     {
         return -1;

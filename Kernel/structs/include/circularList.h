@@ -18,8 +18,6 @@ typedef struct CircularList
 
 extern CircularList round_robin;
 
-// VER SI HAY QUE CREAR UNA STRUCT "ITERATOR" QUE CORRE SOLO COMO SI FUESE EL SCHEDULER !!!!!
-
 void initializeCircularList(CircularList *list);
 void addCircularList(CircularList *list, int pid);
 void removeFromCircularList(CircularList *list, int pid);

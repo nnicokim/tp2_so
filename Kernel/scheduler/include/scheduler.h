@@ -9,11 +9,10 @@
 #include <interrupts.h>
 
 #define PAGE 0x1000
-#define MAX_PROCESSES 192 // 64 * 1024
 #define TRUE 1
 #define MAX_PRIORITY 5
 
-extern Queue PCBqueue;           // Lista de PCBs
+// extern Queue PCBqueue;           // Lista de PCBs
 extern CircularList round_robin; // Lista de los procesos en round-robin
 extern CircularListNode *current;
 extern int isSchedulerActive;

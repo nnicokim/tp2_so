@@ -3,7 +3,8 @@
 
 void *initStackFrame(void *stackProcess, int argc, char **argv, void (*program)(int, char **), uint64_t pid)
 {
-    PCB *currentProcess = get(&PCBqueue, pid);
+    // PCB *currentProcess = get(&PCBqueue, pid);
+    PCB *currentProcess = &PCB_array[pid];
     StackFrame *stack = (StackFrame *)(currentProcess->s_frame);
     stack->r15 = 0x001;
     stack->r14 = 0x002;
