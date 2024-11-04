@@ -87,7 +87,7 @@ int main()
 	printArray("Welcome to the Kernel!\n");
 
 	// Creamos el proceso 2 (IDLE)
-	// createIdleProcess(idleProcess);
+	createIdleProcess(idleProcess);
 
 	_sti(); // Habilitar interrupciones
 

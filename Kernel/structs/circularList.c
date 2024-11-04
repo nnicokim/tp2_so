@@ -33,10 +33,9 @@ void addCircularList(CircularList *list, int pid)
         list->head->prev = newNode;
     }
     list->size++;
-    printArray("Size de la lista luego del ADD: ");
-    printDec(list->size);
-    printArray("\n");
-    // timer_wait_ms(300);
+    // printArray("Size de la lista luego del ADD: ");
+    // printDec(list->size);
+    // printArray("\n");
     return;
 }
 

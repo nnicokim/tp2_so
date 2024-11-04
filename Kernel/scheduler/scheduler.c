@@ -84,7 +84,6 @@ void createIdleProcess(void (*f)())
 
     // Añado al scheduler
     addCircularList(&round_robin, IDLE_PID);
-    printArray("Se creo el proceso IDLE :) \n");
 }
 
 uint64_t killProcess(int pid)
@@ -187,7 +186,6 @@ void *schedule(void *rsp) // void *
     // agrego al Round-robin asi vuelve a correr este proceso (con prioridades)
     for (int i = 0; i <= pcb->priority; i++)
         addCircularList(&round_robin, pcb->pid);
-    printArray("Se agrego al Round-robin en ChangeContext.\n");
 
     // Siguiente proceso a correr
     current = current->next != NULL ? current->next : round_robin.head;
@@ -198,9 +196,7 @@ void *schedule(void *rsp) // void *
 void *change_context(int pid)
 {
     PCB *pcb = &PCB_array[pid];
-    printArray("Cambiando contexto del proceso con PID: ");
-    printDec(current->pid);
-    printArray("\n");
+
     while (pcb->state == BLOCKED)
     { // Me salteo todos los procesos bloqueados hasta llegar al proximo proceso READY
         current = current->next != NULL ? current->next : round_robin.head;
@@ -209,7 +205,7 @@ void *change_context(int pid)
     pcb->state = RUNNING;
     pcb->runningCounter++;
 
-    printArray("Contexto cambiado! \n");
+    // printArray("Contexto cambiado! \n");
     return pcb->stack;
 }
 
