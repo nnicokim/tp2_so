@@ -184,7 +184,7 @@ CircularListNode *getCurrentProcess()
 //     if (current == NULL)
 //     {
 //         current = round_robin.head;
-//         return;
+//         return rsp;
 //     }
 //     PCB *pcb = &PCB_array[current->pid];
 //     pcb->state = READY;
@@ -200,50 +200,74 @@ CircularListNode *getCurrentProcess()
 // }
 
 // // Debemos devolver el RSP del proceso que comienza a correr
-// void *schedule(void *rsp) // void *
-// {
-//     sleepCurrent(rsp);
-//     return change_context(current->pid);
-// }
-
-// void *change_context(int pid)
-// {
-//     PCB *pcb = &PCB_array[pid];
-//     printArray("Cambiando contexto del proceso con PID: ");
-//     printDec(current->pid);
-//     printArray("\n");
-//     while (pcb->state == BLOCKED)
-//     { // Me salteo todos los procesos bloqueados hasta llegar al proximo proceso READY
-//         current = current->next != NULL ? current->next : round_robin.head;
-//         // pcb = get(&PCBqueue, current->pid);
-//         pcb = &PCB_array[current->pid];
-//     }
-//     pcb->state = RUNNING;
-//     pcb->runningCounter++;
-
-//     printArray("Contexto cambiado! \n");
-//     return pcb->stack;
-// }
-
-void *schedule(void *rsp) // Scheduler DUMMY
+void *schedule(void *rsp) // void *
 {
     if (current == NULL)
     {
         current = round_robin.head;
+        return rsp;
     }
     PCB *pcb = &PCB_array[current->pid];
-    pcb->stack = rsp;                        // Guardo el RSP del proceso que va a dejar de correr
-    addCircularList(&round_robin, pcb->pid); // Sin prioridades
+    pcb->state = READY;
+    pcb->stack = rsp; // Guardo el RSP del proceso que va a dejar de correr
 
-    printArray("Se agrego al Round-robin en ChangeContext con PID: \n");
-    printDec(pcb->pid);
-    printArray("\n");
+    // agrego al Round-robin asi vuelve a correr este proceso (con prioridades)
+    for (int i = 0; i <= pcb->priority; i++)
+        addCircularList(&round_robin, pcb->pid);
+    printArray("Se agrego al Round-robin en ChangeContext.\n");
 
     // Siguiente proceso a correr
     current = current->next != NULL ? current->next : round_robin.head;
-    pcb = &PCB_array[current->pid];
-    return pcb->stack; // El problema actual es que el kernel no tiene stack ni StackFrame
+
+    return change_context(current->pid);
 }
+
+void *change_context(int pid)
+{
+    PCB *pcb = &PCB_array[pid];
+    printArray("Cambiando contexto del proceso con PID: ");
+    printDec(current->pid);
+    printArray("\n");
+    while (pcb->state == BLOCKED)
+    { // Me salteo todos los procesos bloqueados hasta llegar al proximo proceso READY
+        current = current->next != NULL ? current->next : round_robin.head;
+        // pcb = get(&PCBqueue, current->pid);
+        pcb = &PCB_array[current->pid];
+    }
+    pcb->state = RUNNING;
+    pcb->runningCounter++;
+
+    printArray("Contexto cambiado! \n");
+    return pcb->stack;
+}
+
+// void *schedule(void *rsp) // Scheduler DUMMY
+// {
+//     if (current == NULL)
+//     {
+//         current = round_robin.head;
+//         // printArray("Se inicializo el current en Schedule.\n");
+//         return rsp;
+//     }
+//     PCB *pcb = &PCB_array[current->pid];
+//     if (pcb->pid == 0 || pcb->pid == 1 || pcb->pid == 2)
+//     {
+//         current = current->next != NULL ? current->next : round_robin.head;
+//         return rsp;
+//     }
+
+//     pcb->stack = rsp;                        // Guardo el RSP del proceso que va a dejar de correr
+//     addCircularList(&round_robin, pcb->pid); // Sin prioridades
+
+//     printArray("Se agrego al Round-robin en Schedule con PID: \n");
+//     printDec(pcb->pid);
+//     printArray("\n");
+
+//     // Siguiente proceso a correr
+//     current = current->next != NULL ? current->next : round_robin.head;
+//     pcb = &PCB_array[current->pid];
+//     return pcb->stack; // El problema actual es que el kernel no tiene stack ni StackFrame
+// }
 
 void my_nice(uint64_t pid, uint64_t newPrio)
 {

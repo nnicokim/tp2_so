@@ -267,6 +267,7 @@ _irq00Handler:
 
 	mov rdi, rsp
 	call schedule        ; El schedule esta causando el loop del qemu
+
 	mov rsp, rax
 
 	; signal pic EOI (End of Interrupt)

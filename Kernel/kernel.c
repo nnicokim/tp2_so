@@ -75,8 +75,6 @@ int main()
 
 	initScheduler();
 
-	printArray("Welcome to the Kernel!\n");
-
 	/* En el primer llamado al int 20h, arranca a correr el scheduler */
 
 	// Creamos el proceso 0 (Kernel)
@@ -96,6 +94,8 @@ int main()
 	PCB PCBshell;
 	initPCB(&PCBshell, SHELL_PID, KERNEL_PID, 0);
 	PCB_array[SHELL_PID] = PCBshell;
+
+	printArray("Welcome to the Kernel!\n");
 
 	// Creamos el proceso 2 (IDLE)
 	// createIdleProcess(idleProcess);
