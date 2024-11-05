@@ -6,6 +6,7 @@ GLOBAL getMinutes
 GLOBAL getSeconds
 GLOBAL inb 
 GLOBAL outb 
+global forceTimerTick
 
 section .text
 	
@@ -160,4 +161,14 @@ outb:
 	popf
 	mov rsp, rbp
 	pop rbp
+	ret
+
+getRSP:
+	xor rax, rax
+	mov rax, rsp
+	ret
+
+; Para el scheduler o kill
+forceTimerTick:
+	int 20h
 	ret

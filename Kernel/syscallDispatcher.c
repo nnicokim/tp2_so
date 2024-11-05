@@ -10,6 +10,12 @@
 #include "./structs/include/queue.h"
 #include "./scheduler/include/scheduler.h"
 #include "./structs/include/stack.h"
+#include "./structs/include/circularList.h"
+#include "./memory_manager/include/mm_manager.h"
+#include "./structs/include/circularList.h"
+#include <tests/test_mm.h>
+#include <tests/test_processes.h>
+#include <tests/test_prio.h>
 
 #define STDIN 0
 #define STDOUT 1
@@ -17,9 +23,12 @@
 #define LASTIN 3
 #define TIME_STR 10
 
+#define PAGE 0x1000
+
 extern char getScanCode();
 extern int getTime(int timeUnit);
 extern void _hlt();
+extern void forceTimerTick();
 
 uint64_t ksys_read(uint64_t fd, uint64_t buffer, uint64_t count);
 uint64_t ksys_write(uint64_t fd, uint64_t buffer, uint64_t count);
@@ -36,10 +45,18 @@ uint64_t ksys_getTime();
 uint64_t ksys_draw_square(uint64_t color, uint64_t x, uint64_t y, uint64_t size);
 uint64_t ksys_draw_rect(uint64_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_t size_y);
 uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t x, uint64_t y, uint64_t arr);
-// ksys_createProcess
+uint64_t ksys_createProcess(char *program, int argc, char **argv);
+uint64_t ksys_blockProcess(int pid);
+uint64_t ksys_unblockProcess(int pid);
 uint64_t ksys_getCurrentpid();
 uint64_t ksys_getCurrentPpid();
-// ksys_killProcess
+uint64_t ksys_killProcess(int pid);
+uint64_t ksys_leaveCPU();
+uint64_t ksys_waitPid(int pid);
+uint64_t ksys_myExit();
+uint64_t ksys_my_nice(uint64_t pid, uint64_t newPrio);
+uint64_t ksys_increase_priority(int pid);
+uint64_t ksys_decrease_priority(int pid);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -78,7 +95,42 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
     case 15:
         flushBuffer();
         return 0;
+
+    // Syscalls nuevas (SO)
+    case 16:
+        return ksys_createProcess((char *)rdi, rsi, (char **)rdx);
+    case 17:
+        return ksys_blockProcess(rdi);
+    case 18:
+        return ksys_unblockProcess(rdi);
+    case 19:
+        return ksys_getCurrentpid();
+    case 20:
+        return ksys_getCurrentPpid();
+    case 21:
+        return ksys_killProcess(rdi);
+    case 22:
+        return ksys_leaveCPU();
+    case 23:
+        return ksys_waitPid(rdi);
+    case 24:
+        return test_mm(rdi, (char **)rsi);
+    case 25:
+        return test_processes(rdi, (char **)rsi);
+    case 26:
+        return ksys_myExit();
+    case 27:
+        // return test_prio(rdi, rsi);
+        sys_test_prio();
+        return 0;
+    case 28:
+        return ksys_my_nice(rdi, rsi);
+    case 29:
+        return ksys_increase_priority(rdi);
+    case 30:
+        return ksys_decrease_priority(rdi);
     }
+
     return 0;
 }
 
@@ -121,7 +173,6 @@ uint64_t ksys_write(uint64_t fd, uint64_t buffer, uint64_t count)
 
 uint64_t ksys_getTime()
 {
-    // char * reserve = "";
     char reserve[TIME_STR]; // en reserve queda guardado el time en formato hh:mm:ss
     timeToStr(reserve);
     // print(reserve);   ver cual funcion uso para imprimir el string
@@ -200,23 +251,77 @@ uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t 
     return 0;
 }
 
-// uint64_t ksys_createProcess( ... ) {
+uint64_t ksys_createProcess(char *program, int argc, char **argv)
+{
+    return createProcess(program, argc, argv);
+}
 
-// PCB newPCB;
-// initPCB(&newPCB, , , );
-// addQueue(&PCBqueue, &newPCB);
+uint64_t ksys_blockProcess(int pid)
+{
+    return blockProcess(pid);
+}
 
-// return 0;
-//}
+uint64_t ksys_unblockProcess(int pid)
+{
+    return unblockProcess(pid);
+}
 
 uint64_t ksys_getCurrentpid()
 {
     return getCurrentPid();
 }
 
-uint64_t ksys_getCurrentppid()
+uint64_t ksys_getCurrentPpid()
 {
     return getCurrentPPid();
 }
 
-// uint64_t ksys_killProcess( ... ) {
+// Faltaria implementar la parte de las prioridades (cuando lo hagamos)
+// Ver si hay que hacer algo con el stack. Faltaria algo mas?
+uint64_t ksys_killProcess(int pid)
+{
+    return killProcess(pid);
+}
+
+uint64_t ksys_leaveCPU()
+{
+    forceTimerTick();
+    return 0;
+}
+
+// El proceso padre se bloquea hasta que el hijo termine
+uint64_t ksys_waitPid(int pid)
+{
+    // PCB *childProcess = get(&PCBqueue, pid);
+    PCB *childProcess = &PCB_array[pid];
+    if (childProcess->state == FINISHED)
+    {
+        return -1;
+    }
+    int parentProcess = getCurrentPid();
+    blockProcess(parentProcess);
+    forceTimerTick();
+    return 0;
+}
+
+uint64_t ksys_myExit()
+{
+    my_exit();
+    return 0;
+}
+
+uint64_t ksys_my_nice(uint64_t pid, uint64_t newPrio)
+{
+    my_nice(pid, newPrio);
+    return 0;
+}
+
+uint64_t ksys_increase_priority(int pid)
+{
+    return increase_priority(pid);
+}
+
+uint64_t ksys_decrease_priority(int pid)
+{
+    return decrease_priority(pid);
+}

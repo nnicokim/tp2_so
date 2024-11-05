@@ -1,13 +1,13 @@
 /* videoDriver */
 #include <videoDriver.h>
 #include <bitmapFont.h>
+#include <lib.h>
 
 static int cursor_x = 0;
 static int cursor_y = 0;
 
 static int font_size = DEFAULT_FONT_SIZE;
 static int draw_size = DEFAULT_DRAW_SIZE;
-
 
 struct vbe_mode_info_structure
 {
@@ -50,13 +50,15 @@ struct vbe_mode_info_structure
 
 typedef struct vbe_mode_info_structure *VBEInfoPtr;
 
+uint64_t bufferlen = 1024 * 768 * 3;
 VBEInfoPtr VBE_mode_info = (VBEInfoPtr)0x0000000000005C00;
 
 void drawPixel(uint32_t hexColor, uint64_t x, uint64_t y)
 {
 	if (x >= 0 && x < VBE_mode_info->width && y >= 0 && y < VBE_mode_info->height)
 	{
-		uint8_t *framebuffer = (uint8_t *)VBE_mode_info->framebuffer;
+		uint64_t aux = (uint64_t)VBE_mode_info->framebuffer;
+		uint8_t *framebuffer = (uint8_t *)aux;
 		uint64_t offset = (x * ((VBE_mode_info->bpp) / 8)) + (y * VBE_mode_info->pitch);
 		framebuffer[offset] = (hexColor) & 0xFF;
 		framebuffer[offset + 1] = (hexColor >> 8) & 0xFF;
@@ -68,7 +70,8 @@ void copyPixel(uint64_t new_x, uint64_t new_y, uint64_t old_x, uint64_t old_y)
 {
 	if (new_x >= 0 && new_x < VBE_mode_info->width && new_y >= 0 && new_y < VBE_mode_info->height)
 	{
-		uint8_t *framebuffer = (uint8_t *)VBE_mode_info->framebuffer;
+		uint64_t aux = (uint64_t)VBE_mode_info->framebuffer;
+		uint8_t *framebuffer = (uint8_t *)aux;
 		uint64_t oldOffset = (old_x * ((VBE_mode_info->bpp) / 8)) + (old_y * VBE_mode_info->pitch);
 		uint64_t offset = (new_x * ((VBE_mode_info->bpp) / 8)) + (new_y * VBE_mode_info->pitch);
 		framebuffer[offset] = framebuffer[oldOffset];
@@ -78,15 +81,17 @@ void copyPixel(uint64_t new_x, uint64_t new_y, uint64_t old_x, uint64_t old_y)
 }
 
 // para el juego, cambia el tamaño del dibujo
-void changeDrawSize(int new_draw_size){
+void changeDrawSize(int new_draw_size)
+{
 	draw_size = new_draw_size;
 }
 
 // Para el juego, dibuja un char según el tamaño de draw_size
-void drawCharOfSize(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, uint64_t y, char character){
+void drawCharOfSize(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, uint64_t y, char character)
+{
 	int aux_font_size = font_size;
 	font_size = draw_size;
-	drawChar(fontColor,backgroundColor,x,y,character);
+	drawChar(fontColor, backgroundColor, x, y, character);
 	font_size = aux_font_size;
 }
 
@@ -153,7 +158,6 @@ void drawArrayOfSize(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, u
 	}
 }
 
-
 void drawRect(uint32_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_t size_y)
 {
 	for (int i = 0; i < size_y; i++)
@@ -213,17 +217,10 @@ void deleteChar()
 
 void clearScreen()
 {
+	uint64_t aux = (uint64_t)VBE_mode_info->framebuffer;
 
-	// vuelvo a pintar la pantalla de negro
-	for (int y = 0; y < VBE_mode_info->height; y++)
-	{
-		for (int x = 0; x < VBE_mode_info->width; x++)
-		{
-			drawPixel(BLACK, x, y);
-		}
-	}
+	memset((void *)aux, 0, bufferlen);
 
-	// resetteo los cursores
 	cursor_x = 0;
 	cursor_y = 0;
 }
@@ -231,11 +228,8 @@ void clearScreen()
 // función auxiliar para limpiar la última línea de la pantalla
 static void clearLine()
 {
-	for (int x = 0; x < getWidth(); x++)
-	{
-		drawChar(BLACK, BLACK, x, VBE_mode_info->height - font_size * CHAR_HEIGHT, ' ');
-	}
-
+	uint64_t aux = (uint64_t)VBE_mode_info->framebuffer;
+	memset((void *)(aux + (VBE_mode_info->height - font_size * CHAR_HEIGHT) * 1024 * 3), 0, bufferlen - (VBE_mode_info->height - font_size * CHAR_HEIGHT) * 1024 * 3);
 	cursor_y -= font_size * CHAR_HEIGHT;
 }
 
@@ -243,20 +237,8 @@ static void clearLine()
 void moveScreen()
 {
 	int y = font_size * CHAR_HEIGHT;
-
-	while (y < VBE_mode_info->height)
-	{
-		for (int j = 0; j < font_size * CHAR_HEIGHT; j++)
-		{
-			for (int i = 0; i < VBE_mode_info->width; i++)
-			{
-				copyPixel(i, y - (font_size * CHAR_HEIGHT) + j , i , y + j );
-			}
-		}
-
-		y += font_size * CHAR_HEIGHT;
-	}
-
+	uint64_t aux = (uint64_t)VBE_mode_info->framebuffer;
+	memcpy((void *)aux, (void *)(aux + y * 1024 * 3), bufferlen - y * 1024 * 3);
 	clearLine();
 }
 

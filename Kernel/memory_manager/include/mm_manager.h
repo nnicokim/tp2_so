@@ -5,8 +5,8 @@
 #include <stdlib.h>
 
 #define HEAP_START ((void *)0xA00000) // 10 Mb
-#define BLOCK_SIZE 0x100000           // 1MB
-#define BLOCK_COUNT 0x100000          // 1MB
+#define BLOCK_SIZE 10000          
+#define BLOCK_COUNT 10000
 
 /**
   Sets up the memory manager

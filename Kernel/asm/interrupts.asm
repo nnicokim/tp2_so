@@ -27,8 +27,10 @@ EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN syscallDispatcher
 EXTERN getStackBase
+EXTERN schedule
 
-
+GLOBAL save_context
+GLOBAL load_context
 
 SECTION .text
 
@@ -102,7 +104,7 @@ SECTION .text
 	pop rbx
 %endmacro
 
-%macro irqHandlerMaster 1
+%macro irqHandlerMaster 1 
 	pushState
 
 	mov rdi, %1 ; pasaje de parametro
@@ -113,6 +115,20 @@ SECTION .text
 	out 20h, al
 
 	popState
+	iretq
+%endmacro
+
+%macro NoRAXirqHandlerMaster 1
+	pushStateNoRAX
+
+	mov rdi, %1 ; pasaje de parametro
+	call irqDispatcher
+
+	; signal pic EOI (End of Interrupt)
+	mov al, 20h
+	out 20h, al
+
+	popStateNoRAX
 	iretq
 %endmacro
 
@@ -169,10 +185,24 @@ SECTION .text
 	mov rax, [rsp + 8]			; RIP
 	mov [regs+8*16], rax			
 
-	mov rax, [rsp+8*3]		; RFLAGS
-	mov [regs+8*17], rax
+    ; Save RFLAGS
+    pushfq
+    pop rax
+    mov [regs+8*17], rax
 %endmacro
 
+save_context:
+    pushState      ; Save all the current registers
+    call saveRegs  ; Save additional registers like rip and rflags
+    ; Perform context switch (jump to the new context)
+    ; Assuming new context is stored in rdi
+    mov rsp, rdi   ; Load new stack pointer
+    ret
+	
+load_context:
+    ; Load general-purpose registers from the StackFrame
+	popState       
+    ret
 
 _hlt:
 	sti
@@ -229,12 +259,28 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+
+	pushState
+
+	mov rdi, 0
+	call irqDispatcher   ; int 20h (timer handler) en irqDispatcher.c
+
+	mov rdi, rsp
+	call schedule        ; El schedule esta causando el loop del qemu
+
+	mov rsp, rax
+
+	; signal pic EOI (End of Interrupt)
+	mov al, 20h
+	out 20h, al
+
+	popState
+	iretq
 
 ;Keyboard
 _irq01Handler:
 	push rax  
-	mov rax, 0 ; clean
+	mov rax, 0 
  
 	in al, 60h 
 
