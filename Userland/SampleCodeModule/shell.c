@@ -17,6 +17,7 @@ void beep();
 void test_processes();
 void test_mm();
 void test_prio();
+void print_processes();
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -37,7 +38,7 @@ static Command commands[] = {
     {"tpr", test_processes, "Testea los procesos"},
     {"tmm", test_mm, "Testea el gestor de memoria"},
     {"tprio", test_prio, "Testea la prioridad de los procesos"},
-};
+    {"printp", print_processes, "Imprime los procesos activos"}};
 
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
 #define COMMAND_COUNT sizeofArr(commands)
@@ -274,4 +275,9 @@ void test_mm()
 {
     char *argvmm[] = {"1000"};
     usys_test_mm(1, argvmm);
+}
+
+void print_processes()
+{
+    usys_print_processes();
 }

@@ -30,6 +30,7 @@ GLOBAL _test_prio
 GLOBAL _my_nice
 GLOBAL _increase_priority
 GLOBAL _decrease_priority
+GLOBAL _print_processes
 
 section .text
 
@@ -339,6 +340,15 @@ _decrease_priority:
     push rbp
     mov rbp, rsp
     mov rax, 30
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_print_processes:
+    push rbp
+    mov rbp, rsp
+    mov rax, 31
     int 80h
     mov rsp, rbp
     pop rbp

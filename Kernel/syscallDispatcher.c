@@ -56,6 +56,7 @@ uint64_t ksys_myExit();
 uint64_t ksys_my_nice(uint64_t pid, uint64_t newPrio);
 uint64_t ksys_increase_priority(int pid);
 uint64_t ksys_decrease_priority(int pid);
+uint64_t ksys_print_processes();
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -128,6 +129,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_increase_priority(rdi);
     case 30:
         return ksys_decrease_priority(rdi);
+    case 31:
+        return ksys_print_processes();
     }
 
     return 0;
@@ -322,4 +325,10 @@ uint64_t ksys_increase_priority(int pid)
 uint64_t ksys_decrease_priority(int pid)
 {
     return decrease_priority(pid);
+}
+
+uint64_t ksys_print_processes()
+{
+    print_processes();
+    return 0;
 }

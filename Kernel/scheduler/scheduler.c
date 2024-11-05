@@ -211,6 +211,13 @@ void *schedule(void *rsp) // Scheduler DUMMY
         return rsp;
     }
 
+    if (current->pid == 1) // IDLE
+    {
+        addCircularList(&round_robin, 1);
+        current = current->next != NULL ? current->next : round_robin.head;
+        return rsp;
+    }
+
     PCB *pcb = PCB_array[current->pid];
 
     pcb->stack = rsp;                        // Guardo el RSP del proceso que va a dejar de correr
@@ -262,4 +269,16 @@ void my_exit()
     }
     killProcess(pcb->pid);
     forceTimerTick();
+}
+
+void print_processes()
+{
+    printArray("Printing processes...\n");
+    for (int i = 0; i < processID; i++)
+    {
+        if (PCB_array[i] != NULL)
+        {
+            printPCB(PCB_array[i]);
+        }
+    }
 }

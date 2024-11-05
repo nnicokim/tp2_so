@@ -32,4 +32,5 @@ void my_nice(uint64_t pid, uint64_t newPrio);
 int increase_priority(int pid);
 int decrease_priority(int pid);
 void my_exit();
+void print_processes();
 #endif

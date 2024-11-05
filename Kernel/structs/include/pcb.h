@@ -45,5 +45,6 @@ void initPCB(PCB *pcb, int pid, int ppid, int priority);
 PCB *copyPCB(PCB *pcb, PCB *newPCB);
 void freePCB(PCB *pcb);
 int compare_PCB(const PCB *pcb1, const PCB *pcb2);
+void printPCB(PCB *pcb);
 
 #endif

@@ -46,3 +46,28 @@ int compare_PCB(const PCB *pcb1, const PCB *pcb2)
 {
     return pcb1->pid - pcb2->pid;
 }
+
+void printPCB(PCB *pcb)
+{
+    if (pcb->pid == 0)
+        printArray("SHELL: \n");
+    if (pcb->pid == 1)
+        printArray("IDLE: \n");
+    printArray("PID: ");
+    printDec(pcb->pid);
+    printArray(" || PPID: ");
+    printDec(pcb->ppid);
+    printArray(" || State: ");
+    printDec(pcb->state);
+    printArray(" || Priority: ");
+    printDec(pcb->priority);
+    printArray(" || Running Counter: ");
+    printDec(pcb->runningCounter);
+    printArray(" || RSP: ");
+    printHex((uint64_t)pcb->stack);
+    printArray(" || Stack Frame: ");
+    printHex((uint64_t)pcb->s_frame);
+    printArray(" || Base Address: ");
+    printHex((uint64_t)pcb->baseAddress);
+    printArray("\n");
+}

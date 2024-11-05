@@ -133,11 +133,6 @@ int usys_myExit()
     return _myExit();
 }
 
-// int usys_test_prio(uint64_t argc, char *argv[])
-// {
-//     return _test_prio(argc, argv);
-// }
-
 int usys_test_prio()
 {
     return _test_prio();
@@ -156,4 +151,9 @@ int usys_increase_priority(int pid)
 int usys_decrease_priority(int pid)
 {
     return _decrease_priority(pid);
+}
+
+void usys_print_processes()
+{
+    _print_processes();
 }
