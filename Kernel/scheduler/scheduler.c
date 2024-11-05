@@ -18,12 +18,12 @@ void initScheduler()
 // uint64_t createProcess(void (*program)(int, char **), int argc, char **argv)
 uint64_t createProcess(char *program, int argc, char **argv)
 {
-    StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
     void *newStack = mymalloc(PAGE);
-    // StackFrame
+    StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
+
     if (newStackFrame == NULL || newStack == NULL)
     {
-        printArray("createProcess: ERROR creating process. Could not allocate Stack for process.");
+        printArray("createProcess: ERROR creating process. Could not allocate Stack for process: ");
         printDec(processID);
         printArray("\n");
         return -1;
@@ -34,7 +34,7 @@ uint64_t createProcess(char *program, int argc, char **argv)
     PCB_array[processID] = newPCB;
 
     // Stack nuevo -> RSP = RBP
-    newPCB.stack = initStackFrame(newStack, argc, argv, (void *)program, processID);
+    newPCB.stack = initStackFrame(newStack, newStackFrame, argc, argv, (void *)program, processID);
     processID++;
     newPCB.baseAddress = newStack;
     newPCB.limit = PAGE;
@@ -52,20 +52,21 @@ uint64_t createProcess(char *program, int argc, char **argv)
 
 void idleProcess()
 {
+    printArray("idleProcess: Entering idle process\n");
     while (TRUE)
     {
         _hlt();
     }
 }
 
-void createIdleProcess(void (*f)())
+void createIdleProcess()
 {
-    StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
     void *newStack = mymalloc(PAGE);
-    // StackFrame
+    StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
+
     if (newStackFrame == NULL || newStack == NULL)
     {
-        printArray("createProcess: ERROR creating process. Could not allocate Stack for process.");
+        printArray("createProcess: ERROR creating process. Could not allocate Stack for process: ");
         printDec(processID);
         printArray("\n");
         return;
@@ -76,7 +77,7 @@ void createIdleProcess(void (*f)())
     PCB_array[IDLE_PID] = PCBidle;
 
     // Stack nuevo -> RSP = RBP
-    PCBidle.stack = initStackFrame(newStack, 0, NULL, f, IDLE_PID);
+    PCBidle.stack = initStackFrame(newStack, newStackFrame, 0, NULL, idleProcess, IDLE_PID);
     PCBidle.baseAddress = newStack;
     PCBidle.limit = PAGE;
 
@@ -171,7 +172,6 @@ CircularListNode *getCurrentProcess()
     return current;
 }
 
-// Debemos devolver el RSP del proceso que comienza a correr
 void *schedule(void *rsp) // void *
 {
     if (current == NULL)
@@ -181,7 +181,7 @@ void *schedule(void *rsp) // void *
     }
     PCB *pcb = &PCB_array[current->pid];
     pcb->state = READY;
-    pcb->stack = rsp; // Guardo el RSP del proceso que va a dejar de correr
+    pcb->stack = rsp;
 
     // agrego al Round-robin asi vuelve a correr este proceso (con prioridades)
     for (int i = 0; i <= pcb->priority; i++)
@@ -205,7 +205,6 @@ void *change_context(int pid)
     pcb->state = RUNNING;
     pcb->runningCounter++;
 
-    // printArray("Contexto cambiado! \n");
     return pcb->stack;
 }
 

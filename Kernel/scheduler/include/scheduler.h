@@ -25,7 +25,7 @@ int getCurrentPPid();
 CircularListNode *getCurrentProcess();
 uint64_t createProcess(char *program, int argc, char **argv);
 void idleProcess();
-void createIdleProcess(void (*f)());
+void createIdleProcess();
 uint64_t killProcess(int pid);
 void *schedule();
 void *change_context(int pid);

@@ -42,5 +42,5 @@ void sys_test_prio()
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         killProcess(pids[i]);
-    printArray("\nALL DONE!!!\n");
+    printArray("ALL DONE!!!\n");
 }

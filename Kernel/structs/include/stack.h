@@ -29,12 +29,12 @@ typedef struct StackFrame
     uint64_t rip;    // loader
     uint64_t cs;     // 0x8
     uint64_t rflags; // 0x202
-    uint64_t rsp;    // currentProcess->RSP
+    void *rsp;       // Igual que el *Stack del PCB
     uint64_t ss;     // 0
     // El align no hace falta ya que el mm me lo da alineado
 } StackFrame;
 
 // ChatGPT tira que ese es el tipo de variable de un puntero a un programa que recibe un int y un char **
-void *initStackFrame(void *stackProcess, int argc, char **argv, void (*program)(int, char **), uint64_t pid);
+void *initStackFrame(void *stackProcess, StackFrame *stackFrame, int argc, char **argv, void (*program)(int, char **), uint64_t pid);
 
 #endif
