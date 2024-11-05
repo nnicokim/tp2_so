@@ -45,7 +45,6 @@ extern PCB PCB_array[MAX_PROCESSES]; // Array de PCBs
 void initPCB(PCB *pcb, int pid, int ppid, int priority);
 PCB *copyPCB(PCB *pcb, PCB *newPCB);
 void freePCB(PCB *pcb);
-void printPCB(PCB *pcb);
 int compare_PCB(const PCB *pcb1, const PCB *pcb2);
 
 #endif
