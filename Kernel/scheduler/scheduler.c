@@ -61,9 +61,9 @@ void idleProcess()
 void createIdleProcess()
 {
     void *newStack = mymalloc(PAGE);
-    StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
+    // StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
 
-    if (newStackFrame == NULL || newStack == NULL)
+    if (newStack == NULL)
     {
         printArray("createProcess: ERROR creating process. Could not allocate Stack for process: ");
         printDec(processID);
@@ -79,7 +79,7 @@ void createIdleProcess()
     PCBidle.baseAddress = newStack;
     PCBidle.limit = PAGE;
 
-    PCBidle.s_frame = newStackFrame;
+    PCBidle.s_frame = newStack;
 
     addCircularList(&round_robin, IDLE_PID);
 }
