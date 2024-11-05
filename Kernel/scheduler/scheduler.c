@@ -7,7 +7,7 @@ extern void forceTimerTick();
 int isSchedulerActive = 0;
 
 CircularListNode *current = NULL;
-static int processID = 3;
+static int processID = 2;
 
 void initScheduler()
 {
@@ -19,9 +19,10 @@ void initScheduler()
 uint64_t createProcess(char *program, int argc, char **argv)
 {
     void *newStack = mymalloc(PAGE);
-    StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
+    // StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
 
-    if (newStackFrame == NULL || newStack == NULL)
+    // if (newStackFrame == NULL || newStack == NULL)
+    if (newStack == NULL)
     {
         printArray("createProcess: ERROR creating process. Could not allocate Stack for process: ");
         printDec(processID);
@@ -33,12 +34,12 @@ uint64_t createProcess(char *program, int argc, char **argv)
     initPCB(&newPCB, processID, getCurrentPid(), 1); // ver que prioridad se le pasa
     PCB_array[processID] = newPCB;
 
-    newPCB.stack = initStackFrame(newStack, newStackFrame, argc, argv, (void *)program, processID);
+    newPCB.stack = initStackFrame(newStack, argc, argv, (void *)program, processID);
     processID++;
     newPCB.baseAddress = newStack;
     newPCB.limit = PAGE;
 
-    newPCB.s_frame = newStackFrame;
+    newPCB.s_frame = newStack;
 
     addCircularList(&round_robin, newPCB.pid);
     printArray("Se creo el proceso con PID: ");
@@ -71,10 +72,10 @@ void createIdleProcess()
     }
 
     PCB PCBidle;
-    initPCB(&PCBidle, IDLE_PID, KERNEL_PID, 0);
+    initPCB(&PCBidle, IDLE_PID, SHELL_PID, 0);
     PCB_array[IDLE_PID] = PCBidle;
 
-    PCBidle.stack = initStackFrame(newStack, newStackFrame, 0, NULL, idleProcess, IDLE_PID);
+    PCBidle.stack = initStackFrame(newStack, 0, NULL, idleProcess, IDLE_PID);
     PCBidle.baseAddress = newStack;
     PCBidle.limit = PAGE;
 

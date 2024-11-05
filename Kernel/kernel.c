@@ -73,14 +73,9 @@ int main()
 
 	initScheduler();
 
-	// Creamos el proceso 0 (Kernel)
-	PCB PCBkernel;
-	initPCB(&PCBkernel, KERNEL_PID, KERNEL_PID, 0);
-	PCB_array[KERNEL_PID] = PCBkernel;
-
-	// Creamos el proceso 1 (Shell)
+	// Creamos el proceso 0 (Shell)
 	PCB PCBshell;
-	initPCB(&PCBshell, SHELL_PID, KERNEL_PID, 0);
+	initPCB(&PCBshell, SHELL_PID, SHELL_PID, 0);
 	PCB_array[SHELL_PID] = PCBshell;
 
 	printArray("Welcome to the Kernel!\n");

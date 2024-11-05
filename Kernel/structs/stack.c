@@ -1,9 +1,11 @@
 #include "../scheduler/include/scheduler.h"
 #include <stdio.h>
 
-void *initStackFrame(void *stackProcess, StackFrame *stackFrame, int argc, char **argv, void (*program)(int, char **), uint64_t pid)
+void *initStackFrame(void *stackProcess, int argc, char **argv, void (*program)(int, char **), uint64_t pid)
 {
-    StackFrame *newStackFrame = stackFrame;
+    StackFrame *newStackFrame = stackProcess;
+    // Escribe desde la direccion de memoria de stackProcess.
+    // Una vez que termine de asignar el stackFrame, el RSP va a ser la direccion contigua a este stackFrame.
     newStackFrame->r15 = 0x001;
     newStackFrame->r14 = 0x002;
     newStackFrame->r13 = 0x003;

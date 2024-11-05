@@ -6,9 +6,8 @@
 #include "./stack.h"
 #include "../../scheduler/include/scheduler.h"
 
-#define KERNEL_PID 0
-#define SHELL_PID 1
-#define IDLE_PID 2
+#define SHELL_PID 0
+#define IDLE_PID 1
 
 #define MAX_PROCESSES 128 // 64 * 1024
 

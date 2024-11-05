@@ -260,21 +260,23 @@ picSlaveMask:
 ;8254 Timer (Timer Tick)
 _irq00Handler:
 
+	cli
 	pushState
-
-	mov rdi, 0
-	call irqDispatcher   ; int 20h (timer handler) en irqDispatcher.c
 
 	mov rdi, rsp
 	call schedule        ; El schedule esta causando el loop del qemu
 
 	mov rsp, rax
 
+	mov rdi, 0
+	call irqDispatcher   ; int 20h (timer handler) en irqDispatcher.c
+
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
 	out 20h, al
 
 	popState
+	sti
 	iretq
 
 ;Keyboard
