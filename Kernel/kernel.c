@@ -28,7 +28,7 @@ extern uint8_t endOfKernel;
 static const uint64_t PageSize = 0x1000;
 
 CircularList round_robin;	  // Definición de la lista de procesos en round-robin
-PCB PCB_array[MAX_PROCESSES]; // Definición del Array de PCBs
+PCB *PCB_array[MAX_PROCESSES]; // Definición del Array de PCBs
 
 static void *const sampleCodeModuleAddress = (void *)0x400000;
 static void *const sampleDataModuleAddress = (void *)0x500000;
@@ -74,8 +74,8 @@ int main()
 	initScheduler();
 
 	// Creamos el proceso 0 (Shell)
-	PCB PCBshell;
-	initPCB(&PCBshell, SHELL_PID, SHELL_PID, 0);
+	PCB *PCBshell= mymalloc(sizeof(PCB));
+	initPCB(PCBshell, SHELL_PID, SHELL_PID, 0);
 	PCB_array[SHELL_PID] = PCBshell;
 
 	printArray("Welcome to the Kernel!\n");

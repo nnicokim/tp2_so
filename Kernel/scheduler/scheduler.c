@@ -30,25 +30,24 @@ uint64_t createProcess(char *program, int argc, char **argv)
         return -1;
     }
 
-    PCB newPCB;
-    initPCB(&newPCB, processID, getCurrentPid(), 1); // ver que prioridad se le pasa
+    PCB *newPCB = mymalloc(sizeof(PCB));
+    initPCB(newPCB, processID, getCurrentPid(), 1); // ver que prioridad se le pasa
     PCB_array[processID] = newPCB;
 
-    newPCB.stack = initStackFrame(newStack, argc, argv, (void *)program, processID);
+    newPCB->stack = initStackFrame(newStack, argc, argv, (void *)program, processID);
     processID++;
-    newPCB.baseAddress = newStack;
-    newPCB.limit = PAGE;
+    newPCB->baseAddress = newStack;
+    newPCB->limit = PAGE;
 
-    newPCB.s_frame = newStack;
+    newPCB->s_frame = newStack;
 
-    addCircularList(&round_robin, newPCB.pid);
+    addCircularList(&round_robin, newPCB->pid);
     printArray("Se creo el proceso con PID: ");
-    printDec(newPCB.pid);
+    printDec(newPCB->pid);
     printArray(" :) \n");
 
-    return newPCB.pid;
+    return newPCB->pid;
 }
-
 void idleProcess()
 {
     printArray("idleProcess: Entering idle process\n");
@@ -71,15 +70,15 @@ void createIdleProcess()
         return;
     }
 
-    PCB PCBidle;
-    initPCB(&PCBidle, IDLE_PID, SHELL_PID, 0);
+    PCB *PCBidle = mymalloc(sizeof(PCB));
+    initPCB(PCBidle, IDLE_PID, SHELL_PID, 0);
     PCB_array[IDLE_PID] = PCBidle;
 
-    PCBidle.stack = initStackFrame(newStack, 0, NULL, idleProcess, IDLE_PID);
-    PCBidle.baseAddress = newStack;
-    PCBidle.limit = PAGE;
+    PCBidle->stack = initStackFrame(newStack, 0, NULL, idleProcess, IDLE_PID);
+    PCBidle->baseAddress = newStack;
+    PCBidle->limit = PAGE;
 
-    PCBidle.s_frame = newStack;
+    PCBidle->s_frame = newStack;
 
     addCircularList(&round_robin, IDLE_PID);
 }
@@ -90,7 +89,7 @@ uint64_t killProcess(int pid)
     {
         return -1;
     }
-    PCB *pcb = &PCB_array[pid];
+    PCB *pcb = PCB_array[pid];
     if (pcb == NULL || pcb->state == FINISHED)
     {
         printArray("killProcess: ERROR: Process with PID: ");
@@ -119,7 +118,7 @@ int blockProcess(int pid)
     {
         return -1;
     }
-    PCB *pcb = &PCB_array[pid];
+    PCB *pcb = PCB_array[pid];
     if (pcb->state == BLOCKED || pcb->state == FINISHED || pcb == NULL)
     {
         return -1;
@@ -134,7 +133,7 @@ int blockProcess(int pid)
 
 int unblockProcess(int pid)
 {
-    PCB *pcb = &PCB_array[pid];
+    PCB *pcb = PCB_array[pid];
     if (pcb->state != BLOCKED)
     {
         return -1;
@@ -158,7 +157,7 @@ int getCurrentPid()
 int getCurrentPPid()
 {
     int currentPid = getCurrentPid();
-    PCB *pcb = &PCB_array[currentPid];
+    PCB *pcb = PCB_array[currentPid];
     return pcb->ppid;
 }
 
@@ -174,7 +173,7 @@ CircularListNode *getCurrentProcess()
 //         current = round_robin.head;
 //         return rsp;
 //     }
-//     PCB *pcb = &PCB_array[current->pid];
+//     PCB *pcb = PCB_array[current->pid];
 //     pcb->state = READY;
 //     pcb->stack = rsp;
 
@@ -190,12 +189,12 @@ CircularListNode *getCurrentProcess()
 
 // void *change_context(int pid)
 // {
-//     PCB *pcb = &PCB_array[pid];
+//     PCB *pcb = PCB_array[pid];
 
 //     while (pcb->state == BLOCKED || pcb->state == FINISHED)
 //     {
 //         current = current->next != NULL ? current->next : round_robin.head;
-//         pcb = &PCB_array[current->pid];
+//         pcb = PCB_array[current->pid];
 //     }
 //     pcb->state = RUNNING;
 //     pcb->runningCounter++;
@@ -212,25 +211,20 @@ void *schedule(void *rsp) // Scheduler DUMMY
         return rsp;
     }
 
-    PCB *pcb = &PCB_array[current->pid];
-    if (pcb->pid == 0 || pcb->pid == 1)
-    {
-        current = current->next != NULL ? current->next : round_robin.head;
-        return rsp;
-    }
+    PCB *pcb = PCB_array[current->pid];
 
     pcb->stack = rsp;                        // Guardo el RSP del proceso que va a dejar de correr
     addCircularList(&round_robin, pcb->pid); // Sin prioridades
 
     // Siguiente proceso a correr
     current = current->next != NULL ? current->next : round_robin.head;
-    pcb = &PCB_array[current->pid];
+    pcb = PCB_array[current->pid];
     return pcb->stack;
 }
 
 void my_nice(uint64_t pid, uint64_t newPrio)
 {
-    PCB *pcb = &PCB_array[pid];
+    PCB *pcb = PCB_array[pid];
     pcb->priority = newPrio;
     printArray("my_nice: Process with PID: ");
     printDec(pid);
@@ -241,7 +235,7 @@ void my_nice(uint64_t pid, uint64_t newPrio)
 
 int increase_priority(int pid)
 {
-    PCB *pcb = &PCB_array[pid];
+    PCB *pcb = PCB_array[pid];
     if (pcb->priority == MAX_PRIORITY)
         return pcb->priority;
     pcb->priority++;
@@ -250,7 +244,7 @@ int increase_priority(int pid)
 
 int decrease_priority(int pid)
 {
-    PCB *pcb = &PCB_array[pid];
+    PCB *pcb = PCB_array[pid];
     if (pcb->priority == 0)
         return pcb->priority;
     pcb->priority--;
@@ -259,7 +253,7 @@ int decrease_priority(int pid)
 
 void my_exit()
 {
-    PCB *pcb = &PCB_array[getCurrentPid()];
+    PCB *pcb = PCB_array[getCurrentPid()];
     if (pcb == NULL || pcb->state == FINISHED)
     {
         printArray("Could not exit process\n");
