@@ -2,7 +2,6 @@
 #define SCHEDULER_H
 
 #include "../../structs/include/pcb.h"
-#include "../../structs/include/queue.h"
 #include "../../structs/include/circularList.h"
 #include "../structs/include/stack.h"
 #include "../memory_manager/include/mm_manager.h"

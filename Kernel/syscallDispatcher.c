@@ -7,7 +7,6 @@
 #include <sound.h>
 #include <naiveConsole.h>
 #include "./structs/include/pcb.h"
-#include "./structs/include/queue.h"
 #include "./scheduler/include/scheduler.h"
 #include "./structs/include/stack.h"
 #include "./structs/include/circularList.h"

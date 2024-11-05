@@ -16,7 +16,6 @@
 // #include "./memory_manager/include/buddyAllocator.h"
 #include "./structs/include/stack.h"
 #include "./structs/include/pcb.h"
-#include "./structs/include/queue.h"
 #include "./scheduler/include/scheduler.h"
 
 extern uint8_t text;
