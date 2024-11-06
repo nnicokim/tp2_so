@@ -36,9 +36,9 @@ int64_t test_processes(uint64_t argc, char *argv[])
             p_rqs[rq].pid = createProcess("endless_loop", 0, argvAux);
             if (p_rqs[rq].pid == -1)
             {
-                printArray("test_processes: ERROR creating process: -");
-                printDec(p_rqs[rq].pid * -1);
-                printArray("\n");
+                // printArray("test_processes: ERROR creating process: -");
+                // printDec(p_rqs[rq].pid * -1);
+                // printArray("\n");
                 return -1;
             }
             else
@@ -63,9 +63,9 @@ int64_t test_processes(uint64_t argc, char *argv[])
                     {
                         if (killProcess(p_rqs[rq].pid) == -1)
                         {
-                            printArray("test_processes: ERROR killing process with PID: ");
-                            printDec(p_rqs[rq].pid);
-                            printArray("\n");
+                            // printArray("test_processes: ERROR killing process with PID: ");
+                            // printDec(p_rqs[rq].pid);
+                            // printArray("\n");
                             return -1;
                         }
                         p_rqs[rq].state = FINISHED;
@@ -78,9 +78,9 @@ int64_t test_processes(uint64_t argc, char *argv[])
                     {
                         if (blockProcess(p_rqs[rq].pid) == -1)
                         {
-                            printArray("test_processes: ERROR blocking process with PID: ");
-                            printDec(p_rqs[rq].pid);
-                            printArray("\n");
+                            // printArray("test_processes: ERROR blocking process with PID: ");
+                            // printDec(p_rqs[rq].pid);
+                            // printArray("\n");
                             return -1;
                         }
                         p_rqs[rq].state = BLOCKED;
@@ -95,9 +95,9 @@ int64_t test_processes(uint64_t argc, char *argv[])
                 {
                     if (unblockProcess(p_rqs[rq].pid) == -1)
                     {
-                        printArray("test_processes: ERROR unblocking process with PID: ");
-                        printDec(p_rqs[rq].pid);
-                        printArray("\n");
+                        // printArray("test_processes: ERROR unblocking process with PID: ");
+                        // printDec(p_rqs[rq].pid);
+                        // printArray("\n");
                         return -1;
                     }
                     p_rqs[rq].state = RUNNING;

@@ -261,23 +261,25 @@ picSlaveMask:
 _irq00Handler:
 
 	cli
-	pushState
-
-	mov rdi, rsp
-	call schedule        ; El schedule esta causando el loop del qemu
-
-	mov rsp, rax
+	pushState   
 
 	mov rdi, 0
 	call irqDispatcher   ; int 20h (timer handler) en irqDispatcher.c
+
+	mov rdi, rsp
+	mov rsi, [rsp+15*8]
+	call schedule        ; El schedule esta causando el loop del qemu
+
+	mov rsp, rax
 
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
 	out 20h, al
 
-	popState
+	popState  ; TODO: Fijarse si los registros se guardan bien
 	sti
-	iretq
+	iretq     ; TODO: Fijarse si los registros se guardan bien
+
 
 ;Keyboard
 _irq01Handler:

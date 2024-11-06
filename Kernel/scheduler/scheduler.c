@@ -6,12 +6,15 @@ extern void forceTimerTick();
 
 int isSchedulerActive = 0;
 
+int IDLE_counter = 0;
+
 CircularListNode *current = NULL;
 static int processID = 2;
 
 void initScheduler()
 {
     initializeCircularList(&round_robin); // Lista de los procesos en round-robin
+    // TODO: inicializar current
     isSchedulerActive = 1;
 }
 
@@ -39,15 +42,21 @@ uint64_t createProcess(char *program, int argc, char **argv)
     newPCB->baseAddress = newStack;
     newPCB->limit = PAGE;
 
-    newPCB->s_frame = newStack;
+    newPCB->s_frame = newStack; // TODO: Ver si esto esta bien
 
     addCircularList(&round_robin, newPCB->pid);
-    printArray("Se creo el proceso con PID: ");
-    printDec(newPCB->pid);
-    printArray(" :) \n");
+
+    if (processID == 1)
+    {
+        printArray("Se creo el proceso con PID: ");
+        printDec(newPCB->pid);
+        printArray(" :) \n");
+        print_processes();
+    }
 
     return newPCB->pid;
 }
+
 void idleProcess()
 {
     printArray("idleProcess: Entering idle process\n");
@@ -78,14 +87,14 @@ void createIdleProcess()
     PCBidle->baseAddress = newStack;
     PCBidle->limit = PAGE;
 
-    PCBidle->s_frame = newStack;
+    PCBidle->s_frame = newStack; // TODO: Ver si esto esta bien
 
     addCircularList(&round_robin, IDLE_PID);
 }
 
 uint64_t killProcess(int pid)
 {
-    if (pid == 0 || pid == 1 || pid == 2)
+    if (pid == 0 || pid == 1)
     {
         return -1;
     }
@@ -114,7 +123,7 @@ uint64_t killProcess(int pid)
 
 int blockProcess(int pid)
 {
-    if (pid == 0 || pid == 1 || pid == 2)
+    if (pid == 0 || pid == 1)
     {
         return -1;
     }
@@ -202,12 +211,15 @@ CircularListNode *getCurrentProcess()
 //     return pcb->stack;
 // }
 
-void *schedule(void *rsp) // Scheduler DUMMY
+void *schedule(void *rsp, void *rip) // Scheduler DUMMY
 {
     if (current == NULL)
     {
         current = round_robin.head;
         // printArray("Se inicializo el current en Schedule.\n");
+        // printArray("--- current == NULL es esto ---\n");
+        // printHex(rsp);
+        // printArray("\n");
         return rsp;
     }
 
@@ -215,6 +227,14 @@ void *schedule(void *rsp) // Scheduler DUMMY
     {
         addCircularList(&round_robin, 1);
         current = current->next != NULL ? current->next : round_robin.head;
+        // if (IDLE_counter < 2)
+        // {
+        //     printArray("--- schedule del IDLE ---\n");
+        //     printHex(rsp);
+        //     printArray("\n");
+        //     IDLE_counter++;
+        // }
+
         return rsp;
     }
 
@@ -223,9 +243,18 @@ void *schedule(void *rsp) // Scheduler DUMMY
     pcb->stack = rsp;                        // Guardo el RSP del proceso que va a dejar de correr
     addCircularList(&round_robin, pcb->pid); // Sin prioridades
 
+    printArray("--- schedule del proceso con PID: ---\n");
+    printDec(pcb->pid);
+    printArray("\n");
+    printHex(pcb->stack);
+    printArray("\n");
+    printHex(rip);
+    printArray("\n");
+
     // Siguiente proceso a correr
     current = current->next != NULL ? current->next : round_robin.head;
     pcb = PCB_array[current->pid];
+
     return pcb->stack;
 }
 
