@@ -26,7 +26,7 @@ uint64_t createProcess(char *program, int argc, char **argv);
 void idleProcess();
 void createIdleProcess();
 uint64_t killProcess(int pid);
-void *schedule(void *rsp, void *rip);
+void *schedule(void *rsp);
 void *change_context(int pid);
 void my_nice(uint64_t pid, uint64_t newPrio);
 int increase_priority(int pid);

@@ -14,7 +14,6 @@ void initPCB(PCB *pcb, int pid, int ppid, int priority)
     pcb->state = READY;
     pcb->priority = priority;
     pcb->runningCounter = 0;
-    pcb->s_frame = NULL;
 
     pcb->baseAddress = NULL;
     pcb->limit = 0;
@@ -30,7 +29,6 @@ PCB *copyPCB(PCB *pcb, PCB *newPCB)
     newPCB->state = pcb->state;
     newPCB->priority = pcb->priority;
     newPCB->runningCounter = pcb->runningCounter;
-    newPCB->s_frame = pcb->s_frame;
     newPCB->baseAddress = pcb->baseAddress;
     newPCB->limit = pcb->limit;
 
@@ -65,8 +63,6 @@ void printPCB(PCB *pcb)
     printDec(pcb->runningCounter);
     printArray(" || RSP: ");
     printHex((uint64_t)pcb->stack);
-    printArray(" || Stack Frame: ");
-    printHex((uint64_t)pcb->s_frame);
     printArray(" || Base Address: ");
     printHex((uint64_t)pcb->baseAddress);
     printArray("\n");

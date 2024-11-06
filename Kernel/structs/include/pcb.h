@@ -32,8 +32,6 @@ typedef struct PCB
     int priority;      // Process priority
     unsigned int runningCounter;
 
-    StackFrame *s_frame; // puntero al stackFrame
-
     void *baseAddress; // direccion base del proceso (memoria virtual)
     size_t limit;
 
