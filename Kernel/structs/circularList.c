@@ -26,7 +26,7 @@ void addCircularList(CircularList *list, int pid)
     }
     else
     {
-        printArray("Hola estoy en el CL");
+        // printArray("Hola estoy en el CL");
         CircularListNode *prev_head = list->head;
         newNode->prev = prev_head->prev;
         prev_head->prev->next = newNode;

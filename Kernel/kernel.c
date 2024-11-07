@@ -74,15 +74,15 @@ int main()
 	initScheduler();
 
 	// Creamos el proceso 0 (Kernel/Shell)
-	PCB *PCBshell = mymalloc(sizeof(PCB));
-	initPCB(PCBshell, SHELL_PID, SHELL_PID, 0);
-	PCB_array[SHELL_PID] = PCBshell;
+	// PCB *PCBshell = mymalloc(sizeof(PCB));
+	// initPCB(PCBshell, SHELL_PID, SHELL_PID, 0);
+	// PCB_array[SHELL_PID] = PCBshell;
 
 	printArray("Welcome to the Kernel!\n");
 
 	_sti(); // Habilitar interrupciones
 
-	_setUser(); // Cambiar a modo usuario
+	//_setUser(); // Cambiar a modo usuario
 
 	printArray("You shouldn't be here chief...");
 

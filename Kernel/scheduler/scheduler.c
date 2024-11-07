@@ -9,11 +9,14 @@ int isSchedulerActive = 0;
 int IDLE_counter = 0;
 
 CircularListNode *current = NULL;
-static int processID = 1;
+static int processID = 0;
 
 void initScheduler()
 {
     initializeCircularList(&round_robin);
+
+    int shellPID = createProcess(_setUser, 0, NULL);
+
     int pidIdle = createProcess(idleProcess, 0, NULL); // Creamos el proceso (Idle)
 
     // current = round_robin.head; // TODO: ver como inicializarlo con el primer proceso (que no sea NULL)
@@ -188,6 +191,7 @@ void *schedule(void *rsp) // RSP del Proceso A
     current = current->next;
     // printDec(current->pid);
     // printArray("\n");
+
     pcb = PCB_array[current->pid];
     while (pcb->state == BLOCKED || pcb->state == FINISHED)
     {
