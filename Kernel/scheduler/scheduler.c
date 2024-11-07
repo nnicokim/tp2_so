@@ -14,9 +14,9 @@ static int processID = 1;
 void initScheduler()
 {
     initializeCircularList(&round_robin);
-    createProcess(idleProcess, 0, NULL); // Creamos el proceso (Idle)
+    int pidIdle = createProcess(idleProcess, 0, NULL); // Creamos el proceso (Idle)
 
-    current = round_robin.head; // TODO: ver como inicializarlo con el primer proceso (que no sea NULL)
+    // current = round_robin.head; // TODO: ver como inicializarlo con el primer proceso (que no sea NULL)
     isSchedulerActive = 1;
 }
 
@@ -24,7 +24,6 @@ void initScheduler()
 uint64_t createProcess(char *program, int argc, char **argv)
 {
     void *newStack = mymalloc(PAGE);
-
     if (newStack == NULL)
     {
         printArray("createProcess: ERROR creating process. Could not allocate Stack for process: ");
@@ -34,7 +33,15 @@ uint64_t createProcess(char *program, int argc, char **argv)
     }
 
     PCB *newPCB = mymalloc(sizeof(PCB));
-    initPCB(newPCB, processID, getCurrentPid(), 1); // ver que prioridad se le pasa por Default
+    if (processID == 1 || processID == 0)
+    {
+        newPCB->ppid = 0;
+    }
+    else
+    {
+        newPCB->ppid = getCurrentPid();
+    }
+    initPCB(newPCB, processID, newPCB->ppid, 1); // ver que prioridad se le pasa por Default
     PCB_array[processID] = newPCB;
 
     newPCB->stack = initStackFrame(newStack + PAGE - sizeof(char), argc, argv, (void *)program, processID);
@@ -43,15 +50,6 @@ uint64_t createProcess(char *program, int argc, char **argv)
     newPCB->limit = PAGE;
 
     addCircularList(&round_robin, newPCB->pid);
-
-    if (processID == 1)
-    {
-        printArray("Se creo el proceso con PID: ");
-        printDec(newPCB->pid);
-        printArray(" :) \n");
-        print_processes();
-    }
-
     return newPCB->pid;
 }
 
@@ -63,30 +61,6 @@ void idleProcess()
         _hlt();
     }
 }
-
-// void createIdleProcess()
-// {
-//     void *newStack = mymalloc(PAGE);
-//     // StackFrame *newStackFrame = mymalloc(sizeof(StackFrame));
-
-//     if (newStack == NULL)
-//     {
-//         printArray("createProcess: ERROR creating process. Could not allocate Stack for process: ");
-//         printDec(processID);
-//         printArray("\n");
-//         return;
-//     }
-
-//     PCB *PCBidle = mymalloc(sizeof(PCB));
-//     initPCB(PCBidle, IDLE_PID, SHELL_PID, 0);
-//     PCB_array[IDLE_PID] = PCBidle;
-
-//     PCBidle->stack = initStackFrame(newStack, 0, NULL, idleProcess, IDLE_PID);
-//     PCBidle->baseAddress = newStack;
-//     PCBidle->limit = PAGE;
-
-//     addCircularList(&round_robin, IDLE_PID);
-// }
 
 uint64_t killProcess(int pid)
 {
@@ -108,8 +82,9 @@ uint64_t killProcess(int pid)
 
     pcb->state = FINISHED;
 
-    // Liberamos ambos stacks
-    myfree(pcb->baseAddress);
+    // Liberamos stack y pcb
+    myfree(pcb->baseAddress - PAGE + sizeof(char));
+    myfree(pcb);
     printArray("killProcess: Process with PID: ");
     printDec(pid);
     printArray(" killed\n");
@@ -195,48 +170,45 @@ CircularListNode *getCurrentProcess()
 //     return pcb->stack;
 // }
 
-void *schedule(void *rsp) // Scheduler DUMMY
+void *schedule(void *rsp) // RSP del Proceso A
 {
-    if (current->next == NULL) // Si no hay más procesos READY en la lista, ejecuto HLT
+    if (current == NULL)
     {
-        idleProcess();
+        current = round_robin.head;
+        PCB *pcb = PCB_array[IDLE_PID];
+        return pcb->stack; // RSP del IDLE
     }
 
     PCB *pcb = PCB_array[current->pid];
-
-    pcb->stack = rsp;                        // Guardo el RSP del proceso que va a dejar de correr
-    addCircularList(&round_robin, pcb->pid); // Sin prioridades
-
-    printArray("--- changing Context del PID: ---\n");
-    printDec(pcb->pid);
-    printArray("\n");
-    printHex(pcb->stack);
-    printArray("\n");
+    StackFrame *stack = rsp;
+    pcb->stack = rsp; // Guardo el RSP del proceso que va a dejar de correr
+    // addCircularList(&round_robin, pcb->pid); // Sin prioridades
 
     // Siguiente proceso a correr
-    current = current->next; // Distinto de NULL
+    current = current->next;
+    // printDec(current->pid);
+    // printArray("\n");
     pcb = PCB_array[current->pid];
-
     while (pcb->state == BLOCKED || pcb->state == FINISHED)
     {
-        if (current->next == NULL)
-        {
-            idleProcess();
-        }
-        else
-        {
-            current = current->next;
-            pcb = PCB_array[current->pid];
-        }
+        current = current->next;
+        pcb = PCB_array[current->pid];
     }
 
-    printArray("--- CHANGED Context del PID: ---\n");
-    printDec(pcb->pid);
-    printArray("\n");
-    printHex(pcb->stack);
-    printArray("\n");
+    pcb->runningCounter++;
 
-    return pcb->stack;
+    // if (pcb->pid == 2)
+    // {
+    //     printArray("--- CHANGED Context del PID: ---\n");
+    //     printDec(pcb->pid);
+    //     printArray("\n");
+    //     printHex(pcb->stack->rip);
+    //     printArray("\n");
+    //     printHex(pcb->stack);
+    //     printArray("\n");
+    // }
+
+    return pcb->stack; // RSP del proceso B
 }
 
 void my_nice(uint64_t pid, uint64_t newPrio)

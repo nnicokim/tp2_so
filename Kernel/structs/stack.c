@@ -1,7 +1,9 @@
 #include "../scheduler/include/scheduler.h"
 #include <stdio.h>
 
-void *initStackFrame(void *stackProcess, int argc, char **argv, void (*program)(int, char **), uint64_t pid)
+// void *initStackFrame(void *stackProcess, int argc, char **argv, void (*program)(int, char **), uint64_t pid)
+void *initStackFrame(void *stackProcess, int argc, char **argv, void *program, uint64_t pid)
+
 {
     StackFrame *newStackFrame = stackProcess;
     // Escribe desde la direccion de memoria de stackProcess.
@@ -19,7 +21,7 @@ void *initStackFrame(void *stackProcess, int argc, char **argv, void (*program)(
 
     newStackFrame->rsi = (uint64_t)argv;
     newStackFrame->rdi = argc;
-    newStackFrame->rbp = 0;
+    newStackFrame->rbp = stackProcess;
     newStackFrame->rdx = (uint64_t)program;
     newStackFrame->rcx = pid;
     newStackFrame->rbx = 0x014;
@@ -29,8 +31,8 @@ void *initStackFrame(void *stackProcess, int argc, char **argv, void (*program)(
     newStackFrame->rip = (uint64_t)program;
     newStackFrame->cs = 0x8;
     newStackFrame->rflags = 0x202;
-    newStackFrame->rsp = stackProcess - sizeof(StackFrame) - sizeof(char);
-    newStackFrame->ss = 0x0; // Iretq
+    newStackFrame->rsp = stackProcess;
+    newStackFrame->ss = 0x0;
 
     return newStackFrame->rsp;
 }

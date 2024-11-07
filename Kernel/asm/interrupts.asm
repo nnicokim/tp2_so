@@ -276,9 +276,9 @@ _irq00Handler:
 	mov al, 20h
 	out 20h, al
 
-	popState  ; TODO: Fijarse si los registros se guardan bien
+	popState  
 	sti
-	iretq     ; TODO: Fijarse si los registros se guardan bien
+	iretq    
 
 
 ;Keyboard

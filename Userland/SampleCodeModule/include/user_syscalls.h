@@ -69,4 +69,6 @@ int usys_increase_priority(int pid);
 
 int usys_decrease_priority(int pid);
 
+void usys_print_processes();
+
 #endif

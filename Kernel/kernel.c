@@ -73,7 +73,7 @@ int main()
 
 	initScheduler();
 
-	// Creamos el proceso 0 (Shell)
+	// Creamos el proceso 0 (Kernel/Shell)
 	PCB *PCBshell = mymalloc(sizeof(PCB));
 	initPCB(PCBshell, SHELL_PID, SHELL_PID, 0);
 	PCB_array[SHELL_PID] = PCBshell;

@@ -64,4 +64,6 @@ uint64_t _my_nice(uint64_t pid, uint64_t newPrio);
 uint64_t _increase_priority(int pid);
 
 uint64_t _decrease_priority(int pid);
+
+uint64_t _print_processes();
 #endif

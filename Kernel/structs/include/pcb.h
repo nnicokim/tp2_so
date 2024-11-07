@@ -28,7 +28,7 @@ typedef struct PCB
     unsigned int pid;  // Process ID
     unsigned int ppid; // Parent Process ID
     int state;         // Process state
-    void *stack;       // Stack pointer de cada proceso
+    StackFrame *stack; // Stack pointer de cada proceso
     int priority;      // Process priority
     unsigned int runningCounter;
 
