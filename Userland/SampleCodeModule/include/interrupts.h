@@ -66,4 +66,6 @@ uint64_t _increase_priority(int pid);
 uint64_t _decrease_priority(int pid);
 
 uint64_t _print_processes();
+
+uint64_t _print_memory();
 #endif

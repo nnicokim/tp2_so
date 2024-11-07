@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include "../include/videoDriver.h"
 
 #define HEAP_START ((void *)0xA00000) // 10 Mb
 #define BLOCK_SIZE 10000          
@@ -29,5 +30,10 @@ void *mymalloc(size_t size);
  * @param   ptr Pointer to the memory block to be freed
  */
 void myfree(void *ptr);
+
+/**
+  * @brief  Prints the memory map
+ */
+void mem();
 
 #endif

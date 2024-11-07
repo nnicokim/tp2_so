@@ -157,3 +157,8 @@ void usys_print_processes()
 {
     _print_processes();
 }
+
+void usys_print_memory()
+{
+    _print_memory();
+}

@@ -18,6 +18,7 @@ void test_processes();
 void test_mm();
 void test_prio();
 void print_processes();
+void print_memory();
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -39,6 +40,10 @@ static Command commands[] = {
     {"tmm", test_mm, "Testea el gestor de memoria"},
     {"tprio", test_prio, "Testea la prioridad de los procesos"},
     {"printp", print_processes, "Imprime los procesos activos"}};
+
+static Command commandsNohelp[] = {
+    {"mem", print_memory, "Imprime la memoria"}};
+
 
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
 #define COMMAND_COUNT sizeofArr(commands)
@@ -64,6 +69,9 @@ void parseCommand(char *str)
         if (strcmp(str, commands[i].name_id) == 0)
         {
             (*commands[i].func)(argument);
+            return;
+        } else if(strcmp(str, commandsNohelp[i].name_id) == 0){
+            (*commandsNohelp[i].func)(argument);
             return;
         }
     }
@@ -280,4 +288,9 @@ void test_mm()
 void print_processes()
 {
     usys_print_processes();
+}
+
+void print_memory()
+{
+    usys_print_memory();
 }

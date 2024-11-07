@@ -31,6 +31,7 @@ GLOBAL _my_nice
 GLOBAL _increase_priority
 GLOBAL _decrease_priority
 GLOBAL _print_processes
+GLOBAL _print_memory
 
 section .text
 
@@ -349,6 +350,15 @@ _print_processes:
     push rbp
     mov rbp, rsp
     mov rax, 31
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_print_memory:
+    push rbp
+    mov rbp, rsp
+    mov rax, 32
     int 80h
     mov rsp, rbp
     pop rbp
