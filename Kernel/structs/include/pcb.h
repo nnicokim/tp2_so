@@ -30,9 +30,10 @@ typedef struct PCB
     int state;         // Process state
     StackFrame *stack; // Stack pointer de cada proceso
     int priority;      // Process priority
+    int priorityLife;
     unsigned int runningCounter;
 
-    void *baseAddress; // direccion base del proceso (memoria virtual)
+    void *baseAddress;
     size_t limit;
 
 } PCB;

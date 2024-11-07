@@ -13,6 +13,7 @@ void initPCB(PCB *pcb, int pid, int ppid, int priority)
     pcb->ppid = ppid;
     pcb->state = READY;
     pcb->priority = priority;
+    pcb->priorityLife = priority;
     pcb->runningCounter = 0;
 
     pcb->baseAddress = NULL;
@@ -28,6 +29,7 @@ PCB *copyPCB(PCB *pcb, PCB *newPCB)
     newPCB->ppid = pcb->ppid;
     newPCB->state = pcb->state;
     newPCB->priority = pcb->priority;
+    newPCB->priorityLife = pcb->priorityLife;
     newPCB->runningCounter = pcb->runningCounter;
     newPCB->baseAddress = pcb->baseAddress;
     newPCB->limit = pcb->limit;
@@ -59,6 +61,8 @@ void printPCB(PCB *pcb)
     printDec(pcb->state);
     printArray(" || Priority: ");
     printDec(pcb->priority);
+    printArray(" || Priority Life: ");
+    printDec(pcb->priorityLife);
     printArray(" || Running Counter: ");
     printDec(pcb->runningCounter);
     printArray(" || RSP: ");
