@@ -6,7 +6,8 @@ GLOBAL getMinutes
 GLOBAL getSeconds
 GLOBAL inb 
 GLOBAL outb 
-global forceTimerTick
+GLOBAL forceTimerTick
+GLOBAL change
 
 section .text
 	
@@ -171,4 +172,9 @@ getRSP:
 ; Para el scheduler o kill
 forceTimerTick:
 	int 20h
+	ret
+
+change: ;Cambia los valores del semaforo pasado
+	mov rax, rsi 
+	xchg [rdi], eax 
 	ret
