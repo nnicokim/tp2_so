@@ -99,7 +99,9 @@ void init_shell()
         print(" | ");
     }
     printColor(LIGHT_BLUE, commands[COMMAND_COUNT - 1].name_id);
-    print("\nIngrese \"help\" para la descripcion los comandos.\n");
+    print("\nIngrese ");
+    printColor(PURPLE, "\"help\" ");
+    print("para la descripcion los comandos.\n");
     char c;
     int running = 1;
     currentFontSize = usys_get_font_size();
@@ -134,7 +136,7 @@ void init_shell()
 
 void help()
 {
-    print("Comandos disponibles:\n");
+    printColor(PINK, "Comandos disponibles:\n");
     for (int i = 1; i < COMMAND_COUNT; i++)
     {
         print("   ");
@@ -274,28 +276,32 @@ void play_eliminator()
 
 void call_test_processes()
 {
+    printColor(ORANGE, "Prrocesses testing...\n");
     char *argvAux[] = {"10"};
     test_processes(1, argvAux);
 }
 
 void call_test_prio()
 {
-    print("Testeando prioridades...\n");
+    printColor(ORANGE, "Priorities testing...\n");
     test_prio();
 }
 
 void call_test_mm()
 {
+    printColor(ORANGE, "MM testing...\n");
     char *argvmm[] = {"1000"};
     test_mm(1, argvmm);
 }
 
 void print_processes()
 {
+    printColor(ORANGE, "Printing processes...\n");
     usys_print_processes();
 }
 
 void print_memory()
 {
+    printColor(ORANGE, "Printing memory directions...\n");
     usys_print_memory();
 }

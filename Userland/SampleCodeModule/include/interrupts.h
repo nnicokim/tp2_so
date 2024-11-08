@@ -2,6 +2,7 @@
 #define INTERRUPTS_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 uint64_t _read(uint64_t fd, uint64_t buf, uint64_t size);
 
@@ -35,7 +36,7 @@ uint64_t _draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t x, u
 
 uint64_t _flush_buffer();
 
-uint64_t _createProcess(void (*program)(int, char **), int argc, char **argv);
+uint64_t _createProcess(void *program, int argc, char **argv);
 
 uint64_t _blockProcess(int pid);
 
@@ -68,4 +69,9 @@ uint64_t _decrease_priority(int pid);
 uint64_t _print_processes();
 
 uint64_t _print_memory();
+
+uint64_t _mymalloc(size_t size);
+
+uint64_t _myfree(void *ptr);
+
 #endif

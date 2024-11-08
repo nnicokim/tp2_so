@@ -265,7 +265,6 @@ void my_exit()
 
 void print_processes()
 {
-    printArray("Printing processes...\n");
     for (int i = 0; i < processID; i++)
     {
         if (PCB_array[i] != NULL)

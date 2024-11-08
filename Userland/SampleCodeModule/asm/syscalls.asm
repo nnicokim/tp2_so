@@ -29,6 +29,8 @@ GLOBAL _increase_priority
 GLOBAL _decrease_priority
 GLOBAL _print_processes
 GLOBAL _print_memory
+GLOBAL _mymalloc
+GLOBAL _myfree
 
 section .text
 
@@ -329,6 +331,24 @@ _print_memory:
     push rbp
     mov rbp, rsp
     mov rax, 32
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_mymalloc:
+    push rbp
+    mov rbp, rsp
+    mov rax, 33
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_myfree:
+    push rbp
+    mov rbp, rsp
+    mov rax, 34
     int 80h
     mov rsp, rbp
     pop rbp

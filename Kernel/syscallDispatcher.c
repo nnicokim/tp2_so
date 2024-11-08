@@ -55,6 +55,8 @@ uint64_t ksys_increase_priority(int pid);
 uint64_t ksys_decrease_priority(int pid);
 uint64_t ksys_print_processes();
 uint64_t ksys_print_memory();
+uint64_t ksys_mymalloc(size_t size);
+uint64_t ksys_myfree(void *ptr);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -130,6 +132,10 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_print_processes();
     case 32:
         return ksys_print_memory();
+    case 33:
+        return ksys_mymalloc(rdi);
+    case 34:
+        return ksys_myfree((void *)rdi);
     }
 
     return 0;
@@ -333,5 +339,16 @@ uint64_t ksys_print_processes()
 uint64_t ksys_print_memory()
 {
     mem();
+    return 0;
+}
+
+uint64_t ksys_mymalloc(size_t size)
+{
+    return (uint64_t)mymalloc(size);
+}
+
+uint64_t ksys_myfree(void *ptr)
+{
+    myfree(ptr);
     return 0;
 }

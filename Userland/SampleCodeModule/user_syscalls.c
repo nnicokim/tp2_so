@@ -1,5 +1,6 @@
 #include <user_syscalls.h>
 #include <interrupts.h>
+#include <stdint.h>
 
 #define INPUT_SIZE 100
 
@@ -78,7 +79,7 @@ void flush_buffer()
     _flush_buffer();
 }
 
-int usys_createProcess(void (*program)(int, char **), int argc, char **argv)
+int usys_createProcess(char *program, int argc, char **argv)
 {
     return _createProcess(program, argc, argv);
 }
@@ -146,4 +147,14 @@ void usys_print_processes()
 void usys_print_memory()
 {
     _print_memory();
+}
+
+void *usys_mymalloc(size_t size)
+{
+    return (void *)_mymalloc(size);
+}
+
+void usys_myfree(void *ptr)
+{
+    _myfree(ptr);
 }

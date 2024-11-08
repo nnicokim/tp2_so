@@ -2,6 +2,7 @@
 #define USER_SYSCALLS_H
 #include <stdint.h>
 #include <interrupts.h>
+#include <stddef.h>
 
 #define STDIN 0
 #define STDOUT 1
@@ -38,7 +39,7 @@ int usys_get_time();
 
 void flush_buffer();
 
-int usys_createProcess(void (*program)(int, char **), int argc, char **argv);
+int usys_createProcess(char *program, int argc, char **argv);
 
 int usys_blockProcess(int pid);
 
@@ -65,5 +66,9 @@ int usys_decrease_priority(int pid);
 void usys_print_processes();
 
 void usys_print_memory();
+
+void *usys_mymalloc(size_t size);
+
+void usys_myfree(void *ptr);
 
 #endif
