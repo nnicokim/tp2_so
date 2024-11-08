@@ -51,8 +51,10 @@ void printPCB(PCB *pcb)
 {
     if (pcb->pid == 0)
         printArray("SHELL: \n");
-    if (pcb->pid == 1)
+    else if (pcb->pid == 1)
         printArray("IDLE: \n");
+    else
+        printArray("ORDINARY PROCESS: \n");
     printArray("PID: ");
     printDec(pcb->pid);
     printArray(" || PPID: ");

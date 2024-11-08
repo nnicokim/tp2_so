@@ -44,7 +44,6 @@ static Command commands[] = {
 static Command commandsNohelp[] = {
     {"mem", print_memory, "Imprime la memoria"}};
 
-
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
 #define COMMAND_COUNT sizeofArr(commands)
 
@@ -70,7 +69,9 @@ void parseCommand(char *str)
         {
             (*commands[i].func)(argument);
             return;
-        } else if(strcmp(str, commandsNohelp[i].name_id) == 0){
+        }
+        else if (strcmp(str, commandsNohelp[i].name_id) == 0)
+        {
             (*commandsNohelp[i].func)(argument);
             return;
         }
@@ -275,7 +276,6 @@ void test_processes()
 void test_prio()
 {
     print("Testeando prioridades...\n");
-    // char *argvPrio[] = {"10"};
     usys_test_prio();
 }
 

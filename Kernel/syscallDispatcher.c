@@ -121,7 +121,6 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
     case 26:
         return ksys_myExit();
     case 27:
-        // return test_prio(rdi, rsi);
         sys_test_prio();
         return 0;
     case 28:
@@ -281,8 +280,6 @@ uint64_t ksys_getCurrentPpid()
     return getCurrentPPid();
 }
 
-// Faltaria implementar la parte de las prioridades (cuando lo hagamos)
-// Ver si hay que hacer algo con el stack. Faltaria algo mas?
 uint64_t ksys_killProcess(int pid)
 {
     return killProcess(pid);
@@ -336,7 +333,6 @@ uint64_t ksys_print_processes()
     return 0;
 }
 
-//Syscall imprimir memoria
 uint64_t ksys_print_memory()
 {
     mem();

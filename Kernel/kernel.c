@@ -71,18 +71,13 @@ int main()
 	// size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
 	// init_buddy_allocator(HEAP_START, total_memory);
 
-	initScheduler();
-
-	// Creamos el proceso 0 (Kernel/Shell)
-	// PCB *PCBshell = mymalloc(sizeof(PCB));
-	// initPCB(PCBshell, SHELL_PID, SHELL_PID, 0);
-	// PCB_array[SHELL_PID] = PCBshell;
-
 	printArray("Welcome to the Kernel!\n");
+
+	initScheduler();
 
 	_sti(); // Habilitar interrupciones
 
-	//_setUser(); // Cambiar a modo usuario
+	//_setUser();
 
 	printArray("You shouldn't be here chief...");
 

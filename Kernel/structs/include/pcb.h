@@ -9,7 +9,7 @@
 #define SHELL_PID 0
 #define IDLE_PID 1
 
-#define MAX_PROCESSES 128 // 64 * 1024
+#define MAX_PROCESSES 192
 
 enum State
 {
@@ -18,10 +18,6 @@ enum State
     BLOCKED,
     FINISHED
 };
-// #define READY 0
-// #define RUNNING 1
-// #define BLOCKED 2
-// #define FINISHED 3
 
 typedef struct PCB
 {

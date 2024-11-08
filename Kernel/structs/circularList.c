@@ -26,7 +26,6 @@ void addCircularList(CircularList *list, int pid)
     }
     else
     {
-        // printArray("Hola estoy en el CL");
         CircularListNode *prev_head = list->head;
         newNode->prev = prev_head->prev;
         prev_head->prev->next = newNode;
@@ -50,9 +49,7 @@ void addCircularList(CircularList *list, int pid)
         // // list->head->prev = newNode;
     }
     list->size++;
-    // printArray("Size de la lista luego del ADD: ");
-    // printDec(list->size);
-    // printArray("\n");
+
     return;
 }
 

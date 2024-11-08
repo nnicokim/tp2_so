@@ -6,8 +6,6 @@ extern void forceTimerTick();
 
 int isSchedulerActive = 0;
 
-int IDLE_counter = 0;
-
 CircularListNode *current = NULL;
 static int processID = 0;
 
@@ -16,7 +14,7 @@ void initScheduler()
     initializeCircularList(&round_robin);
 
     int pidShell = createProcess(_setUser, 0, NULL);
-    int pidIdle = createProcess(idleProcess, 0, NULL); // Creamos el proceso (Idle)
+    int pidIdle = createProcess(idleProcess, 0, NULL);
 
     isSchedulerActive = 1;
 }
@@ -42,7 +40,7 @@ uint64_t createProcess(char *program, int argc, char **argv)
     {
         newPCB->ppid = getCurrentPid();
     }
-    initPCB(newPCB, processID, newPCB->ppid, 1); // ver que prioridad se le pasa por Default
+    initPCB(newPCB, processID, newPCB->ppid, DEFAULT_PRIORITY);
     PCB_array[processID] = newPCB;
 
     newPCB->stack = initStackFrame(newStack + PAGE - sizeof(char), argc, argv, (void *)program, processID);

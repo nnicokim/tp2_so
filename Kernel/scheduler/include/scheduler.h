@@ -10,8 +10,9 @@
 #define PAGE 0x1000
 #define TRUE 1
 #define MAX_PRIORITY 5
+#define MIN_PRIORITY 0
+#define DEFAULT_PRIORITY 1
 
-// extern Queue PCBqueue;           // Lista de PCBs
 extern CircularList round_robin; // Lista de los procesos en round-robin
 extern CircularListNode *current;
 extern int isSchedulerActive;
@@ -33,4 +34,5 @@ int increase_priority(int pid);
 int decrease_priority(int pid);
 void my_exit();
 void print_processes();
+
 #endif
