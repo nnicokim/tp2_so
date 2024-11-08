@@ -114,7 +114,7 @@ int semWait(int semIndex)
     }
     else
     {
-        int pid = getCurrentPid(); // Esto hay que cambiarlo por nuestro current que tiene el pid corriendo
+        int pid = getCurrentPid();
         if (enqueueProcess(pid, sem) == -1)
         {
             change(&sem->lock, 0);

@@ -10,3 +10,4 @@ void bussy_wait(uint64_t n);
 void endless_loop();
 void endless_loop_print(uint64_t wait);
 uint64_t test_mm(uint64_t argc, char *argv[]);
+void memset(void *destination, int32_t c, uint64_t length);
