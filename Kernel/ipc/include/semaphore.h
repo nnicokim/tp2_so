@@ -1,10 +1,12 @@
 #include <stdint.h>
+#include <stdio.h>
 
 #ifndef SEMAPHORE_H
 #define SEMAPHORE_H
 
 #define MAX_NAME 15
 #define MAX_SEM 20
+#define MAX_SIZE 10
 
 extern int change(int *lock, int value);
 void initSems();

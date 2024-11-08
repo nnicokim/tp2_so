@@ -1,7 +1,11 @@
-#include "../include/semaphore.h"
+#include "./include/semaphore.h"
 #include <stdint.h>
+#include <stdio.h>
+#include <lib.h>
+#include <string.h>
+#include "../scheduler/include/scheduler.h"
 
-extern void forceTick(); //Este tiene que ser otra cosa
+// extern void forceTick(); // Este tiene que ser otra cosa
 
 typedef struct
 {
@@ -27,7 +31,7 @@ static int semLock = 0;
 static int findAvailableSpace();
 static int enqueueProcess(int pid, sem_t *sem);
 static int dequeueProcess(sem_t *sem);
-void printSemQueue(int semIndex);
+// void printSemQueue(int semIndex);
 int findSem(char *name);
 char *getSemName(int semIndex);
 
@@ -110,7 +114,7 @@ int semWait(int semIndex)
     }
     else
     {
-        int pid = getCurrentPid(); //Esto hay que cambiarlo por nuestro current que tiene el pid corriendo
+        int pid = getCurrentPid(); // Esto hay que cambiarlo por nuestro current que tiene el pid corriendo
         if (enqueueProcess(pid, sem) == -1)
         {
             change(&sem->lock, 0);
@@ -118,8 +122,7 @@ int semWait(int semIndex)
         }
 
         change(&sem->lock, 0);
-
-        block(pid);
+        blockProcess(pid);
 
         int flag = 0;
         do
@@ -134,7 +137,7 @@ int semWait(int semIndex)
             }
 
             change(&sem->lock, 0);
-            forceTick();
+            // forceTick();
         } while (!flag);
     }
     return 0;
@@ -158,11 +161,11 @@ int semPost(int semIndex)
         int pid = 0;
         if ((pid = dequeueProcess(sem)) == -1)
         {
-            printSemQueue(semIndex);
+            // printSemQueue(semIndex);
             change(&sem->lock, 0);
             return -1;
         }
-        unblock(pid);
+        unblockProcess(pid);
     }
 
     change(&sem->lock, 0);
@@ -171,24 +174,24 @@ int semPost(int semIndex)
 }
 
 /****************************************************************************************************/
-void printSemQueue(int semIndex)
-{
-    if (semIndex >= MAX_SEM)
-    {
-        print("Invalid semaphore index.\n");
-        return;
-    }
+// void printSemQueue(int semIndex)
+// {
+//     if (semIndex >= MAX_SEM)
+//     {
+//         print("Invalid semaphore index.\n");
+//         return;
+//     }
 
-    sem_t *sem = &semTable[semIndex].sem;
-    print("Semaphore: %s\n", sem->name);
-    print("Queue Size: %d\n", sem->queueSize);
+//     sem_t *sem = &semTable[semIndex].sem;
+//     print("Semaphore: %s\n", sem->name);
+//     print("Queue Size: %d\n", sem->queueSize);
 
-    int i;
-    for (i = 0; i < sem->queueSize; i++)
-    {
-        print("PID: %d\n", sem->pidQueue[i]);
-    }
-}
+//     int i;
+//     for (i = 0; i < sem->queueSize; i++)
+//     {
+//         print("PID: %d\n", sem->pidQueue[i]);
+//     }
+// }
 
 void initSems()
 {

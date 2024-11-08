@@ -147,10 +147,22 @@ void *schedule(void *rsp)
     }
 
     PCB *pcb = PCB_array[current->pid];
-    pcb->state = READY;
     pcb->stack = rsp;
+    if (pcb->state == RUNNING && pcb->priority > pcb->priorityLife)
+    {
+        pcb->priorityLife--;
+        return pcb->stack;
+    }
 
-    // current = current->next != NULL ? current->next : round_robin.head;
+    if (pcb->state == FINISHED)
+    {
+        current = current->next;
+        removeFromCircularList(&round_robin, pcb->pid);
+        killProcess(pcb->pid);
+        return change_context(current->pid);
+    }
+
+    pcb->state = READY;
     current = current->next;
 
     return change_context(current->pid);
@@ -166,6 +178,7 @@ void *change_context(int pid)
         pcb = PCB_array[current->pid];
     }
     pcb->state = RUNNING;
+    pcb->priorityLife = pcb->priority;
     pcb->runningCounter++;
 
     return pcb->stack;

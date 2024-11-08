@@ -29,6 +29,9 @@
         "syscall.h": "c",
         "test_prio.h": "c",
         "queue": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "semaphore.h": "c",
+        "memory.h": "c",
+        "lib.h": "c"
     }
 }
