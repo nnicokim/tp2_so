@@ -1,4 +1,7 @@
 #include <shell.h>
+#include "./include/tests/test_processes.h"
+#include "./include/tests/test_prio.h"
+#include "./include/tests/test_mm.h"
 
 #define INPUT_SIZE 100
 // #define COMMAND_COUNT 10
@@ -14,9 +17,9 @@ void zoomout();
 void inforeg();
 void clear_shell();
 void beep();
-void test_processes();
-void test_mm();
-void test_prio();
+void call_test_processes();
+void call_test_mm();
+void call_test_prio();
 void print_processes();
 void print_memory();
 
@@ -36,9 +39,10 @@ static Command commands[] = {
     {"zoomout", zoomout, "Disminuye el tamanio de la letra"},
     {"clear", clear_shell, "Limpia la shell"},
     {"beep", beep, "Emite un beep"},
-    {"tpr", test_processes, "Testea los procesos"},
-    {"tmm", test_mm, "Testea el gestor de memoria"},
-    {"tprio", test_prio, "Testea la prioridad de los procesos"},
+    // SO
+    {"tpr", call_test_processes, "Testea los procesos"},
+    {"tmm", call_test_mm, "Testea el gestor de memoria"},
+    {"tprio", call_test_prio, "Testea la prioridad de los procesos"},
     {"printp", print_processes, "Imprime los procesos activos"}};
 
 static Command commandsNohelp[] = {
@@ -247,6 +251,7 @@ void inforeg()
         printColor(RED, "No se pudo encontrar ningun momento de captura de registro. Presione CTRL para capturar los registros.\n");
     }
 }
+
 void clear_shell()
 {
     usys_clear_screen();
@@ -267,22 +272,22 @@ void play_eliminator()
     gameActive = 0;
 }
 
-void test_processes()
+void call_test_processes()
 {
     char *argvAux[] = {"10"};
-    usys_test_processes(1, argvAux);
+    test_processes(1, argvAux);
 }
 
-void test_prio()
+void call_test_prio()
 {
     print("Testeando prioridades...\n");
-    usys_test_prio();
+    test_prio();
 }
 
-void test_mm()
+void call_test_mm()
 {
     char *argvmm[] = {"1000"};
-    usys_test_mm(1, argvmm);
+    test_mm(1, argvmm);
 }
 
 void print_processes()

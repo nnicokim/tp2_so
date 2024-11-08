@@ -118,24 +118,9 @@ int usys_waitPid(int pid)
     return _waitPid(pid);
 }
 
-int usys_test_mm(uint64_t argc, char *argv[])
-{
-    return _test_mm(argc, argv);
-}
-
-int usys_test_processes(uint64_t argc, char *argv[])
-{
-    return _test_processes(argc, argv);
-}
-
 int usys_myExit()
 {
     return _myExit();
-}
-
-int usys_test_prio()
-{
-    return _test_prio();
 }
 
 int usys_my_nice(int pid, int new_prio)

@@ -4,7 +4,16 @@
 #include <tests/test_util.h>
 #include <tests/syscall.h>
 #include <videoDriver.h>
-#include "../scheduler/include/scheduler.h"
+#include "../include/tests/test_processes.h"
+// #include "../scheduler/include/scheduler.h"
+
+enum State
+{
+    RUNNING,
+    BLOCKED,
+    KILLED,
+    FINISHED
+};
 
 typedef struct P_rq
 {
@@ -12,7 +21,7 @@ typedef struct P_rq
     enum State state;
 } p_rq;
 
-int64_t test_processes(uint64_t argc, char *argv[])
+uint64_t test_processes(uint64_t argc, char *argv[])
 {
     uint8_t rq;
     uint8_t alive = 0;
@@ -33,12 +42,10 @@ int64_t test_processes(uint64_t argc, char *argv[])
         // Create max_processes processes
         for (rq = 0; rq < max_processes; rq++)
         {
-            p_rqs[rq].pid = createProcess("endless_loop", 0, argvAux);
+            p_rqs[rq].pid = usys_createProcess("endless_loop", 0, argvAux);
             if (p_rqs[rq].pid == -1)
             {
-                // printArray("test_processes: ERROR creating process: -");
-                // printDec(p_rqs[rq].pid * -1);
-                // printArray("\n");
+                printColor(RED, "test_processes: ERROR creating process: -");
                 return -1;
             }
             else
@@ -61,11 +68,9 @@ int64_t test_processes(uint64_t argc, char *argv[])
                 case 0:
                     if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED)
                     {
-                        if (killProcess(p_rqs[rq].pid) == -1)
+                        if (usys_killProcess(p_rqs[rq].pid) == -1)
                         {
-                            // printArray("test_processes: ERROR killing process with PID: ");
-                            // printDec(p_rqs[rq].pid);
-                            // printArray("\n");
+                            printColor(RED, "test_processes: ERROR killing process. \n");
                             return -1;
                         }
                         p_rqs[rq].state = FINISHED;
@@ -76,11 +81,9 @@ int64_t test_processes(uint64_t argc, char *argv[])
                 case 1:
                     if (p_rqs[rq].state == RUNNING)
                     {
-                        if (blockProcess(p_rqs[rq].pid) == -1)
+                        if (usys_blockProcess(p_rqs[rq].pid) == -1)
                         {
-                            // printArray("test_processes: ERROR blocking process with PID: ");
-                            // printDec(p_rqs[rq].pid);
-                            // printArray("\n");
+                            printColor(RED, "test_processes: ERROR blocking process. \n");
                             return -1;
                         }
                         p_rqs[rq].state = BLOCKED;
@@ -93,11 +96,9 @@ int64_t test_processes(uint64_t argc, char *argv[])
             for (rq = 0; rq < max_processes; rq++)
                 if (p_rqs[rq].state == BLOCKED && GetUniform(100) % 2)
                 {
-                    if (unblockProcess(p_rqs[rq].pid) == -1)
+                    if (usys_unblockProcess(p_rqs[rq].pid) == -1)
                     {
-                        // printArray("test_processes: ERROR unblocking process with PID: ");
-                        // printDec(p_rqs[rq].pid);
-                        // printArray("\n");
+                        printColor(RED, "test_processes: ERROR unblocking process. \n");
                         return -1;
                     }
                     p_rqs[rq].state = RUNNING;

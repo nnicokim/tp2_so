@@ -54,14 +54,7 @@ int usys_leaveCPU();
 
 int usys_waitPid(int pid);
 
-int usys_test_mm(uint64_t argc, char *argv[]);
-
-int usys_test_processes(uint64_t argc, char *argv[]);
-
 int usys_myExit();
-
-// int usys_test_prio(uint64_t argc, char *argv[]);
-int usys_test_prio();
 
 int usys_my_nice(int pid, int new_prio);
 

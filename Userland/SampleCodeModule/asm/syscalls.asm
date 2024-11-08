@@ -23,10 +23,7 @@ GLOBAL _getCurrentPpid
 GLOBAL _killProcess
 GLOBAL _leaveCPU
 GLOBAL _waitPid
-GLOBAL _test_mm
-GLOBAL _test_processes
 GLOBAL _myExit
-GLOBAL _test_prio
 GLOBAL _my_nice
 GLOBAL _increase_priority
 GLOBAL _decrease_priority
@@ -283,37 +280,10 @@ _waitPid:
     pop rbp
     ret
 
-_test_mm:
-    push rbp
-    mov rbp, rsp
-    mov rax, 24
-    int 80h
-    mov rsp, rbp
-    pop rbp
-    ret
-
-_test_processes:
-    push rbp
-    mov rbp, rsp
-    mov rax, 25
-    int 80h
-    mov rsp, rbp
-    pop rbp
-    ret
-
 _myExit:
     push rbp
     mov rbp, rsp
     mov rax, 26
-    int 80h
-    mov rsp, rbp
-    pop rbp
-    ret
-
-_test_prio:
-    push rbp
-    mov rbp, rsp
-    mov rax, 27
     int 80h
     mov rsp, rbp
     pop rbp
