@@ -1,5 +1,4 @@
 #include <tests/test_prio.h>
-#include "../include/videoDriver.h"
 #include "../include/tests/test_prio.h"
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
@@ -28,7 +27,7 @@ void test_prio()
     printColor(LIGHT_BLUE, "CHANGING PRIORITIES WHILE BLOCKED...\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        my_nice(pids[i], MEDIUM);
+        _my_nice(pids[i], MEDIUM);
 
     printColor(LIGHT_BLUE, "UNBLOCKING...\n");
 
