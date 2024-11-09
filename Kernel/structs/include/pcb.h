@@ -9,7 +9,7 @@
 #define SHELL_PID 0
 #define IDLE_PID 1
 
-#define MAX_PROCESSES 192
+#define MAX_PROCESSES 256
 
 enum State
 {
