@@ -56,17 +56,18 @@ void randomFunction()
 {
     printArray("Random function executed!!! \n");
 
-    while (TRUE)
-        ;
+    // while (TRUE)
+    //     ;
 
-    // int i = 0;
-    // while (i < 1000000)
-    // {
-    //     i++;
-    // }
-    // printArray("Random function FINISHED \n");
-    // PCB *pcb = PCB_array[getCurrentPid()];
-    // pcb->state = FINISHED;
+    int i = 0;
+    while (i < 1000000)
+    {
+        i++;
+    }
+    printArray("Random function FINISHED \n");
+    PCB *pcb = PCB_array[getCurrentPid()];
+    pcb->state = FINISHED;
+    my_exit();
 }
 
 uint64_t createOneProcess()

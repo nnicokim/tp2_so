@@ -7,6 +7,8 @@
 #include "../memory_manager/include/mm_manager.h"
 #include "./include/stack.h"
 
+void allvars(PCB *pcb);
+
 void initPCB(PCB *pcb, int pid, int ppid, int priority)
 {
     pcb->pid = pid;
@@ -49,27 +51,37 @@ int compare_PCB(const PCB *pcb1, const PCB *pcb2)
 
 void printPCB(PCB *pcb)
 {
-    if (pcb->pid == 0)
+    if (pcb->pid == 0){
         printArray("SHELL: \n");
-    else if (pcb->pid == 1)
+        allvars(pcb);
+    }else if (pcb->pid == 1){
         printArray("IDLE: \n");
-    else
+        allvars(pcb);
+    }else
+        if(pcb->state == FINISHED){ // Do nothing
+    }else{
         printArray("ORDINARY PROCESS: \n");
+        allvars(pcb);
+        }
+}
+
+void allvars(PCB *pcb)
+{
     printArray("PID: ");
-    printDec(pcb->pid);
-    printArray(" || PPID: ");
-    printDec(pcb->ppid);
-    printArray(" || State: ");
-    printDec(pcb->state);
-    printArray(" || Priority: ");
-    printDec(pcb->priority);
-    printArray(" || Priority Life: ");
-    printDec(pcb->priorityLife);
-    printArray(" || Running Counter: ");
-    printDec(pcb->runningCounter);
-    printArray(" || RSP: ");
-    printHex((uint64_t)pcb->stack);
-    printArray(" || Base Address: ");
-    printHex((uint64_t)pcb->baseAddress);
-    printArray("\n");
+        printDec(pcb->pid);
+        printArray(" || PPID: ");
+        printDec(pcb->ppid);
+        printArray(" || State: ");
+        printDec(pcb->state);
+        printArray(" || Priority: ");
+        printDec(pcb->priority);
+        printArray(" || Priority Life: ");
+        printDec(pcb->priorityLife);
+        printArray(" || Running Counter: ");
+        printDec(pcb->runningCounter);
+        printArray(" || RSP: ");
+        printHex((uint64_t)pcb->stack);
+        printArray(" || Base Address: ");
+        printHex((uint64_t)pcb->baseAddress);
+        printArray("\n");
 }
