@@ -54,7 +54,6 @@ uint64_t createProcess(char *program, int argc, char **argv)
 
 void idleProcess()
 {
-    printArray("idleProcess: Entering HALT... \n");
     while (TRUE)
     {
         _hlt();
@@ -81,6 +80,7 @@ uint64_t killProcess(int pid)
     // Liberamos stack y pcb
     myfree(pcb->baseAddress - PAGE + sizeof(char));
     myfree(pcb);
+    removeFromCircularList(&round_robin, pid);
     printArray("killProcess: Process with PID: ");
     printDec(pid);
     printArray(" killed\n");
@@ -253,7 +253,7 @@ int decrease_priority(int pid)
 void my_exit()
 {
     PCB *pcb = PCB_array[getCurrentPid()];
-    if (pcb == NULL || pcb->state == FINISHED)
+    if (pcb == NULL || pcb->state == FINISHED || pcb->pid == 0 || pcb->pid == 1)
     {
         printArray("Could not exit process\n");
         forceTimerTick();
