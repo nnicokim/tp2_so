@@ -52,6 +52,8 @@ int64_t test_processes(uint64_t argc, char *argv[])
             printArray("\n");
         }
 
+        timer_wait_ms(10);
+
         // Randomly kills, blocks or unblocks processes until every one has been killed
         while (alive > 0)
         {
@@ -110,7 +112,6 @@ int64_t test_processes(uint64_t argc, char *argv[])
 
         printDec(counter);
         printArray("\n");
-        // if (counter > 250)
         return;
     }
 }

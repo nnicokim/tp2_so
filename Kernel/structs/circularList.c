@@ -56,13 +56,8 @@ void addCircularList(CircularList *list, int pid)
 void removeFromCircularList(CircularList *list, int pid)
 {
     CircularListNode *current = list->head;
-    if (list->size == 0 || list->head == NULL)
-    {
-        printArray("removeFromCircularList: ERROR: CircularList is empty\n");
-        return;
-    }
 
-    for (int i = 0; i <= list->size; i++)
+    for (int i = 0; i < list->size; i++)
     {
         if (current->pid != pid)
         {
@@ -80,10 +75,7 @@ void removeFromCircularList(CircularList *list, int pid)
         }
         myfree(current);
         list->size--;
-        if (list->size == 0)
-        {
-            list->head = NULL;
-        }
+
         return;
     }
     printArray("El proceso con pid: ");

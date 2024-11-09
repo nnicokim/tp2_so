@@ -55,17 +55,18 @@ uint64_t createProcess(char *program, int argc, char **argv)
 void randomFunction()
 {
     printArray("Random function executed!!! \n");
-    // while (TRUE)
-    //     ;
 
-    int i = 0;
-    while (i < 1000000)
-    {
-        i++;
-    }
-    printArray("Random function FINISHED and killing process... \n");
-    PCB *pcb = PCB_array[getCurrentPid()];
-    pcb->state = FINISHED;
+    while (TRUE)
+        ;
+
+    // int i = 0;
+    // while (i < 1000000)
+    // {
+    //     i++;
+    // }
+    // printArray("Random function FINISHED \n");
+    // PCB *pcb = PCB_array[getCurrentPid()];
+    // pcb->state = FINISHED;
 }
 
 uint64_t createOneProcess()
@@ -88,7 +89,7 @@ uint64_t killProcess(int pid)
         return -1;
     }
     PCB *pcb = PCB_array[pid];
-    if (pcb == NULL || pcb->state == FINISHED)
+    if (pcb == NULL)
     {
         printArray("killProcess: ERROR: Process with PID: ");
         printDec(pid);
@@ -96,11 +97,9 @@ uint64_t killProcess(int pid)
         return -1;
     }
 
-    pcb->state = FINISHED;
-
     // Liberamos stack y pcb
     removeFromCircularList(&round_robin, pcb->pid); // OJO el orden
-    myfree(pcb->baseAddress - PAGE + sizeof(char));
+    myfree(pcb->baseAddress - PAGE + sizeof(char)); // Libera el stack
     myfree(pcb);
     printArray("killProcess: Process with PID: ");
     printDec(pid);
@@ -117,12 +116,10 @@ int blockProcess(int pid)
     PCB *pcb = PCB_array[pid];
     if (pcb->state == BLOCKED || pcb->state == FINISHED || pcb == NULL)
     {
+        printArray("ERROR: Could not block process\n");
         return -1;
     }
     pcb->state = BLOCKED;
-    printArray("blockProcess: Process with PID: ");
-    printDec(pid);
-    printArray(" blocked\n");
     return 1;
 }
 
@@ -134,7 +131,6 @@ int unblockProcess(int pid)
         return -1;
     }
     pcb->state = READY;
-    addCircularList(&round_robin, pid);
     return 1;
 }
 
@@ -192,6 +188,9 @@ void *change_context(int pid)
 
     while (pcb->state == BLOCKED || pcb->state == FINISHED)
     {
+        if (pcb->state == FINISHED)
+            killProcess(pcb->pid);
+
         current = current->next;
         pcb = PCB_array[current->pid];
     }
