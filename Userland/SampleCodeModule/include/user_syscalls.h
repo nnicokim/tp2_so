@@ -38,7 +38,7 @@ int usys_get_time();
 
 void flush_buffer();
 
-int usys_createProcess(void (*program)(int, char **), int argc, char **argv);
+int usys_createProcess();
 
 int usys_blockProcess(int pid);
 

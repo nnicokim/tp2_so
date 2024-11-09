@@ -78,9 +78,9 @@ void flush_buffer()
     _flush_buffer();
 }
 
-int usys_createProcess(void (*program)(int, char **), int argc, char **argv)
+int usys_createProcess()
 {
-    return _createProcess(program, argc, argv);
+    return _createProcess();
 }
 
 int usys_blockProcess(int pid)

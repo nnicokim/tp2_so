@@ -35,7 +35,7 @@ uint64_t _draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t x, u
 
 uint64_t _flush_buffer();
 
-uint64_t _createProcess(void (*program)(int, char **), int argc, char **argv);
+uint64_t _createProcess();
 
 uint64_t _blockProcess(int pid);
 

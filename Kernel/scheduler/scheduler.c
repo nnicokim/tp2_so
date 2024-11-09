@@ -52,6 +52,27 @@ uint64_t createProcess(char *program, int argc, char **argv)
     return newPCB->pid;
 }
 
+void randomFunction()
+{
+    printArray("Random function executed!!! \n");
+    // while (TRUE)
+    //     ;
+
+    int i = 0;
+    while (i < 1000000)
+    {
+        i++;
+    }
+    printArray("Random function FINISHED and killing process... \n");
+    PCB *pcb = PCB_array[getCurrentPid()];
+    pcb->state = FINISHED;
+}
+
+uint64_t createOneProcess()
+{
+    return createProcess(randomFunction, 0, NULL);
+}
+
 void idleProcess()
 {
     while (TRUE)
@@ -78,9 +99,9 @@ uint64_t killProcess(int pid)
     pcb->state = FINISHED;
 
     // Liberamos stack y pcb
+    removeFromCircularList(&round_robin, pcb->pid); // OJO el orden
     myfree(pcb->baseAddress - PAGE + sizeof(char));
     myfree(pcb);
-    removeFromCircularList(&round_robin, pid);
     printArray("killProcess: Process with PID: ");
     printDec(pid);
     printArray(" killed\n");
@@ -155,7 +176,6 @@ void *schedule(void *rsp)
     if (pcb->state == FINISHED)
     {
         current = current->next;
-        removeFromCircularList(&round_robin, pcb->pid);
         killProcess(pcb->pid);
         return change_context(current->pid);
     }

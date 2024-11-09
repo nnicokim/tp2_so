@@ -19,6 +19,7 @@ void test_mm();
 void test_prio();
 void print_processes();
 void print_memory();
+void create_one_process();
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -39,7 +40,8 @@ static Command commands[] = {
     {"tpr", test_processes, "Testea los procesos"},
     {"tmm", test_mm, "Testea el gestor de memoria"},
     {"tprio", test_prio, "Testea la prioridad de los procesos"},
-    {"printp", print_processes, "Imprime los procesos activos"}};
+    {"printp", print_processes, "Imprime los procesos activos"},
+    {"cp", create_one_process, "Crea un proceso"}};
 
 static Command commandsNohelp[] = {
     {"mem", print_memory, "Imprime la memoria"}};
@@ -293,4 +295,10 @@ void print_processes()
 void print_memory()
 {
     usys_print_memory();
+}
+
+void create_one_process()
+{
+    printColor(ORANGE, "Creando un proceso...\n");
+    usys_createProcess();
 }
