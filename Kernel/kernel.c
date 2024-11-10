@@ -16,8 +16,8 @@
 // #include "./memory_manager/include/buddyAllocator.h"
 #include "./structs/include/stack.h"
 #include "./structs/include/pcb.h"
-#include "./structs/include/queue.h"
 #include "./scheduler/include/scheduler.h"
+#include "./ipc/include/semaphore.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -28,8 +28,8 @@ extern uint8_t endOfKernel;
 
 static const uint64_t PageSize = 0x1000;
 
-CircularList round_robin;	  // Definición de la lista de procesos en round-robin
-PCB PCB_array[MAX_PROCESSES]; // Definición del Array de PCBs
+CircularList round_robin;	   // Definición de la lista de procesos en round-robin
+PCB *PCB_array[MAX_PROCESSES]; // Definición del Array de PCBs
 
 static void *const sampleCodeModuleAddress = (void *)0x400000;
 static void *const sampleDataModuleAddress = (void *)0x500000;
@@ -72,26 +72,15 @@ int main()
 	// size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
 	// init_buddy_allocator(HEAP_START, total_memory);
 
-	initScheduler();
-
-	// Creamos el proceso 0 (Kernel)
-	PCB PCBkernel;
-	initPCB(&PCBkernel, KERNEL_PID, KERNEL_PID, 0);
-	PCB_array[KERNEL_PID] = PCBkernel;
-
-	// Creamos el proceso 1 (Shell)
-	PCB PCBshell;
-	initPCB(&PCBshell, SHELL_PID, KERNEL_PID, 0);
-	PCB_array[SHELL_PID] = PCBshell;
-
 	printArray("Welcome to the Kernel!\n");
 
-	// Creamos el proceso 2 (IDLE)
-	createIdleProcess();
+	initScheduler();
+
+	initSems();
 
 	_sti(); // Habilitar interrupciones
 
-	_setUser(); // Cambiar a modo usuario
+	//_setUser();
 
 	printArray("You shouldn't be here chief...");
 

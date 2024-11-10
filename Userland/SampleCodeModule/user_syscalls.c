@@ -78,9 +78,14 @@ void flush_buffer()
     _flush_buffer();
 }
 
-int usys_createProcess(void (*program)(int, char **), int argc, char **argv)
+int usys_createOneProcess()
 {
-    return _createProcess(program, argc, argv);
+    return _createOneProcess();
+}
+
+int usys_createProcess(void *process, int argc, char **argv)
+{
+    return _createProcess(process, argc, argv);
 }
 
 int usys_blockProcess(int pid)
@@ -133,11 +138,6 @@ int usys_myExit()
     return _myExit();
 }
 
-// int usys_test_prio(uint64_t argc, char *argv[])
-// {
-//     return _test_prio(argc, argv);
-// }
-
 int usys_test_prio()
 {
     return _test_prio();
@@ -156,4 +156,24 @@ int usys_increase_priority(int pid)
 int usys_decrease_priority(int pid)
 {
     return _decrease_priority(pid);
+}
+
+void usys_print_processes()
+{
+    _print_processes();
+}
+
+void usys_print_memory()
+{
+    _print_memory();
+}
+
+void usys_loop_print()
+{
+    _loop_print();
+}
+
+void usys_test_sync(uint64_t argc, char *argv[])
+{
+    _test_sync(argc, argv);
 }

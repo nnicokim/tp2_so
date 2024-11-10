@@ -3,11 +3,9 @@
 #include "../include/videoDriver.h"
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
-// uint64_t test_prio(uint64_t argc, char *argvAux[])
+
 void sys_test_prio()
 {
-    printArray(" Aunque sea arranca? \n");
-
     int64_t pids[TOTAL_PROCESSES];
     char *argv[] = {0};
     uint64_t i;

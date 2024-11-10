@@ -3,6 +3,8 @@
 #define INPUT_SIZE 100
 // #define COMMAND_COUNT 10
 #define CANT_REGS 18
+#define MAX_PROCESS 192
+#define TRUE 1
 
 void help();
 void divzero();
@@ -17,6 +19,17 @@ void beep();
 void test_processes();
 void test_mm();
 void test_prio();
+void print_processes();
+void print_memory();
+void create_one_process();
+void loop_print();
+void kill_process_pid();
+void block_process_pid();
+void increase_prio_pid();
+void decrease_prio_pid();
+void nice_pid();
+void test_sync1();
+void test_sync2();
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -37,7 +50,20 @@ static Command commands[] = {
     {"tpr", test_processes, "Testea los procesos"},
     {"tmm", test_mm, "Testea el gestor de memoria"},
     {"tprio", test_prio, "Testea la prioridad de los procesos"},
+    {"printp", print_processes, "Imprime los procesos activos"},
+    {"cp", create_one_process, "Crea un proceso"},
+    {"loop", loop_print, "Imprime el PID del proceso ejecutandose cada 2 segs"},
+    {"kill", kill_process_pid, "Mata un proceso dado un PID"},
+    {"block", block_process_pid, "Bloquea un proceso dado un PID"},
+    {"incp", increase_prio_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
+    {"decp", decrease_prio_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
+    {"nice", nice_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
 };
+
+static Command commandsNohelp[] = {
+    {"mem", print_memory, "Imprime la memoria"},
+    {"tsync1", test_sync1, "Testea la sincronizacion con semaforos"},
+    {"tsync2", test_sync2, "Testea la sincronizacion sin semaforos"}};
 
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
 #define COMMAND_COUNT sizeofArr(commands)
@@ -62,7 +88,14 @@ void parseCommand(char *str)
     {
         if (strcmp(str, commands[i].name_id) == 0)
         {
-            (*commands[i].func)(argument);
+            _createProcess(commands[i].func, argC, argument);
+            // (*commands[i].func)(argument);
+            return;
+        }
+        else if (strcmp(str, commandsNohelp[i].name_id) == 0)
+        {
+            _createProcess(commandsNohelp[i].func, argC, argument);
+            // (*commandsNohelp[i].func)(argument);
             return;
         }
     }
@@ -85,7 +118,10 @@ void init_shell()
         print(" | ");
     }
     printColor(LIGHT_BLUE, commands[COMMAND_COUNT - 1].name_id);
-    print("\nIngrese \"help\" para la descripcion los comandos.\n");
+    print("\nIngrese ");
+    printColor(PURPLE, "\"help\" ");
+    print("para la descripcion los comandos.\n");
+
     char c;
     int running = 1;
     currentFontSize = usys_get_font_size();
@@ -120,7 +156,7 @@ void init_shell()
 
 void help()
 {
-    print("Comandos disponibles:\n");
+    printColor(ORANGE, "Comandos disponibles:\n");
     for (int i = 1; i < COMMAND_COUNT; i++)
     {
         print("   ");
@@ -129,6 +165,8 @@ void help()
         print(commands[i].desc);
         putChar('\n');
     }
+
+    usys_myExit();
 }
 
 void divzero()
@@ -139,16 +177,19 @@ void divzero()
     {
         printError("This is wrong...");
     }
+    usys_myExit();
 }
 void invopcode()
 {
     _invalid_opcode_exception();
+    usys_myExit();
 }
 
 void time()
 {
     printColor(GREEN, "ART (Argentine Time): UTC/GMT -3 horas\n");
     _get_time();
+    usys_myExit();
 }
 
 void zoomin()
@@ -180,6 +221,8 @@ void zoomin()
             printColor(RED, "Indique S o N\n");
         }
     }
+
+    usys_myExit();
 }
 
 void zoomout()
@@ -211,6 +254,8 @@ void zoomout()
             printColor(RED, "Indique S o N\n");
         }
     }
+
+    usys_myExit();
 }
 
 void inforeg()
@@ -236,10 +281,12 @@ void inforeg()
     {
         printColor(RED, "No se pudo encontrar ningun momento de captura de registro. Presione CTRL para capturar los registros.\n");
     }
+    usys_myExit();
 }
 void clear_shell()
 {
     usys_clear_screen();
+    usys_myExit();
 }
 
 void beep()
@@ -255,23 +302,356 @@ void play_eliminator()
     eliminator();
     clear_shell();
     gameActive = 0;
+    usys_myExit();
 }
 
 void test_processes()
 {
+    printColor(ORANGE, "Testeando procesos...\n");
     char *argvAux[] = {"10"};
     usys_test_processes(1, argvAux);
+    usys_myExit();
 }
 
 void test_prio()
 {
+    printColor(ORANGE, "Testeando prioridades...\n");
     print("Testeando prioridades...\n");
-    // char *argvPrio[] = {"10"};
     usys_test_prio();
+    usys_myExit();
 }
 
 void test_mm()
 {
+    printColor(ORANGE, "Testeando MM...\n");
     char *argvmm[] = {"1000"};
     usys_test_mm(1, argvmm);
+    usys_myExit();
+}
+
+void print_processes()
+{
+    printColor(ORANGE, "Imprimiendo procesos...\n");
+    usys_print_processes();
+    usys_myExit();
+}
+
+void print_memory()
+{
+    usys_print_memory();
+    usys_myExit();
+}
+
+void create_one_process()
+{
+    printColor(ORANGE, "Creando un proceso...\n");
+    usys_createOneProcess();
+    usys_myExit();
+}
+
+void loop_print()
+{
+    printColor(ORANGE, "Imprimiendo el PID de un proceso cada 2 segundos...\n");
+    usys_loop_print();
+    usys_myExit();
+}
+
+void test_sync1()
+{
+    printColor(ORANGE, "Testeando sincronizacion con sincro...\n");
+    char *argv1[] = {"10", "1", "0"}; // Para usar el de sync y el argc=3
+    usys_test_sync(3, argv1);
+    usys_myExit();
+}
+
+void test_sync2()
+{
+    printColor(ORANGE, "Testeando sincronizacion sin sincro...\n");
+    char *argv2[] = {"10", "1", "1"}; // Para usar el de no sync y el argc=3
+    usys_test_sync(3, argv2);
+    usys_myExit();
+}
+
+void kill_process_pid()
+{
+    printColor(ORANGE, "Ingrese el PID del proceso a matar: ");
+    char pid[5] = {"0"};
+    int i = 0;
+    char c;
+    int kill_pid;
+    while (TRUE)
+    {
+        while (TRUE)
+        {
+            c = getChar();
+            if (c != 0)
+            {
+                putChar(c);
+                if ((c < '0' || c > '9') && c != '\n')
+                {
+                    print("\n");
+                    printColor(RED, "ERROR. Ingrese un digito valido.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    return;
+                }
+                if (i > 3)
+                {
+                    print("\n");
+                    printColor(RED, "ERROR. PID muy largo.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    return;
+                }
+                if (c == '\n')
+                {
+                    kill_pid = stringToInt(pid);
+                    break;
+                }
+                pid[i++] = c;
+            }
+        }
+
+        if (kill_pid < 0 || kill_pid > MAX_PROCESS)
+        {
+            print("\n");
+            printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            return;
+        }
+        if (kill_pid == 0 || kill_pid == 1)
+        {
+            print("\n");
+            printColor(RED, "No se puede matar el proceso SHELL o IDLE. Ingrese otro PID.\n");
+            return;
+        }
+
+        printColor(ORANGE, "Matando al proceso...\n");
+        int resultado = usys_killProcess(kill_pid);
+        if (resultado == -1)
+        {
+            printColor(RED, "No se pudo matar al proceso con PID: ");
+            intToStr(kill_pid, pid);
+            print(pid);
+            print("\n");
+            return;
+        }
+        else
+        {
+            printColor(GREEN, "Se mato al proceso con PID: ");
+            intToStr(kill_pid, pid);
+            print(pid);
+            print("\n");
+            return;
+        }
+    }
+
+    usys_myExit();
+}
+
+void block_process_pid()
+{
+    printColor(ORANGE, "Ingrese el PID del proceso a bloquear: ");
+    char pid[5] = {"0"};
+    int i = 0;
+    char c;
+    int block_pid;
+    while (TRUE)
+    {
+        while (TRUE)
+        {
+            c = getChar();
+            if (c != 0)
+            {
+                putChar(c);
+                if ((c < '0' || c > '9') && c != '\n')
+                {
+                    print("\n");
+                    printColor(RED, "ERROR. Ingrese un digito valido.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    return;
+                }
+                if (i > 3)
+                {
+                    print("\n");
+                    printColor(RED, "ERROR. PID muy largo.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    return;
+                }
+                if (c == '\n')
+                {
+                    block_pid = stringToInt(pid);
+                    break;
+                }
+                pid[i++] = c;
+            }
+        }
+
+        if (block_pid < 0 || block_pid > MAX_PROCESS)
+        {
+            printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            return;
+        }
+        if (block_pid == 0 || block_pid == 1)
+        {
+            printColor(RED, "No se puede bloquear el proceso SHELL o IDLE. Ingrese otro PID.\n");
+            return;
+        }
+
+        printColor(ORANGE, "Bloqueando al proceso...\n");
+        int resultado = usys_blockProcess(block_pid);
+        if (resultado == -1)
+        {
+            printColor(RED, "No se pudo bloquear al proceso con PID: ");
+            intToStr(block_pid, pid);
+            print(pid);
+            print("\n");
+            return;
+        }
+        else
+        {
+            printColor(GREEN, "Se bloqueo al proceso con PID: ");
+            intToStr(block_pid, pid);
+            print(pid);
+            print("\n");
+            return;
+        }
+    }
+
+    usys_myExit();
+}
+
+void increase_prio_pid()
+{
+    printColor(ORANGE, "Ingrese el PID del proceso a incrementar su prioridad: ");
+    char pid[5] = {"0"};
+    int i = 0;
+    char c;
+    int inc_pid;
+    while (TRUE)
+    {
+        while (TRUE)
+        {
+            c = getChar();
+            if (c != 0)
+            {
+                putChar(c);
+                if ((c < '0' || c > '9') && c != '\n')
+                {
+                    print("\n");
+                    printColor(RED, "ERROR. Ingrese un digito valido.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
+                    return;
+                }
+                if (i > 3)
+                {
+                    print("\n");
+                    printColor(RED, "ERROR. PID muy largo.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
+                    return;
+                }
+                if (c == '\n')
+                {
+                    inc_pid = stringToInt(pid);
+                    break;
+                }
+                pid[i++] = c;
+            }
+        }
+
+        if (inc_pid < 0 || inc_pid > MAX_PROCESS)
+        {
+            printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            usys_myExit();
+            return;
+        }
+
+        printColor(ORANGE, "Aumentando la prioridad del proceso...\n");
+        int resultado = usys_increase_priority(inc_pid);
+        if (resultado == -1)
+        {
+            printColor(RED, "No se pudo incrementar la prioridad del proceso.\n");
+            usys_myExit();
+            return;
+        }
+        else
+        {
+            printColor(GREEN, "Se incremento la prioridad del proceso :) \n");
+            usys_myExit();
+            return;
+        }
+    }
+}
+
+void decrease_prio_pid()
+{
+    printColor(ORANGE, "Ingrese el PID del proceso a decrementar su prioridad: ");
+    char pid[5] = {"0"};
+    int i = 0;
+    char c;
+    int dec_pid;
+    while (TRUE)
+    {
+        while (TRUE)
+        {
+            c = getChar();
+            if (c != 0)
+            {
+                putChar(c);
+                if ((c < '0' || c > '9') && c != '\n')
+                {
+                    print("\n");
+                    printColor(RED, "ERROR. Ingrese un digito valido.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
+                    return;
+                }
+                if (i > 3)
+                {
+                    print("\n");
+                    printColor(RED, "ERROR. PID muy largo.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
+                    return;
+                }
+                if (c == '\n')
+                {
+                    dec_pid = stringToInt(pid);
+                    break;
+                }
+                pid[i++] = c;
+            }
+        }
+
+        if (dec_pid < 0 || dec_pid > MAX_PROCESS)
+        {
+            printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            usys_myExit();
+            return;
+        }
+
+        printColor(ORANGE, "Decrementando la prioridad del proceso...\n");
+        int resultado = usys_decrease_priority(dec_pid);
+        if (resultado == -1)
+        {
+            printColor(RED, "No se pudo decrementar la prioridad del proceso.");
+            print("\n");
+            usys_myExit();
+            return;
+        }
+        else
+        {
+            printColor(GREEN, "Se decremento la prioridad del proceso :) \n");
+            print("\n");
+            usys_myExit();
+            return;
+        }
+    }
+
+    usys_myExit();
+}
+
+void nice_pid()
+{
+    print("Falta hacer, lo hago mañana\n");
+    usys_myExit();
 }

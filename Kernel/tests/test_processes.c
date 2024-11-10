@@ -5,6 +5,7 @@
 #include <tests/syscall.h>
 #include <videoDriver.h>
 #include "../scheduler/include/scheduler.h"
+#include "../include/time.h"
 
 typedef struct P_rq
 {
@@ -20,6 +21,8 @@ int64_t test_processes(uint64_t argc, char *argv[])
     uint64_t max_processes;
     char *argvAux[] = {0};
 
+    int counter = 0;
+
     if (argc != 1)
         return -1;
 
@@ -33,12 +36,11 @@ int64_t test_processes(uint64_t argc, char *argv[])
         // Create max_processes processes
         for (rq = 0; rq < max_processes; rq++)
         {
-            p_rqs[rq].pid = createProcess("endless_loop", 0, argvAux);
+            p_rqs[rq].pid = createProcess((char *)endless_loop, 0, argvAux);
+
             if (p_rqs[rq].pid == -1)
             {
                 printArray("test_processes: ERROR creating process: -");
-                printDec(p_rqs[rq].pid * -1);
-                printArray("\n");
                 return -1;
             }
             else
@@ -46,7 +48,12 @@ int64_t test_processes(uint64_t argc, char *argv[])
                 p_rqs[rq].state = RUNNING;
                 alive++;
             }
+            printArray("test_processes: Process created with PID: ");
+            printDec(p_rqs[rq].pid);
+            printArray("\n");
         }
+
+        timer_wait_ms(10);
 
         // Randomly kills, blocks or unblocks processes until every one has been killed
         while (alive > 0)
@@ -70,6 +77,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
                         }
                         p_rqs[rq].state = FINISHED;
                         alive--;
+                        counter++;
                     }
                     break;
 
@@ -79,8 +87,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
                         if (blockProcess(p_rqs[rq].pid) == -1)
                         {
                             printArray("test_processes: ERROR blocking process with PID: ");
-                            printDec(p_rqs[rq].pid);
-                            printArray("\n");
+
                             return -1;
                         }
                         p_rqs[rq].state = BLOCKED;
@@ -96,12 +103,16 @@ int64_t test_processes(uint64_t argc, char *argv[])
                     if (unblockProcess(p_rqs[rq].pid) == -1)
                     {
                         printArray("test_processes: ERROR unblocking process with PID: ");
-                        printDec(p_rqs[rq].pid);
-                        printArray("\n");
+
                         return -1;
                     }
                     p_rqs[rq].state = RUNNING;
                 }
         }
+        // break;
+
+        printDec(counter);
+        printArray("\n");
+        return 0;
     }
 }

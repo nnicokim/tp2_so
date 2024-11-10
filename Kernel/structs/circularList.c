@@ -26,44 +26,45 @@ void addCircularList(CircularList *list, int pid)
     }
     else
     {
-        CircularListNode *last = list->head->prev;
-        last->next = newNode;
-        newNode->prev = last;
-        newNode->next = list->head;
-        list->head->prev = newNode;
+        CircularListNode *prev_head = list->head;
+        newNode->prev = prev_head->prev;
+        prev_head->prev->next = newNode;
+
+        newNode->next = prev_head;
+        prev_head->prev = newNode;
+
+        list->head = newNode;
+
+        // CircularListNode *last = list->head;
+        // list->head = newNode;
+        // last->next = newNode;
+        // newNode->next = last->prev;
+        // last->prev->next = newNode;
+
+        // newNode->prev = last;
+        // last->next = newNode;
+
+        // // newNode->prev = last;
+        // // newNode->next = list->head;
+        // // list->head->prev = newNode;
     }
     list->size++;
-    // printArray("Size de la lista luego del ADD: ");
-    // printDec(list->size);
-    // printArray("\n");
+
     return;
 }
 
 void removeFromCircularList(CircularList *list, int pid)
 {
     CircularListNode *current = list->head;
-    if (list->size == 0 || list->head == NULL)
-    {
-        printArray("removeFromCircularList: ERROR: CircularList is empty\n");
-        return;
-    }
 
-    for (int i = 0; i <= list->size; i++)
+    for (int i = 0; i < list->size; i++)
     {
-        if (current->pid != pid) // Se muere aca despues de la 1ra comparacion
+        if (current->pid != pid)
         {
             current = current->next;
-            if (pid == 13)
-            {
-                printArray("Sigo buscando al PROCESO 13...\n");
-            }
             continue;
         };
 
-        if (pid == 13)
-        {
-            printArray("Encontre EL PROCESO 13 de la CIRCULAR LIST.\n");
-        }
         CircularListNode *prev = current->prev;
         CircularListNode *next = current->next;
         prev->next = next;
@@ -74,14 +75,11 @@ void removeFromCircularList(CircularList *list, int pid)
         }
         myfree(current);
         list->size--;
-        if (list->size == 0)
-        {
-            list->head = NULL;
-        }
+
         return;
     }
-    printArray("El proceso con pid: ");
-    printDec(pid);
-    printArray(" -> No se encontro del circularList.\n");
+    // printArray("El proceso con pid: ");
+    // printDec(pid);
+    // printArray(" -> No se encontro del circularList.\n");
     return;
 }

@@ -7,7 +7,6 @@
 #include <sound.h>
 #include <naiveConsole.h>
 #include "./structs/include/pcb.h"
-#include "./structs/include/queue.h"
 #include "./scheduler/include/scheduler.h"
 #include "./structs/include/stack.h"
 #include "./structs/include/circularList.h"
@@ -16,6 +15,7 @@
 #include <tests/test_mm.h>
 #include <tests/test_processes.h>
 #include <tests/test_prio.h>
+#include <tests/test_sync.h>
 
 #define STDIN 0
 #define STDOUT 1
@@ -45,7 +45,8 @@ uint64_t ksys_getTime();
 uint64_t ksys_draw_square(uint64_t color, uint64_t x, uint64_t y, uint64_t size);
 uint64_t ksys_draw_rect(uint64_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_t size_y);
 uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t x, uint64_t y, uint64_t arr);
-uint64_t ksys_createProcess(char *program, int argc, char **argv);
+uint64_t ksys_createOneProcess();
+uint64_t ksys_createProcess(void *process, int argc, char **argv);
 uint64_t ksys_blockProcess(int pid);
 uint64_t ksys_unblockProcess(int pid);
 uint64_t ksys_getCurrentpid();
@@ -57,6 +58,9 @@ uint64_t ksys_myExit();
 uint64_t ksys_my_nice(uint64_t pid, uint64_t newPrio);
 uint64_t ksys_increase_priority(int pid);
 uint64_t ksys_decrease_priority(int pid);
+uint64_t ksys_print_processes();
+uint64_t ksys_print_memory();
+uint64_t ksys_loop_print();
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -98,7 +102,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
 
     // Syscalls nuevas (SO)
     case 16:
-        return ksys_createProcess((char *)rdi, rsi, (char **)rdx);
+        return ksys_createOneProcess();
     case 17:
         return ksys_blockProcess(rdi);
     case 18:
@@ -120,7 +124,6 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
     case 26:
         return ksys_myExit();
     case 27:
-        // return test_prio(rdi, rsi);
         sys_test_prio();
         return 0;
     case 28:
@@ -129,6 +132,17 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_increase_priority(rdi);
     case 30:
         return ksys_decrease_priority(rdi);
+    case 31:
+        return ksys_print_processes();
+    case 32:
+        return ksys_print_memory();
+    case 33:
+        return ksys_loop_print();
+    case 34:
+        return test_sync(rdi, (char **)rsi);
+
+    case 35:
+        return ksys_createProcess((void *)rdi, rsi, (char **)rdx);
     }
 
     return 0;
@@ -251,9 +265,14 @@ uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t 
     return 0;
 }
 
-uint64_t ksys_createProcess(char *program, int argc, char **argv)
+uint64_t ksys_createOneProcess()
 {
-    return createProcess(program, argc, argv);
+    return createOneProcess();
+}
+
+uint64_t ksys_createProcess(void *process, int argc, char **argv)
+{
+    return createProcess((char *)process, argc, argv);
 }
 
 uint64_t ksys_blockProcess(int pid)
@@ -276,8 +295,6 @@ uint64_t ksys_getCurrentPpid()
     return getCurrentPPid();
 }
 
-// Faltaria implementar la parte de las prioridades (cuando lo hagamos)
-// Ver si hay que hacer algo con el stack. Faltaria algo mas?
 uint64_t ksys_killProcess(int pid)
 {
     return killProcess(pid);
@@ -292,8 +309,7 @@ uint64_t ksys_leaveCPU()
 // El proceso padre se bloquea hasta que el hijo termine
 uint64_t ksys_waitPid(int pid)
 {
-    // PCB *childProcess = get(&PCBqueue, pid);
-    PCB *childProcess = &PCB_array[pid];
+    PCB *childProcess = PCB_array[pid];
     if (childProcess->state == FINISHED)
     {
         return -1;
@@ -324,4 +340,22 @@ uint64_t ksys_increase_priority(int pid)
 uint64_t ksys_decrease_priority(int pid)
 {
     return decrease_priority(pid);
+}
+
+uint64_t ksys_print_processes()
+{
+    print_processes();
+    return 0;
+}
+
+uint64_t ksys_print_memory()
+{
+    mem();
+    return 0;
+}
+
+uint64_t ksys_loop_print()
+{
+    loop_print();
+    return 0;
 }

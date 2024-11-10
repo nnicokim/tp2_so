@@ -38,7 +38,9 @@ int usys_get_time();
 
 void flush_buffer();
 
-int usys_createProcess(void (*program)(int, char **), int argc, char **argv);
+int usys_createOneProcess();
+
+int usys_createProcess(void *process, int argc, char **argv);
 
 int usys_blockProcess(int pid);
 
@@ -68,5 +70,13 @@ int usys_my_nice(int pid, int new_prio);
 int usys_increase_priority(int pid);
 
 int usys_decrease_priority(int pid);
+
+void usys_print_processes();
+
+void usys_print_memory();
+
+void usys_loop_print();
+
+void usys_test_sync(uint64_t argc, char *argv[]);
 
 #endif

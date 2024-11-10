@@ -2,6 +2,7 @@
 #include <stdio.h>
 // #include "syscall.h"
 #include <tests/syscall.h>
+#include <videoDriver.h>
 
 // Random
 static uint32_t m_z = 362436069;
@@ -69,6 +70,7 @@ void bussy_wait(uint64_t n)
 
 void endless_loop()
 {
+  printArray("Endless loop\n");
   while (1)
     ;
 }
