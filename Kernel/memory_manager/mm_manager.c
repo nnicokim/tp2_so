@@ -46,7 +46,7 @@ void mem()
     for (int i = 0; i < BLOCK_COUNT; i++) {
         uintToBase((uint64_t)free_ptrs[i], buffer, 16); // Convert pointer to hex
         printArray("Block:");
-        printArray(i);
+        printDec(i);
         printArray(buffer); // Print the string representation of the pointer
         putChar('\n'); // New line after each pointer
     }

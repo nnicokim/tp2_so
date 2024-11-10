@@ -21,7 +21,7 @@ void *initStackFrame(void *stackProcess, int argc, char **argv, void *program, u
 
     newStackFrame->rsi = (uint64_t)argv;
     newStackFrame->rdi = argc;
-    newStackFrame->rbp = stackProcess;
+    newStackFrame->rbp = (uint64_t) stackProcess;
     newStackFrame->rdx = (uint64_t)program;
     newStackFrame->rcx = pid;
     newStackFrame->rbx = 0x014;

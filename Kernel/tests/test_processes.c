@@ -5,6 +5,7 @@
 #include <tests/syscall.h>
 #include <videoDriver.h>
 #include "../scheduler/include/scheduler.h"
+#include "../include/time.h"
 
 typedef struct P_rq
 {
@@ -35,7 +36,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
         // Create max_processes processes
         for (rq = 0; rq < max_processes; rq++)
         {
-            p_rqs[rq].pid = createProcess(endless_loop, 0, argvAux);
+            p_rqs[rq].pid = createProcess("endless_loop", 0, argvAux);
 
             if (p_rqs[rq].pid == -1)
             {
@@ -112,6 +113,6 @@ int64_t test_processes(uint64_t argc, char *argv[])
 
         printDec(counter);
         printArray("\n");
-        return;
+        return 0;
     }
 }

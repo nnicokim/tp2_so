@@ -13,8 +13,8 @@ void initScheduler()
 {
     initializeCircularList(&round_robin);
 
-    int pidShell = createProcess(_setUser, 0, NULL);
-    int pidIdle = createProcess(idleProcess, 0, NULL);
+    createProcess((char*)_setUser, 0, NULL);
+    createProcess((char *)idleProcess, 0, NULL);
 
     isSchedulerActive = 1;
 }
@@ -72,7 +72,7 @@ void randomFunction()
 
 uint64_t createOneProcess()
 {
-    return createProcess(randomFunction, 0, NULL);
+    return createProcess((char*)randomFunction, 0, NULL);
 }
 
 void idleProcess()

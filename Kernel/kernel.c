@@ -17,6 +17,7 @@
 #include "./structs/include/stack.h"
 #include "./structs/include/pcb.h"
 #include "./scheduler/include/scheduler.h"
+#include "./ipc/include/semaphore.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -74,6 +75,8 @@ int main()
 	printArray("Welcome to the Kernel!\n");
 
 	initScheduler();
+
+	initSems();
 
 	_sti(); // Habilitar interrupciones
 
