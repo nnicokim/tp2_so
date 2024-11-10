@@ -4,8 +4,9 @@
 #include <lib.h>
 #include <string.h>
 #include "../scheduler/include/scheduler.h"
+#include "../include/tests/syscall.h"
 
-// extern void forceTick(); // Este tiene que ser otra cosa
+extern void forceTimerTick();
 
 typedef struct
 {
@@ -264,4 +265,9 @@ char *getSemName(int semIndex)
         return NULL;
     }
     return semTable[semIndex].sem.name;
+}
+
+void yield()
+{
+    forceTimerTick();
 }

@@ -1,6 +1,7 @@
 // Algoritmo: Round-Robin con prioridades
 #include <videoDriver.h>
 #include "./include/scheduler.h"
+#include "../include/time.h"
 
 extern void forceTimerTick();
 
@@ -59,7 +60,7 @@ void randomFunction()
     while (TRUE)
         ;
 
-    int i = 0;
+    //int i = 0;
     // while (i < 1000000)
     // {
     //     i++;
