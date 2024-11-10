@@ -207,52 +207,25 @@ void *change_context(int pid)
     return pcb->stack;
 }
 
-// void *schedule(void *rsp) // RSP del Proceso A
-// {
-//     if (current == NULL)
-//     {
-//         current = round_robin.head;
-//         PCB *pcb = PCB_array[IDLE_PID];
-//         return pcb->stack; // RSP del IDLE
-//     }
-
-//     PCB *pcb = PCB_array[current->pid];
-
-//     // if (pcb->pid == 1 && pcb->state == READY)
-//     // {
-//     //     blockProcess(IDLE_PID);
-//     // }
-//     StackFrame *stack = rsp;
-//     pcb->stack = rsp; // Guardo el RSP del proceso que va a dejar de correr
-//     // addCircularList(&round_robin, pcb->pid); // Sin prioridades
-
-//     // Siguiente proceso a correr
-//     current = current->next;
-//     // printDec(current->pid);
-//     // printArray("\n");
-
-//     pcb = PCB_array[current->pid];
-//     while (pcb->state == BLOCKED || pcb->state == FINISHED)
-//     {
-//         current = current->next;
-//         pcb = PCB_array[current->pid];
-//     }
-
-//     pcb->runningCounter++;
-
-//     return pcb->stack; // RSP del proceso B
-// }
-
 void my_nice(uint64_t pid, uint64_t newPrio)
 {
+    if (newPrio < 0 || newPrio > MAX_PRIORITY)
+    {
+        printArray("Invalid priority\n");
+        return;
+    }
     PCB *pcb = PCB_array[pid];
+    if (pcb->priority < newPrio)
+    {
+        increase_priority(pid);
+    }
+    else if (pcb->priority > newPrio)
+    {
+        decrease_priority(pid);
+    }
     pcb->priority = newPrio;
     pcb->priorityLife = newPrio;
-    printArray("my_nice: Process with PID: ");
-    printDec(pid);
-    printArray(" priority changed to: ");
-    printDec(newPrio);
-    printArray("\n");
+    return;
 }
 
 int increase_priority(int pid)
@@ -260,6 +233,7 @@ int increase_priority(int pid)
     PCB *pcb = PCB_array[pid];
     if (pcb->priority == MAX_PRIORITY)
         return pcb->priority;
+    addCircularList(&round_robin, pid);
     pcb->priority++;
     pcb->priorityLife++;
     return pcb->priority;
@@ -270,6 +244,7 @@ int decrease_priority(int pid)
     PCB *pcb = PCB_array[pid];
     if (pcb->priority == 0)
         return pcb->priority;
+    removeFromCircularList(&round_robin, pid);
     pcb->priority--;
     pcb->priorityLife--;
     return pcb->priority;
