@@ -32,6 +32,7 @@ GLOBAL _increase_priority
 GLOBAL _decrease_priority
 GLOBAL _print_processes
 GLOBAL _print_memory
+GLOBAL _loop_print
 
 section .text
 
@@ -359,6 +360,15 @@ _print_memory:
     push rbp
     mov rbp, rsp
     mov rax, 32
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_loop_print:
+    push rbp
+    mov rbp, rsp
+    mov rax, 33
     int 80h
     mov rsp, rbp
     pop rbp

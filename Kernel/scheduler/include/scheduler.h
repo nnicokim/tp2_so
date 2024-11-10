@@ -35,5 +35,6 @@ int increase_priority(int pid);
 int decrease_priority(int pid);
 void my_exit();
 void print_processes();
+void loop_print();
 
 #endif

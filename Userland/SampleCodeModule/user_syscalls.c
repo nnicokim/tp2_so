@@ -162,3 +162,8 @@ void usys_print_memory()
 {
     _print_memory();
 }
+
+void usys_loop_print()
+{
+    _loop_print();
+}

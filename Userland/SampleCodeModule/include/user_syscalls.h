@@ -73,4 +73,6 @@ void usys_print_processes();
 
 void usys_print_memory();
 
+void usys_loop_print();
+
 #endif

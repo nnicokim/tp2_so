@@ -13,7 +13,7 @@ void initScheduler()
 {
     initializeCircularList(&round_robin);
 
-    createProcess((char*)_setUser, 0, NULL);
+    createProcess((char *)_setUser, 0, NULL);
     createProcess((char *)idleProcess, 0, NULL);
 
     isSchedulerActive = 1;
@@ -56,23 +56,23 @@ void randomFunction()
 {
     printArray("Random function executed!!! \n");
 
-    // while (TRUE)
-    //     ;
+    while (TRUE)
+        ;
 
     int i = 0;
-    while (i < 1000000)
-    {
-        i++;
-    }
-    printArray("Random function FINISHED \n");
-    PCB *pcb = PCB_array[getCurrentPid()];
-    pcb->state = FINISHED;
-    my_exit();
+    // while (i < 1000000)
+    // {
+    //     i++;
+    // }
+    // printArray("Random function FINISHED \n");
+    // PCB *pcb = PCB_array[getCurrentPid()];
+    // pcb->state = FINISHED;
+    // my_exit();
 }
 
 uint64_t createOneProcess()
 {
-    return createProcess((char*)randomFunction, 0, NULL);
+    return createProcess((char *)randomFunction, 0, NULL);
 }
 
 void idleProcess()
@@ -96,6 +96,11 @@ uint64_t killProcess(int pid)
         printDec(pid);
         printArray(" not found :( \n");
         return -1;
+    }
+
+    if (pcb->state != FINISHED) // Esto es por el kill de la shell
+    {
+        pcb->state = FINISHED;
     }
 
     // Liberamos stack y pcb
@@ -285,12 +290,22 @@ void my_exit()
 
 void print_processes()
 {
-    printArray("Printing processes...\n");
     for (int i = 0; i < processID; i++)
     {
-        if (PCB_array[i] != NULL)
+        if (PCB_array[i] != NULL || PCB_array[i]->state != FINISHED)
         {
             printPCB(PCB_array[i]);
         }
+    }
+}
+
+void loop_print()
+{
+    while (TRUE)
+    {
+        printArray("PID: ");
+        printDec(current->pid);
+        printArray("\n");
+        timer_wait(1);
     }
 }

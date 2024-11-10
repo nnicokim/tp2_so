@@ -58,6 +58,7 @@ uint64_t ksys_increase_priority(int pid);
 uint64_t ksys_decrease_priority(int pid);
 uint64_t ksys_print_processes();
 uint64_t ksys_print_memory();
+uint64_t ksys_loop_print();
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -133,6 +134,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_print_processes();
     case 32:
         return ksys_print_memory();
+    case 33:
+        return ksys_loop_print();
     }
 
     return 0;
@@ -337,5 +340,11 @@ uint64_t ksys_print_processes()
 uint64_t ksys_print_memory()
 {
     mem();
+    return 0;
+}
+
+uint64_t ksys_loop_print()
+{
+    loop_print();
     return 0;
 }
