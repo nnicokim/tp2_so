@@ -339,7 +339,7 @@ void test_sync1()
 {
     printColor(ORANGE, "Testeando sincronizacion con sincro...\n");
     char *argv1[] = {"10", "1", "0"}; // Para usar el de sync y el argc=3
-	usys_test_sync(3, argv1);
+    usys_test_sync(3, argv1);
 }
 
 void test_sync2()
@@ -613,5 +613,98 @@ void decrease_prio_pid()
 
 void nice_pid()
 {
-    print("Falta hacer, lo hago mañana\n");
+    printColor(ORANGE, "Ingrese el PID del proceso y la nueva prioridad: ");
+    char pid[5] = {"0"};
+    char prio[5] = {"0"};
+    int i = 0;
+    char c;
+    int nice_pid;
+    int newPrio;
+    int flag = 0;
+
+    while (TRUE)
+    {
+        while (TRUE)
+        {
+            c = getChar();
+            if (c != 0)
+            {
+                putChar(c);
+                if ((c < '0' || c > '9') && c != '\n' && c != ' ')
+                {
+                    print("\n");
+                    printColor(RED, "ERROR. Ingrese un digito valido.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    return;
+                }
+                if (i > 3)
+                {
+                    print("\n");
+                    printColor(RED, "ERROR. PID muy largo.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    return;
+                }
+                if (c == ' ')
+                {
+                    flag = 1;
+                    i = 0;
+                    continue;
+                }
+                if (c == '\n')
+                {
+                    if (flag == 0)
+                    {
+                        print("\n");
+                        printColor(RED, "ERROR. Ingrese un espacio entre el PID y la prioridad.\n");
+                        printColor(YELLOW, "Vuelva a intentarlo.\n");
+                        return;
+                    }
+                    nice_pid = stringToInt(pid);
+                    newPrio = stringToInt(prio);
+                    break;
+                }
+                if (flag == 0)
+                {
+                    pid[i++] = c;
+                }
+                else
+                {
+                    prio[i++] = c;
+                }
+            }
+        }
+
+        if (nice_pid < 0 || nice_pid > MAX_PROCESS)
+        {
+            printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            return;
+        }
+
+        if (newPrio < 0 || newPrio > 5)
+        {
+            printColor(RED, "Prioridad invalida. Ingrese una prioridad valida.\n");
+            return;
+        }
+
+        printColor(ORANGE, "Cambiando la prioridad del proceso...\n");
+        int resultado = usys_my_nice(nice_pid, newPrio);
+        if (resultado == -1)
+        {
+            print("ups\n");
+            printColor(RED, "No se pudo cambiar la prioridad del proceso.\n");
+            return;
+        }
+        else
+        {
+            printColor(GREEN, "Se cambio la prioridad del proceso: \n");
+            intToStr(nice_pid, pid);
+            print(pid);
+            printColor(GREEN, " a la prioridad: ");
+            intToStr(newPrio, prio);
+            print(prio);
+            printColor(GREEN, " !!! :) \n");
+            print("\n");
+            return;
+        }
+    }
 }
