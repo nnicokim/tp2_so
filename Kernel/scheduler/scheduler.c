@@ -245,7 +245,7 @@ int increase_priority(int pid)
 int decrease_priority(int pid)
 {
     PCB *pcb = PCB_array[pid];
-    if (pcb->priority == 0)
+    if (pcb->priority == 0 || pid == 0 || pid == 1)
         return pcb->priority;
     removeFromCircularList(&round_robin, pid);
     pcb->priority--;
@@ -253,17 +253,22 @@ int decrease_priority(int pid)
     return pcb->priority;
 }
 
-void my_exit()
+void tryToExit()
 {
-    PCB *pcb = PCB_array[getCurrentPid()];
-    if (pcb == NULL || pcb->state == FINISHED || pcb->pid == 0 || pcb->pid == 1)
+    int pid = getCurrentPid();
+    PCB *pcb = PCB_array[pid];
+    if (pcb->state == FINISHED || pid == 0 || pid == 1)
     {
         printArray("Could not exit process\n");
-        forceTimerTick();
         return;
     }
 
-    killProcess(pcb->pid);
+    killProcess(pid);
+}
+
+void my_exit()
+{
+    tryToExit();
     forceTimerTick();
 }
 

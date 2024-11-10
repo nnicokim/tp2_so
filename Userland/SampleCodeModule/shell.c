@@ -538,6 +538,7 @@ void increase_prio_pid()
                     print("\n");
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (i > 3)
@@ -545,6 +546,7 @@ void increase_prio_pid()
                     print("\n");
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (c == '\n')
@@ -559,6 +561,7 @@ void increase_prio_pid()
         if (inc_pid < 0 || inc_pid > MAX_PROCESS)
         {
             printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            usys_myExit();
             return;
         }
 
@@ -567,16 +570,16 @@ void increase_prio_pid()
         if (resultado == -1)
         {
             printColor(RED, "No se pudo incrementar la prioridad del proceso.\n");
+            usys_myExit();
             return;
         }
         else
         {
             printColor(GREEN, "Se incremento la prioridad del proceso :) \n");
+            usys_myExit();
             return;
         }
     }
-
-    usys_myExit();
 }
 
 void decrease_prio_pid()
@@ -599,6 +602,7 @@ void decrease_prio_pid()
                     print("\n");
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (i > 3)
@@ -606,6 +610,7 @@ void decrease_prio_pid()
                     print("\n");
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (c == '\n')
@@ -620,6 +625,7 @@ void decrease_prio_pid()
         if (dec_pid < 0 || dec_pid > MAX_PROCESS)
         {
             printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            usys_myExit();
             return;
         }
 
@@ -629,12 +635,14 @@ void decrease_prio_pid()
         {
             printColor(RED, "No se pudo decrementar la prioridad del proceso.");
             print("\n");
+            usys_myExit();
             return;
         }
         else
         {
             printColor(GREEN, "Se decremento la prioridad del proceso :) \n");
             print("\n");
+            usys_myExit();
             return;
         }
     }
