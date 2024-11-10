@@ -88,12 +88,14 @@ void parseCommand(char *str)
     {
         if (strcmp(str, commands[i].name_id) == 0)
         {
-            (*commands[i].func)(argument);
+            _createProcess(commands[i].func, argC, argument);
+            // (*commands[i].func)(argument);
             return;
         }
         else if (strcmp(str, commandsNohelp[i].name_id) == 0)
         {
-            (*commandsNohelp[i].func)(argument);
+            _createProcess(commandsNohelp[i].func, argC, argument);
+            // (*commandsNohelp[i].func)(argument);
             return;
         }
     }
@@ -163,6 +165,8 @@ void help()
         print(commands[i].desc);
         putChar('\n');
     }
+
+    usys_myExit();
 }
 
 void divzero()
@@ -173,16 +177,19 @@ void divzero()
     {
         printError("This is wrong...");
     }
+    usys_myExit();
 }
 void invopcode()
 {
     _invalid_opcode_exception();
+    usys_myExit();
 }
 
 void time()
 {
     printColor(GREEN, "ART (Argentine Time): UTC/GMT -3 horas\n");
     _get_time();
+    usys_myExit();
 }
 
 void zoomin()
@@ -214,6 +221,8 @@ void zoomin()
             printColor(RED, "Indique S o N\n");
         }
     }
+
+    usys_myExit();
 }
 
 void zoomout()
@@ -245,6 +254,8 @@ void zoomout()
             printColor(RED, "Indique S o N\n");
         }
     }
+
+    usys_myExit();
 }
 
 void inforeg()
@@ -270,10 +281,12 @@ void inforeg()
     {
         printColor(RED, "No se pudo encontrar ningun momento de captura de registro. Presione CTRL para capturar los registros.\n");
     }
+    usys_myExit();
 }
 void clear_shell()
 {
     usys_clear_screen();
+    usys_myExit();
 }
 
 void beep()
@@ -289,6 +302,7 @@ void play_eliminator()
     eliminator();
     clear_shell();
     gameActive = 0;
+    usys_myExit();
 }
 
 void test_processes()
@@ -296,6 +310,7 @@ void test_processes()
     printColor(ORANGE, "Testeando procesos...\n");
     char *argvAux[] = {"10"};
     usys_test_processes(1, argvAux);
+    usys_myExit();
 }
 
 void test_prio()
@@ -303,6 +318,7 @@ void test_prio()
     printColor(ORANGE, "Testeando prioridades...\n");
     print("Testeando prioridades...\n");
     usys_test_prio();
+    usys_myExit();
 }
 
 void test_mm()
@@ -310,36 +326,42 @@ void test_mm()
     printColor(ORANGE, "Testeando MM...\n");
     char *argvmm[] = {"1000"};
     usys_test_mm(1, argvmm);
+    usys_myExit();
 }
 
 void print_processes()
 {
     printColor(ORANGE, "Imprimiendo procesos...\n");
     usys_print_processes();
+    usys_myExit();
 }
 
 void print_memory()
 {
     usys_print_memory();
+    usys_myExit();
 }
 
 void create_one_process()
 {
     printColor(ORANGE, "Creando un proceso...\n");
-    usys_createProcess();
+    usys_createOneProcess();
+    usys_myExit();
 }
 
 void loop_print()
 {
     printColor(ORANGE, "Imprimiendo el PID de un proceso cada 2 segundos...\n");
     usys_loop_print();
+    usys_myExit();
 }
 
 void test_sync1()
 {
     printColor(ORANGE, "Testeando sincronizacion con sincro...\n");
     char *argv1[] = {"10", "1", "0"}; // Para usar el de sync y el argc=3
-	usys_test_sync(3, argv1);
+    usys_test_sync(3, argv1);
+    usys_myExit();
 }
 
 void test_sync2()
@@ -347,6 +369,7 @@ void test_sync2()
     printColor(ORANGE, "Testeando sincronizacion sin sincro...\n");
     char *argv2[] = {"10", "1", "1"}; // Para usar el de no sync y el argc=3
     usys_test_sync(3, argv2);
+    usys_myExit();
 }
 
 void kill_process_pid()
@@ -419,6 +442,8 @@ void kill_process_pid()
             return;
         }
     }
+
+    usys_myExit();
 }
 
 void block_process_pid()
@@ -489,6 +514,8 @@ void block_process_pid()
             return;
         }
     }
+
+    usys_myExit();
 }
 
 void increase_prio_pid()
@@ -548,6 +575,8 @@ void increase_prio_pid()
             return;
         }
     }
+
+    usys_myExit();
 }
 
 void decrease_prio_pid()
@@ -609,9 +638,12 @@ void decrease_prio_pid()
             return;
         }
     }
+
+    usys_myExit();
 }
 
 void nice_pid()
 {
     print("Falta hacer, lo hago mañana\n");
+    usys_myExit();
 }

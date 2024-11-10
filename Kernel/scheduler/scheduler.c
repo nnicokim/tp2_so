@@ -60,15 +60,15 @@ void randomFunction()
     while (TRUE)
         ;
 
-    //int i = 0;
-    // while (i < 1000000)
-    // {
-    //     i++;
-    // }
-    // printArray("Random function FINISHED \n");
-    // PCB *pcb = PCB_array[getCurrentPid()];
-    // pcb->state = FINISHED;
-    // my_exit();
+    // int i = 0;
+    //  while (i < 1000000)
+    //  {
+    //      i++;
+    //  }
+    //  printArray("Random function FINISHED \n");
+    //  PCB *pcb = PCB_array[getCurrentPid()];
+    //  pcb->state = FINISHED;
+    //  my_exit();
 }
 
 uint64_t createOneProcess()
@@ -93,9 +93,9 @@ uint64_t killProcess(int pid)
     PCB *pcb = PCB_array[pid];
     if (pcb == NULL)
     {
-        printArray("killProcess: ERROR: Process with PID: ");
-        printDec(pid);
-        printArray(" not found :( \n");
+        // printArray("killProcess: ERROR: Process with PID: ");
+        // printDec(pid);
+        // printArray(" not found :( \n");
         return -1;
     }
 
@@ -105,12 +105,14 @@ uint64_t killProcess(int pid)
     }
 
     // Liberamos stack y pcb
-    removeFromCircularList(&round_robin, pcb->pid); // OJO el orden
+    // int pid = pcb->pid;
     myfree(pcb->baseAddress - PAGE + sizeof(char)); // Libera el stack
     myfree(pcb);
-    printArray("killProcess: Process with PID: ");
-    printDec(pid);
-    printArray(" killed\n");
+    removeFromCircularList(&round_robin, pid); // OJO el orden
+    PCB_array[pid] = NULL;
+    // printArray("killProcess: Process with PID: ");
+    // printDec(pid);
+    // printArray(" killed\n");
     return 0; // que devuelva el codigo de exit
 }
 
@@ -260,6 +262,7 @@ void my_exit()
         forceTimerTick();
         return;
     }
+
     killProcess(pcb->pid);
     forceTimerTick();
 }
@@ -268,7 +271,7 @@ void print_processes()
 {
     for (int i = 0; i < processID; i++)
     {
-        if (PCB_array[i] != NULL || PCB_array[i]->state != FINISHED)
+        if (PCB_array[i] != NULL && PCB_array[i]->state != FINISHED)
         {
             printPCB(PCB_array[i]);
         }

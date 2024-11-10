@@ -15,6 +15,7 @@ GLOBAL _get_time
 GLOBAL _draw_array
 GLOBAL _flush_buffer
 
+GLOBAL _createOneProcess
 GLOBAL _createProcess
 GLOBAL _blockProcess
 GLOBAL _unblockProcess
@@ -213,7 +214,7 @@ _flush_buffer:
     pop rbp 
     ret
 
-_createProcess:
+_createOneProcess:
     push rbp
     mov rbp, rsp
     mov rax, 16
@@ -379,6 +380,15 @@ _test_sync:
     push rbp
     mov rbp, rsp
     mov rax, 34
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+_createProcess:
+    push rbp
+    mov rbp, rsp
+    mov rax, 35
     int 80h
     mov rsp, rbp
     pop rbp

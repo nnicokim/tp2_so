@@ -38,7 +38,9 @@ int usys_get_time();
 
 void flush_buffer();
 
-int usys_createProcess();
+int usys_createOneProcess();
+
+int usys_createProcess(void *process, int argc, char **argv);
 
 int usys_blockProcess(int pid);
 
@@ -76,4 +78,5 @@ void usys_print_memory();
 void usys_loop_print();
 
 void usys_test_sync(uint64_t argc, char *argv[]);
+
 #endif
