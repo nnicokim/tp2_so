@@ -71,4 +71,5 @@ uint64_t _print_memory();
 
 uint64_t _loop_print();
 
+uint64_t _test_sync(uint64_t argc, char *argv[]);
 #endif

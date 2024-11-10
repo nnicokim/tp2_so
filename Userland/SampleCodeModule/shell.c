@@ -28,6 +28,8 @@ void block_process_pid();
 void increase_prio_pid();
 void decrease_prio_pid();
 void nice_pid();
+void test_sync1();
+void test_sync2();
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -59,7 +61,9 @@ static Command commands[] = {
 };
 
 static Command commandsNohelp[] = {
-    {"mem", print_memory, "Imprime la memoria"}};
+    {"mem", print_memory, "Imprime la memoria"},
+    {"tsync1", test_sync1, "Testea la sincronizacion con semaforos"},
+    {"tsync2", test_sync2, "Testea la sincronizacion sin semaforos"}};
 
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
 #define COMMAND_COUNT sizeofArr(commands)
@@ -329,6 +333,20 @@ void loop_print()
 {
     printColor(ORANGE, "Imprimiendo el PID de un proceso cada 2 segundos...\n");
     usys_loop_print();
+}
+
+void test_sync1()
+{
+    printColor(ORANGE, "Testeando sincronizacion con sincro...\n");
+    char *argv1[] = {"10", "1", "0"}; // Para usar el de sync y el argc=3
+	usys_test_sync(3, argv1);
+}
+
+void test_sync2()
+{
+    printColor(ORANGE, "Testeando sincronizacion sin sincro...\n");
+    char *argv2[] = {"10", "1", "1"}; // Para usar el de no sync y el argc=3
+    usys_test_sync(3, argv2);
 }
 
 void kill_process_pid()

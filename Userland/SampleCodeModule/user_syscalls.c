@@ -167,3 +167,8 @@ void usys_loop_print()
 {
     _loop_print();
 }
+
+void usys_test_sync(uint64_t argc, char *argv[])
+{
+    _test_sync(argc, argv);
+}

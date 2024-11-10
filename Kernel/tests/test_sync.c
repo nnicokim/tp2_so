@@ -5,10 +5,15 @@
 #include <videoDriver.h>
 #include "../include/tests/syscall.h"
 #include "../scheduler/include/scheduler.h"
+#include "../include/tests/test_sync.h"
+
+extern void forceTimerTick();
+
+uint64_t ksys_waitPid(int pid);
 
 #define SEM_ID "sem"
 #define TOTAL_PAIR_PROCESSES 2
-#define NULL ((void *)0)
+
 int64_t global; // shared memory
 char namBuf[][3] = {"R1", "R2", "R3", "R4"};
 
@@ -25,7 +30,7 @@ void *slowInc(int64_t *p, int64_t inc)
   *p = aux;
   printDec(*p);
   printArray("|\n");
-  return NULL;
+  return 0;
 }
 
 void *my_process_inc(int argc, char *argv[])
@@ -35,20 +40,20 @@ void *my_process_inc(int argc, char *argv[])
   int8_t use_sem;
 
   if (argc != 3)
-    return NULL;
+    return 0;
 
   if ((n = satoi(argv[0])) <= 0)
-    return NULL;
+    return 0;
   if ((inc = satoi(argv[1])) == 0)
-    return NULL;
+    return 0;
   if ((use_sem = satoi(argv[2])) < 0)
-    return NULL;
+    return 0;
 
   if (use_sem)
     if (semOpen(SEM_ID, 1) == -1)
     {
       printArray("test_sync: ERROR opening semaphore\n");
-      return NULL;
+      return 0;
     }
 
   uint64_t i;
@@ -65,7 +70,7 @@ void *my_process_inc(int argc, char *argv[])
     semClose(SEM_ID);
   my_exit();
 
-  return NULL;
+  return 0;
 }
 
 void *my_process_inc_no_sem(int argc, char *argv[])
@@ -74,14 +79,14 @@ void *my_process_inc_no_sem(int argc, char *argv[])
   int8_t inc;
 
   if (argc != 3)
-    return NULL;
+    return 0;
 
   if ((n = satoi(argv[0])) <= 0)
-    return NULL;
+    return 0;
   if ((inc = satoi(argv[1])) == 0)
-    return NULL;
+    return 0;
   if ((satoi(argv[2])) < 0)
-    return NULL;
+    return 0;
 
   uint64_t i;
   for (i = 0; i < n; i++)
@@ -91,19 +96,19 @@ void *my_process_inc_no_sem(int argc, char *argv[])
 
   my_exit();
 
-  return NULL;
+  return 0;
 }
 
-void *test_sync(int argc, char *argv[])
+uint64_t test_sync(uint64_t argc, char *argv[])
 {
 
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
   if (argc != 3)
-    return NULL;
+    return 0;
 
-  char *argvDec[] = {argv[0], "-1", argv[1], NULL};
-  char *argvInc[] = {argv[0], "1", argv[1], NULL};
+  char *argvDec[] = {argv[0], "-1", argv[1], 0};
+  char *argvInc[] = {argv[0], "1", argv[1], 0};
 
   global = 0;
   uint64_t i;
@@ -118,8 +123,8 @@ void *test_sync(int argc, char *argv[])
 
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
     {
-      waitPid(pids[i]);
-      waitPid(pids[i + TOTAL_PAIR_PROCESSES]);
+      ksys_waitPid(pids[i]);
+      ksys_waitPid(pids[i + TOTAL_PAIR_PROCESSES]);
     }
   }
   else
@@ -132,8 +137,8 @@ void *test_sync(int argc, char *argv[])
 
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
     {
-      waitPid(pids[i]);
-      waitPid(pids[i + TOTAL_PAIR_PROCESSES]);
+      ksys_waitPid(pids[i]);
+      ksys_waitPid(pids[i + TOTAL_PAIR_PROCESSES]);
     }
   }
 
@@ -141,5 +146,5 @@ void *test_sync(int argc, char *argv[])
   printDec(global);
   printArray("\n");
   my_exit();
-  return NULL;
+  return 0;
 }

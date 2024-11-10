@@ -75,4 +75,5 @@ void usys_print_memory();
 
 void usys_loop_print();
 
+void usys_test_sync(uint64_t argc, char *argv[]);
 #endif

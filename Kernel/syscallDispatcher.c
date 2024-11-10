@@ -15,6 +15,7 @@
 #include <tests/test_mm.h>
 #include <tests/test_processes.h>
 #include <tests/test_prio.h>
+#include <tests/test_sync.h>
 
 #define STDIN 0
 #define STDOUT 1
@@ -136,6 +137,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_print_memory();
     case 33:
         return ksys_loop_print();
+    case 34:
+        return test_sync(rdi, (char **)rsi);
     }
 
     return 0;
