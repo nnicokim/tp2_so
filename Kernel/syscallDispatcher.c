@@ -322,13 +322,11 @@ uint64_t ksys_leaveCPU()
 uint64_t ksys_waitPid(int pid)
 {
     PCB *childProcess = PCB_array[pid];
-    if (childProcess->state == FINISHED)
-    {
-        return -1;
-    }
-    int parentProcess = getCurrentPid();
-    blockProcess(parentProcess);
-    forceTimerTick();
+    if(!childProcess) return -1;
+    while(childProcess->state != FINISHED) forceTimerTick();
+
+    // int parentProcess = getCurrentPid();
+    // blockProcess(parentProcess);
     return 0;
 }
 

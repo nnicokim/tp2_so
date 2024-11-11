@@ -33,6 +33,9 @@ void decrease_prio_pid();
 void nice_pid();
 void test_sync1();
 void test_sync2();
+void handleCommands(char * str, int * fd);
+void handleRegularCommand(char * str, int * fd);
+
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -110,13 +113,17 @@ void handleRegularCommand(char * str, int * fd){
     while(*str == ' ') str++;
 
     for (int i = 0; i < COMMAND_COUNT; i++)
-    {
+    {   
+        int pid = -1;
         if (strcmp(str, commands[i].name_id) == 0)
         {
-            usys_createProcess(str, commands[i].func, argC, argument, fd);
-            return;
+            pid = usys_createProcess(str, commands[i].func, argC, argument, fd);
         } else if (strcmp(str, commandsNohelp[i].name_id) == 0) {
-            usys_createProcess(str, commandsNohelp[i].func, argC, argument, fd);
+            pid = usys_createProcess(str, commandsNohelp[i].func, argC, argument, fd);
+        }
+
+        if(pid != -1) {
+            usys_waitPid(pid);
             return;
         }
     }
@@ -126,7 +133,7 @@ void handleRegularCommand(char * str, int * fd){
 void handleCommands(char * str, int * fd){
     char * cmds[3] = { str, 0 };
     char * currCMD = str;
-    uint64_t currentID = 0;
+    uint64_t currentID = 1;
     while(*currCMD != '\n' && currentID < 3){
         if(*currCMD == '|'){
             *currCMD = '\0';
@@ -143,7 +150,7 @@ void handleCommands(char * str, int * fd){
         printError("Demasiados comandos en la linea de comandos.\n");
         return;
     };
-    for(int i = 0; i <= currentID; i++)
+    for(int i = 0; i < currentID; i++)
         handleRegularCommand(cmds[i], fd);
 }
 
@@ -196,8 +203,12 @@ void init_shell()
                 putChar(c);
                 buffer[bufferIndex++] = c;
             }
-            //else if ( c == ) {
-             //   
+            //else if ( c == 3 ) {
+             // usys_killProcess();
+            //}
+
+            //else if ( c == 4 ) {
+             // usys_sendEOF();   
             //}
         }
     }
