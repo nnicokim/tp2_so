@@ -56,7 +56,6 @@ static Command commands[] = {
     {"tmm", test_mm, "Testea el gestor de memoria"},
     {"tprio", test_prio, "Testea la prioridad de los procesos"},
     {"printp", print_processes, "Imprime los procesos activos"},
-    {"cp", create_one_process, "Crea un proceso"},
     {"loop", loop_print, "Imprime el PID del proceso ejecutandose cada 2 segs"},
     {"kill", kill_process_pid, "Mata un proceso dado un PID"},
     {"block", block_process_pid, "Bloquea un proceso dado un PID"},
@@ -66,6 +65,7 @@ static Command commands[] = {
 };
 
 static Command commandsNohelp[] = {
+    {"cp", create_one_process, "Crea un proceso"},
     {"mem", print_memory, "Imprime la memoria"},
     {"tsync1", test_sync1, "Testea la sincronizacion con semaforos"},
     {"tsync2", test_sync2, "Testea la sincronizacion sin semaforos"},
@@ -75,39 +75,78 @@ static Command commandsNohelp[] = {
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
 #define COMMAND_COUNT sizeofArr(commands)
 
-void parseCommand(char *str)
-{
-    char argument[] = {0};
 
+void parseCommand(char *str) // TODO: dependiendo de si es BG o FG, se envia el FD correspondiente
+{
+    int fgFD[] = { 0, 1 };
+    int bgFD[] = { -1, -1 };
+    
+    char argument[] = {0};
     if (strcmp(str, "") == 0)
     {
         return;
     }
 
     int argC = parseCommandArg(str);
+    int cmdLen = strlen(str);
+    char lastChar = str[cmdLen-2]; 
 
-    if (argC > 1)
-    {
-        printColor(YELLOW, "No puede haber ni un espacio ni mas de 1 argumento. Verificar los comandos de nuevo.\n");
-    }
+    if (lastChar == '&')
+        return handleCommands(str, bgFD);
+    else
+        return handleCommands(str, fgFD);
+}
+
+void handleRegularCommand(char * str, int * fd){
+    char *argument[] = { 0 };
+
+    if(strcmp(str, "") == 0) return;
+    print("HandleRegularCommand\n");
+
+    // TODO: parseCommandArg { char argc, char * argv }
+    // char argc = parseCommandArg(str, argv);
+
+    int argC = parseCommandArg(str);
+    while(*str == ' ') str++;
 
     for (int i = 0; i < COMMAND_COUNT; i++)
     {
         if (strcmp(str, commands[i].name_id) == 0)
         {
-            usys_createProcess(str, commands[i].func, argC, argument);
-            // (*commands[i].func)(argument);
+            usys_createProcess(str, commands[i].func, argC, argument, fd);
             return;
-        }
-        else if (strcmp(str, commandsNohelp[i].name_id) == 0)
-        {
-            usys_createProcess(str, commandsNohelp[i].func, argC, argument);
-            // (*commandsNohelp[i].func)(argument);
+        } else if (strcmp(str, commandsNohelp[i].name_id) == 0) {
+            usys_createProcess(str, commandsNohelp[i].func, argC, argument, fd);
             return;
         }
     }
     printError("Error: comando no diponible. Ingrese \"help\" para ver los comandos disponibles.\n");
 }
+
+void handleCommands(char * str, int * fd){
+    char * cmds[3] = { str, 0 };
+    char * currCMD = str;
+    uint64_t currentID = 0;
+    while(*currCMD != '\n' && currentID < 3){
+        if(*currCMD == '|'){
+            *currCMD = '\0';
+            cmds[currentID] = currCMD + 1;   
+            char * aux = currCMD;
+
+            currentID++;
+        }
+
+        currCMD++;
+    }
+
+    if(currentID >= 3) {
+        printError("Demasiados comandos en la linea de comandos.\n");
+        return;
+    };
+    for(int i = 0; i <= currentID; i++)
+        handleRegularCommand(cmds[i], fd);
+}
+
 
 void printPromptIcon()
 {
@@ -157,6 +196,9 @@ void init_shell()
                 putChar(c);
                 buffer[bufferIndex++] = c;
             }
+            //else if ( c == ) {
+             //   
+            //}
         }
     }
 }
@@ -178,7 +220,7 @@ void help()
 
 void divzero()
 {
-    int a = 1; // rax??
+    int a = 1;
     int b = 0;
     if (a / b == 1)
     {
@@ -238,7 +280,7 @@ void zoomout()
     printColor(ORANGE, "Indicar S (Si) o N (No)\n");
     char c;
     while (1)
-    {
+    { 
         while ((c = getChar()) == 0)
             ;
         if (c == 'N' || c == 'n')
@@ -290,6 +332,7 @@ void inforeg()
     }
     usys_myExit();
 }
+
 void clear_shell()
 {
     usys_clear_screen();
@@ -298,7 +341,7 @@ void clear_shell()
 
 void beep()
 {
-    printColor(GREEN, "usys_BEEP!!\n");
+    printColor(GREEN, "BEEP!!\n");
     usys_beep(500, 10);
     usys_myExit();
 }
@@ -512,11 +555,11 @@ void mario_bros_song()
     usys_beep(440, 50);
     usys_beep(523, 50);
     usys_beep(587, 50);
-    usys_wait(250);
+    usys_wait(230);
     usys_beep(622, 50);
     usys_wait(250);
     usys_beep(587, 50);
-    usys_wait(250);
+    usys_wait(230);
     usys_beep(523, 50);
     usys_wait(150);
     usys_myExit();
@@ -524,16 +567,16 @@ void mario_bros_song()
 
 void easteregg()
 {
-    printColor(GREEN, "Guess who's sinphony...\n");
+    printColor(GREEN, "Guess who's symphony...\n");
 
     usys_beep(523, 250);
-    usys_wait(100);
+    usys_wait(90);
     usys_beep(523, 250);
-    usys_wait(100);
+    usys_wait(90);
     usys_beep(523, 250);
-    usys_wait(100);
+    usys_wait(800);
     usys_beep(415, 750);
-    usys_wait(250);
+    usys_wait(200);
 
     usys_beep(466, 250);
     usys_wait(100);
@@ -542,7 +585,7 @@ void easteregg()
     usys_beep(466, 250);
     usys_wait(100);
     usys_beep(392, 750);
-    usys_wait(250);
+    usys_wait(200);
 
     usys_beep(523, 250);
     usys_wait(100);
@@ -551,14 +594,14 @@ void easteregg()
     usys_beep(523, 250);
     usys_wait(100);
     usys_beep(415, 750);
-    usys_wait(250);
+    usys_wait(200);
 
     usys_beep(466, 250);
-    usys_wait(100);
+    usys_wait(80);
     usys_beep(466, 250);
-    usys_wait(100);
+    usys_wait(80);
     usys_beep(466, 250);
-    usys_wait(100);
+    usys_wait(80);
     usys_beep(392, 750);
 
     printColor(TURQUOISE, "Encontraron el easter egg oculto!!!\n");
@@ -603,12 +646,15 @@ void print_processes()
 {
     printColor(ORANGE, "Imprimiendo procesos...\n");
     usys_print_processes();
+    printPromptIcon();
     usys_myExit();
 }
 
 void print_memory()
 {
+    printColor(ORANGE, "Imprimiendo memoria...\n");
     usys_print_memory();
+    printPromptIcon();
     usys_myExit();
 }
 

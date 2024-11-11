@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "./ipc/include/pipes.h"
 #include <videoDriver.h>
 #include <registers.h>
 #include <time.h>
@@ -46,8 +47,9 @@ uint64_t ksys_getTime();
 uint64_t ksys_draw_square(uint64_t color, uint64_t x, uint64_t y, uint64_t size);
 uint64_t ksys_draw_rect(uint64_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_t size_y);
 uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t x, uint64_t y, uint64_t arr);
+// SO
 uint64_t ksys_createOneProcess();
-uint64_t ksys_createProcess(char *pr_name, void *process, int argc, char **argv);
+uint64_t ksys_createProcess(char *pr_name, void *process, int argc, char **argv, int * fds);
 uint64_t ksys_blockProcess(int pid);
 uint64_t ksys_unblockProcess(int pid);
 uint64_t ksys_getCurrentpid();
@@ -62,8 +64,12 @@ uint64_t ksys_decrease_priority(int pid);
 uint64_t ksys_print_processes();
 uint64_t ksys_print_memory();
 uint64_t ksys_loop_print();
-uint64_t wait_Pid(int pid);
+// uint64_t wait_Pid(int pid);
 uint64_t ksys_testsync(uint64_t argc, char **argv);
+
+uint64_t ksys_pollPipe(uint64_t id, uint64_t event);
+uint64_t ksys_readPipe(uint64_t id, char * dest, uint64_t count);
+uint64_t ksys_writePipe(uint64_t id, char * src, uint64_t count);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -144,7 +150,13 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
     case 34:
         return ksys_testsync(rdi, (char **)rsi);
     case 35:
-        return ksys_createProcess((char *)rdi, (void *)rsi, rdx, (char **)rcx);
+        return ksys_createProcess((char *)rdi, (void *)rsi, rdx, (char **)rcx, r8);
+    case 36:
+        return ksys_pollPipe(rdi, rsi);
+    case 37:
+        return ksys_readPipe(rdi, (char *)rsi, rdx);
+    case 38:
+        return ksys_writePipe(rdi, (char *)rsi, rdx);
     }
 
     return 0;
@@ -191,7 +203,6 @@ uint64_t ksys_getTime()
 {
     char reserve[TIME_STR]; // en reserve queda guardado el time en formato hh:mm:ss
     timeToStr(reserve);
-    // print(reserve);   ver cual funcion uso para imprimir el string
     printArray(reserve);
     return 0;
 }
@@ -272,9 +283,9 @@ uint64_t ksys_createOneProcess()
     return createOneProcess();
 }
 
-uint64_t ksys_createProcess(char *pr_name, void *process, int argc, char **argv)
+uint64_t ksys_createProcess(char *pr_name, void *process, int argc, char **argv, int * fds)
 {
-    return createProcess((char *)pr_name, (void *)process, argc, argv);
+    return createProcess((char *)pr_name, (void *)process, argc, argv, fds);
 }
 
 uint64_t ksys_blockProcess(int pid)
@@ -308,7 +319,6 @@ uint64_t ksys_leaveCPU()
     return 0;
 }
 
-// El proceso padre se bloquea hasta que el hijo termine
 uint64_t ksys_waitPid(int pid)
 {
     PCB *childProcess = PCB_array[pid];
@@ -362,23 +372,34 @@ uint64_t ksys_loop_print()
     return 0;
 }
 
-uint64_t wait_Pid(int pid)
-{
-    PCB *childProcess = PCB_array[pid];
-    if (childProcess->state == FINISHED)
-    {
-        return -1;
-    }
-    childProcess->state = BLOCKED;
-    forceTimerTick();
-    return 0;
-}
+// uint64_t wait_Pid(int pid)
+// {
+//     PCB *childProcess = PCB_array[pid];
+//     if (childProcess->state == FINISHED)
+//     {
+//         return -1;
+//     }
+//     childProcess->state = BLOCKED;
+//     forceTimerTick();
+//     return 0;
+// }
 
 uint64_t ksys_testsync(uint64_t argc, char *argv[])
 {
-    int sync_pid = createProcess("Sync_Test", (void *)test_sync, argc, argv);
+    int fds[] = {0, 1};
+    int sync_pid = createProcess("Sync_Test", (void *)test_sync, argc, argv, fds);
     return sync_pid;
 
-    // test_sync(argc, argv);
-    // return 0;
+}
+
+uint64_t ksys_pollPipe(uint64_t id, uint64_t event){
+    return pollPipe(id, event);
+}
+
+uint64_t ksys_readPipe(uint64_t id, char * dest, uint64_t count){
+    return readPipe(id, dest, count);
+}
+
+uint64_t ksys_writePipe(uint64_t id, char * src, uint64_t count){
+    return writePipe(id, src, count);
 }

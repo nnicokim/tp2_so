@@ -14,14 +14,16 @@ void initScheduler()
 {
     initializeCircularList(&round_robin);
 
-    createProcess("SHELL", (void *)_setUser, 0, NULL);
-    createProcess("IDLE", (void *)idleProcess, 0, NULL);
+    int shellFD[] = {0, 1};
+    int idleFD[] = {0, 1};
+    createProcess("SHELL", (void *)_setUser, 0, NULL, shellFD);
+    createProcess("IDLE", (void *)idleProcess, 0, NULL, idleFD);
 
     isSchedulerActive = 1;
 }
 
 // uint64_t createProcess(void (*program)(int, char **), int argc, char **argv)
-uint64_t createProcess(char *pr_name, void *program, int argc, char **argv)
+uint64_t createProcess(char *pr_name, void *program, int argc, char **argv, int * fds)
 {
     void *newStack = mymalloc(PAGE);
     if (newStack == NULL)
@@ -41,13 +43,13 @@ uint64_t createProcess(char *pr_name, void *program, int argc, char **argv)
     {
         newPCB->ppid = getCurrentPid();
     }
-    initPCB(newPCB, processID, newPCB->ppid, DEFAULT_PRIORITY);
+    initPCB(newPCB, processID, newPCB->ppid, DEFAULT_PRIORITY, (int *) fds);
     PCB_array[processID] = newPCB;
 
     newPCB->stack = initStackFrame(newStack + PAGE - sizeof(char), argc, argv, (void *)program, processID);
     processID++;
     newPCB->name = pr_name;
-    newPCB->baseAddress = newStack + PAGE - sizeof(char); // A chequear
+    newPCB->baseAddress = newStack + PAGE - sizeof(char); 
     newPCB->limit = PAGE;
 
     addCircularList(&round_robin, newPCB->pid);
@@ -74,7 +76,8 @@ void randomFunction()
 
 uint64_t createOneProcess()
 {
-    return createProcess("DUMMY Function", (void *)randomFunction, 0, NULL);
+    int dummyFD[] = {0, 1};
+    return createProcess("DUMMY Function", (void *)randomFunction, 0, NULL, dummyFD);
 }
 
 void idleProcess()

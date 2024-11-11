@@ -18,6 +18,7 @@
 #include "./structs/include/pcb.h"
 #include "./scheduler/include/scheduler.h"
 #include "./ipc/include/semaphore.h"
+#include "./ipc/include/pipes.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -72,15 +73,11 @@ int main()
 	// size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
 	// init_buddy_allocator(HEAP_START, total_memory);
 
-	printArray("Welcome to the Kernel!\n");
-
 	initScheduler();
 
 	initSems();
 
 	_sti(); // Habilitar interrupciones
-
-	//_setUser();
 
 	printArray("You shouldn't be here chief...");
 

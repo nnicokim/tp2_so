@@ -36,6 +36,11 @@ GLOBAL usys_print_memory
 GLOBAL usys_loop_print
 GLOBAL usys_test_sync
 
+
+GLOBAL usys_pollPipe
+GLOBAL usys_readPipe
+GLOBAL usys_writePipe
+
 section .text
 
 usys_write:
@@ -389,6 +394,33 @@ usys_createProcess:
     push rbp
     mov rbp, rsp
     mov rax, 35
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_pollPipe:
+    push rbp
+    mov rbp, rsp
+    mov rax, 36
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_readPipe:
+    push rbp
+    mov rbp, rsp
+    mov rax, 37
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_writePipe:
+    push rbp
+    mov rbp, rsp
+    mov rax, 38
     int 80h
     mov rsp, rbp
     pop rbp

@@ -15,6 +15,7 @@ typedef struct P_rq
 
 int64_t test_processes(uint64_t argc, char *argv[])
 {
+    int fd[] = { 0, 1 }; 
     uint8_t rq;
     uint8_t alive = 0;
     uint8_t action;
@@ -36,7 +37,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
         // Create max_processes processes
         for (rq = 0; rq < max_processes; rq++)
         {
-            p_rqs[rq].pid = createProcess("endless_lopp", (void *)endless_loop, 0, argvAux);
+            p_rqs[rq].pid = createProcess("endless_lopp", (void *)endless_loop, 0, argvAux, fd);
 
             if (p_rqs[rq].pid == -1)
             {

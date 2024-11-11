@@ -30,6 +30,8 @@ typedef struct PCB
     int priorityLife;
     unsigned int runningCounter;
 
+    int FD[2]; // fg & bg
+
     void *baseAddress;
     size_t limit;
 
@@ -37,8 +39,8 @@ typedef struct PCB
 
 extern PCB *PCB_array[MAX_PROCESSES]; // Array de PCBs
 
-void initPCB(PCB *pcb, int pid, int ppid, int priority);
-PCB *copyPCB(PCB *pcb, PCB *newPCB);
+void initPCB(PCB *pcb, int pid, int ppid, int priority, int * fds);
+// PCB *copyPCB(PCB *pcb, PCB *newPCB);
 void freePCB(PCB *pcb);
 int compare_PCB(const PCB *pcb1, const PCB *pcb2);
 void printPCB(PCB *pcb);

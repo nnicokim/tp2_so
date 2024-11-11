@@ -144,7 +144,7 @@ void *my_process_inc_no_sem(int argc, char *argv[])
 
 uint64_t test_sync(uint64_t argc, char *argv[])
 {
-
+  int fd[]={0,1};
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
   if (argc != 3)
@@ -163,8 +163,8 @@ uint64_t test_sync(uint64_t argc, char *argv[])
   {
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
     {
-      pids[i] = createProcess(namBuf[i], (void *)my_process_inc, 3, argvDec);
-      pids[i + TOTAL_PAIR_PROCESSES] = createProcess(namBuf[i], (void *)my_process_inc, 3, argvInc);
+      pids[i] = createProcess(namBuf[i], (void *)my_process_inc, 3, argvDec, fd);
+      pids[i + TOTAL_PAIR_PROCESSES] = createProcess(namBuf[i], (void *)my_process_inc, 3, argvInc, fd);
     }
 
     printArray("Waiting for processes to finish del (strcmp(argv[2], 0) == 0)...\n");
@@ -184,8 +184,8 @@ uint64_t test_sync(uint64_t argc, char *argv[])
   {
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
     {
-      pids[i] = createProcess(namBuf[i], (void *)my_process_inc_no_sem, 3, argvDec);
-      pids[i + TOTAL_PAIR_PROCESSES] = createProcess(namBuf[i], (void *)my_process_inc_no_sem, 3, argvInc);
+      pids[i] = createProcess(namBuf[i], (void *)my_process_inc_no_sem, 3, argvDec, fd);
+      pids[i + TOTAL_PAIR_PROCESSES] = createProcess(namBuf[i], (void *)my_process_inc_no_sem, 3, argvInc, fd);
     }
 
     printArray("Waiting for processes to finish (en el ELSE)...\n");

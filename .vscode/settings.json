@@ -32,6 +32,8 @@
         "unistd.h": "c",
         "semaphore.h": "c",
         "memory.h": "c",
-        "lib.h": "c"
+        "lib.h": "c",
+        "pipes.h": "c",
+        "string.h": "c"
     }
 }

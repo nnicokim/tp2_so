@@ -23,7 +23,7 @@ int unblockProcess(int pid);
 int getCurrentPid();
 int getCurrentPPid();
 CircularListNode *getCurrentProcess();
-uint64_t createProcess(char *pr_name, void *program, int argc, char **argv);
+uint64_t createProcess(char *pr_name, void *program, int argc, char **argv, int * fds);
 
 void idleProcess();
 uint64_t createOneProcess();
