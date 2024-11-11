@@ -188,7 +188,7 @@ void invopcode()
 void time()
 {
     printColor(GREEN, "ART (Argentine Time): UTC/GMT -3 horas\n");
-    _get_time();
+    usys_get_time();
     usys_myExit();
 }
 

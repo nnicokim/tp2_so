@@ -31,7 +31,7 @@ void eliminator()
     usys_print_array_of_draw_size(PINK, BLACK, middle_x - strlen("BYE!!") / 2, middle_y, "BYE!!");
     usys_wait(2000);
     clearMatrix();
-    flush_buffer();
+    usys_flush_buffer();
 }
 
 // inicializa el eliminator
