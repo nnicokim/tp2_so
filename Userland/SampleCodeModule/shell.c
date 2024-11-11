@@ -33,8 +33,8 @@ void decrease_prio_pid();
 void nice_pid();
 void test_sync1();
 void test_sync2();
-void handleCommands(char * str, int * fd);
-void handleRegularCommand(char * str, int * fd);
+void handleCommands(char *str, int *fd);
+void handleRegularCommand(char *str, int *fd);
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -77,12 +77,11 @@ static Command commandsNohelp[] = {
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
 #define COMMAND_COUNT sizeofArr(commands)
 
-
 void parseCommand(char *str) // TODO: dependiendo de si es BG o FG, se envia el FD correspondiente
 {
-    int fgFD[] = { 0, 1 };
-    int bgFD[] = { -1, -1 };
-    
+    int fgFD[] = {0, 1};
+    int bgFD[] = {-1, -1};
+
     char argument[] = {0};
     if (strcmp(str, "") == 0)
     {
@@ -91,65 +90,74 @@ void parseCommand(char *str) // TODO: dependiendo de si es BG o FG, se envia el 
 
     int argC = parseCommandArg(str);
     int cmdLen = strlen(str);
-    char lastChar = str[cmdLen-2]; 
+    char lastChar = str[cmdLen - 2];
 
     // if (lastChar == '&')
     //     return handleCommands(str, bgFD);
     // else
-        return handleCommands(str, fgFD);
+    return handleCommands(str, fgFD);
 }
 
-void handleRegularCommand(char * str, int * fd){
-    char *argument[] = { 0 };
+void handleRegularCommand(char *str, int *fd)
+{
+    char *argument[] = {0};
 
-    if(strcmp(str, "") == 0) return;
+    if (strcmp(str, "") == 0)
+        return;
 
     // TODO: parseCommandArg { char argc, char * argv }
     // char argc = parseCommandArg(str, argv);
 
     int argC = parseCommandArg(str);
-    while(*str == ' ') str++;
+    while (*str == ' ')
+        str++;
 
     for (int i = 0; i < COMMAND_COUNT; i++)
     {
         if (strcmp(str, commands[i].name_id) == 0)
         {
             char *name;
-            int pid=usys_createProcess(str, commands[i].func, argC, argument, fd);
+            int pid = usys_createProcess(str, commands[i].func, argC, argument, fd);
             usys_waitPid(pid);
             return;
-        } else if (strcmp(str, commandsNohelp[i].name_id) == 0) {
-           int pid= usys_createProcess(str, commandsNohelp[i].func, argC, argument, fd);
-           usys_waitPid(pid);
+        }
+        else if (strcmp(str, commandsNohelp[i].name_id) == 0)
+        {
+            int pid = usys_createProcess(str, commandsNohelp[i].func, argC, argument, fd);
+            usys_waitPid(pid);
             return;
         }
     }
     printError("Error: comando no diponible. Ingrese \"help\" para ver los comandos disponibles.\n");
 }
 
-void handleCommands(char * str, int * fd){
-    char * cmds[3] = { str, 0 };
-    char * currCMD = str;
+void handleCommands(char *str, int *fd)
+{
+    char *cmds[3] = {str, 0};
+    char *currCMD = str;
     uint64_t currentID = 0;
-    while (*currCMD != '\0' && *currCMD != '\n' && currentID < 3) {
-        if (*currCMD == '|') {
-            *currCMD = '\0';             // Terminate current command
-            currentID++;                 // Move to the next command
-            if (currentID < 3) {         // Check bounds before assignment
+    while (*currCMD != '\0' && *currCMD != '\n' && currentID < 3)
+    {
+        if (*currCMD == '|')
+        {
+            *currCMD = '\0'; // Terminate current command
+            currentID++;     // Move to the next command
+            if (currentID < 3)
+            {                                  // Check bounds before assignment
                 cmds[currentID] = currCMD + 1; // Set the next command start
             }
         }
         currCMD++;
     }
 
-    if(currentID >= 3) {
+    if (currentID >= 3)
+    {
         printError("Demasiados comandos en la linea de comandos.\n");
         return;
     };
-    for(int i = 0; i <= currentID; i++)
+    for (int i = 0; i <= currentID; i++)
         handleRegularCommand(cmds[i], fd);
 }
-
 
 void printPromptIcon()
 {
@@ -199,9 +207,24 @@ void init_shell()
                 putChar(c);
                 buffer[bufferIndex++] = c;
             }
-            //else if ( c == ) {
-             //   
-            //}
+            else if (c == "^")
+            {
+                putChar(c);
+                if ((c = getChar()) == 0)
+                    continue;
+                if (c == 'c') // Ctrl+C
+                {
+                    print("^C\n");
+                    usys_myExit();
+                }
+                else if (c == 'd') // Ctrl+D
+                {
+                    print("^D\n");
+                    // usys_sendEOF();
+                }
+                bufferIndex = 0; // Reset the buffer for the next command
+                printPromptIcon();
+            }
         }
     }
 }
@@ -286,7 +309,7 @@ void zoomout()
     printColor(ORANGE, "Indicar S (Si) o N (No)\n");
     char c;
     while (1)
-    { 
+    {
         while ((c = getChar()) == 0)
             ;
         if (c == 'N' || c == 'n')
