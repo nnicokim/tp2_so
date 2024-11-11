@@ -35,6 +35,7 @@ void *slowInc(int64_t *p, int64_t inc)
 
 void *my_process_inc(int argc, char *argv[])
 {
+  printArray("LLAMADO A FUNCION DE INCREMENTO\n");
   uint64_t n;
   int8_t inc;
   int8_t use_sem;
@@ -42,17 +43,23 @@ void *my_process_inc(int argc, char *argv[])
   if (argc != 3)
     return 0;
 
-  if ((n = satoi(argv[0])) <= 0)
+  if ((n = satoi(argv[0])) <= 0){
+        my_exit();
     return 0;
-  if ((inc = satoi(argv[1])) == 0)
+  }
+  if ((inc = satoi(argv[1])) == 0){
+        my_exit();
     return 0;
-  if ((use_sem = satoi(argv[2])) < 0)
+  }
+  if ((use_sem = satoi(argv[2])) < 0){
+        my_exit();
     return 0;
-
+    }
   if (use_sem)
     if (semOpen(SEM_ID, 1) == -1)
     {
       printArray("test_sync: ERROR opening semaphore\n");
+      my_exit();
       return 0;
     }
 
@@ -75,19 +82,25 @@ void *my_process_inc(int argc, char *argv[])
 
 void *my_process_inc_no_sem(int argc, char *argv[])
 {
+  printArray("LLAMADO A FUNCION DE INCREMENTO\n");
   uint64_t n;
   int8_t inc;
 
   if (argc != 3)
     return 0;
 
-  if ((n = satoi(argv[0])) <= 0)
+  if ((n = satoi(argv[0])) <= 0){
+      my_exit();
     return 0;
-  if ((inc = satoi(argv[1])) == 0)
+    }
+  if ((inc = satoi(argv[1])) == 0){
+      my_exit();
     return 0;
-  if ((satoi(argv[2])) < 0)
+  }
+  if ((satoi(argv[2])) < 0){
+      my_exit();
     return 0;
-
+  }
   uint64_t i;
   for (i = 0; i < n; i++)
   {

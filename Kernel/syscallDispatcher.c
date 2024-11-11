@@ -16,6 +16,7 @@
 #include <tests/test_processes.h>
 #include <tests/test_prio.h>
 #include <tests/test_sync.h>
+#include "./ipc/include/semaphore.h"
 
 #define STDIN 0
 #define STDOUT 1
@@ -61,6 +62,8 @@ uint64_t ksys_decrease_priority(int pid);
 uint64_t ksys_print_processes();
 uint64_t ksys_print_memory();
 uint64_t ksys_loop_print();
+uint64_t wait_Pid(int pid);
+uint64_t ksys_testsync(uint64_t argc, char **argv);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -139,10 +142,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
     case 33:
         return ksys_loop_print();
     case 34:
-        return test_sync(rdi, (char **)rsi);
-
-    case 35:
-        return ksys_createProcess((void *)rdi, rsi, (char **)rdx);
+        return ksys_testsync(rdi, (char **)rsi);
     }
 
     return 0;
@@ -357,5 +357,23 @@ uint64_t ksys_print_memory()
 uint64_t ksys_loop_print()
 {
     loop_print();
+    return 0;
+}
+
+uint64_t wait_Pid(int pid)
+{
+    PCB *childProcess = PCB_array[pid];
+    if (childProcess->state == FINISHED)
+    {
+        return -1;
+    }
+    childProcess->state = BLOCKED;
+    forceTimerTick();
+    return 0;
+}
+
+uint64_t ksys_testsync(uint64_t argc, char *argv[])
+{
+    test_sync(argc, argv);
     return 0;
 }

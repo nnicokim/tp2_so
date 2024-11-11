@@ -46,7 +46,7 @@ uint64_t createProcess(char *program, int argc, char **argv)
 
     newPCB->stack = initStackFrame(newStack + PAGE - sizeof(char), argc, argv, (void *)program, processID);
     processID++;
-    newPCB->baseAddress = newStack + PAGE - sizeof(char);
+    newPCB->baseAddress = newStack + PAGE - sizeof(char); // A chequear
     newPCB->limit = PAGE;
 
     addCircularList(&round_robin, newPCB->pid);
@@ -184,6 +184,11 @@ void *schedule(void *rsp)
         killProcess(pcb->pid);
         return change_context(current->pid);
     }
+    if (pcb->state == BLOCKED)
+    { // Esto es para que no se quede en un proceso bloqueado y tampoco lo desbloqueo
+        current = current->next;
+        return change_context(current->pid);
+    }
 
     pcb->state = READY;
     current = current->next;
@@ -262,6 +267,7 @@ void tryToExit()
         printArray("Could not exit process\n");
         return;
     }
+    unblockProcess(pcb->ppid);
 
     killProcess(pid);
 }
