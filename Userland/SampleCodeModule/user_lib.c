@@ -206,9 +206,18 @@ void udrawFrame(uint32_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_
 
 void udrawArray(uint32_t fontColor, uint32_t backgroundColor, int x, int y, char *arr)
 {
-    usys_draw_array(fontColor, backgroundColor, (uint64_t)x, (uint64_t)y, (uint64_t)arr);
+   usys_draw_array(fontColor, backgroundColor, (uint64_t)x, (uint64_t)y, (uint64_t)arr);
 }
 
+void puts(const char * string){
+    int i;
+    int flag;
+    for (i = 0; string[i] != 0; i++) {
+        putChar(string[i]);
+    }
+
+    return i;
+}
 
 int printf(const char * format, ...){
     va_list args;
@@ -222,7 +231,6 @@ int printf(const char * format, ...){
             switch (*format++) {
                 case 'd': {
                     int64_t int_arg = va_arg(args, int64_t);
-                    // char * toPrint = (char *)myMalloc(sizeof(int64_t)*5);
                     char toPrint[20] = { 0 };
                     uintToBase(int_arg, toPrint, 10);
 
@@ -231,7 +239,6 @@ int printf(const char * format, ...){
                         padd--;
                     }
                     puts(toPrint);
-                                    // myFree(toPrint);
                     break;
                 }
                 case 's': {
@@ -246,11 +253,9 @@ int printf(const char * format, ...){
                 }
                 case 'x': {
                     uint64_t hex_arg = va_arg(args, uint64_t);
-                    // char * toPrint = (char *)myMalloc(sizeof(uint64_t)*5);
                     char toPrint[16] = { 0 };
                     uintToBase(hex_arg, toPrint,16);
                     puts(toPrint);
-                                // myFree(toPrint);
                     break;
                 }
                 default:
