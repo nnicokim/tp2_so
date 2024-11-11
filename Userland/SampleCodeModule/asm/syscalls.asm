@@ -1,44 +1,44 @@
-GLOBAL _write
-GLOBAL _read
-GLOBAL _change_draw_size
-GLOBAL _print_array_of_draw_size
-GLOBAL _getRegisters
-GLOBAL _wait
-GLOBAL _write_color
-GLOBAL _clear_screen
-GLOBAL _change_font_size
-GLOBAL _get_font_size
-GLOBAL _beep
-GLOBAL _print_square
-GLOBAL _print_rect
-GLOBAL _get_time
-GLOBAL _draw_array
-GLOBAL _flush_buffer
+GLOBAL usys_write
+GLOBAL usys_read
+GLOBAL usys_change_draw_size
+GLOBAL usys_print_array_of_draw_size
+GLOBAL usys_getRegisters
+GLOBAL usys_wait
+GLOBAL usys_write_color
+GLOBAL usys_clear_screen
+GLOBAL usys_change_font_size
+GLOBAL usys_get_font_size
+GLOBAL usys_beep
+GLOBAL usys_print_square
+GLOBAL usys_print_rect
+GLOBAL usys_get_time
+GLOBAL usys_draw_array
+GLOBAL usys_flush_buffer
 
-GLOBAL _createOneProcess
-GLOBAL _createProcess
-GLOBAL _blockProcess
-GLOBAL _unblockProcess
-GLOBAL _getCurrentpid
-GLOBAL _getCurrentPpid
-GLOBAL _killProcess
-GLOBAL _leaveCPU
-GLOBAL _waitPid
-GLOBAL _test_mm
-GLOBAL _test_processes
-GLOBAL _myExit
-GLOBAL _test_prio
-GLOBAL _my_nice
-GLOBAL _increase_priority
-GLOBAL _decrease_priority
-GLOBAL _print_processes
-GLOBAL _print_memory
-GLOBAL _loop_print
-GLOBAL _test_sync
+GLOBAL usys_createOneProcess
+GLOBAL usys_createProcess
+GLOBAL usys_blockProcess
+GLOBAL usys_unblockProcess
+GLOBAL usys_getCurrentpid
+GLOBAL usys_getCurrentPpid
+GLOBAL usys_killProcess
+GLOBAL usys_leaveCPU
+GLOBAL usys_waitPid
+GLOBAL usys_test_mm
+GLOBAL usys_test_processes
+GLOBAL usys_myExit
+GLOBAL usys_test_prio
+GLOBAL usys_my_nice
+GLOBAL usys_increase_priority
+GLOBAL usys_decrease_priority
+GLOBAL usys_print_processes
+GLOBAL usys_print_memory
+GLOBAL usys_loop_print
+GLOBAL usys_test_sync
 
 section .text
 
-_write:
+usys_write:
     push rbp
     mov rbp, rsp 
 
@@ -49,7 +49,7 @@ _write:
     pop rbp
     ret
 
-_getRegisters:
+usys_getRegisters:
     push rbp
     mov rbp, rsp 
 
@@ -60,7 +60,7 @@ _getRegisters:
     pop rbp
     ret
 
-_wait:
+usys_wait:
     push rbp
     mov rbp, rsp 
 
@@ -71,7 +71,7 @@ _wait:
     pop rbp
     ret
 
-_read: 
+usys_read: 
     push rbp 
     mov rbp, rsp 
 
@@ -82,7 +82,7 @@ _read:
     pop rbp
     ret
 
-_write_color: 
+usys_write_color: 
     push rbp 
     mov rbp, rsp 
 
@@ -93,7 +93,7 @@ _write_color:
     pop rbp 
     ret
 
-_clear_screen: 
+usys_clear_screen: 
     push rbp 
     mov rbp, rsp 
 
@@ -104,7 +104,7 @@ _clear_screen:
     pop rbp 
     ret 
 
-_change_font_size: 
+usys_change_font_size: 
     push rbp 
     mov rbp, rsp 
 
@@ -115,7 +115,7 @@ _change_font_size:
     pop rbp 
     ret
 
-_get_font_size: 
+usys_get_font_size: 
     push rbp 
     mov rbp, rsp 
 
@@ -126,7 +126,7 @@ _get_font_size:
     pop rbp 
     ret
     
-_beep: 
+usys_beep: 
     push rbp
     mov rbp, rsp 
 
@@ -137,7 +137,7 @@ _beep:
     pop rbp
     ret
 
-_print_square: 
+usys_print_square: 
     push rbp 
     mov rbp, rsp 
 
@@ -148,7 +148,7 @@ _print_square:
     pop rbp
     ret
 
-_print_rect:
+usys_print_rect:
     push rbp 
     mov rbp, rsp 
 
@@ -159,7 +159,7 @@ _print_rect:
     pop rbp 
     ret
 
-_get_time: 
+usys_get_time: 
     push rbp 
     mov rbp, rsp 
 
@@ -170,7 +170,7 @@ _get_time:
     pop rbp 
     ret
 
-_change_draw_size:
+usys_change_draw_size:
     push rbp 
     mov rbp, rsp 
 
@@ -181,7 +181,7 @@ _change_draw_size:
     pop rbp 
     ret
 
-_print_array_of_draw_size:
+usys_print_array_of_draw_size:
     push rbp 
     mov rbp, rsp 
 
@@ -192,7 +192,7 @@ _print_array_of_draw_size:
     pop rbp 
     ret
 
-_draw_array: 
+usys_draw_array: 
     push rbp 
     mov rbp, rsp 
 
@@ -203,7 +203,7 @@ _draw_array:
     pop rbp 
     ret
 
-_flush_buffer:
+usys_flush_buffer:
     push rbp 
     mov rbp, rsp 
 
@@ -214,7 +214,7 @@ _flush_buffer:
     pop rbp 
     ret
 
-_createOneProcess:
+usys_createOneProcess:
     push rbp
     mov rbp, rsp
     mov rax, 16
@@ -223,7 +223,7 @@ _createOneProcess:
     pop rbp
     ret
     
-_blockProcess:
+usys_blockProcess:
     push rbp
     mov rbp, rsp
     mov rax, 17
@@ -232,7 +232,7 @@ _blockProcess:
     pop rbp
     ret
 
-_unblockProcess:
+usys_unblockProcess:
     push rbp
     mov rbp, rsp
     mov rax, 18
@@ -241,7 +241,7 @@ _unblockProcess:
     pop rbp
     ret
 
-_getCurrentpid:
+usys_getCurrentpid:
     push rbp
     mov rbp, rsp
     mov rax, 19
@@ -250,7 +250,7 @@ _getCurrentpid:
     pop rbp
     ret
 
-_getCurrentPpid:
+usys_getCurrentPpid:
     push rbp
     mov rbp, rsp
     mov rax, 20
@@ -259,7 +259,7 @@ _getCurrentPpid:
     pop rbp
     ret
 
-_killProcess:
+usys_killProcess:
     push rbp
     mov rbp, rsp
     mov rax, 21
@@ -268,7 +268,7 @@ _killProcess:
     pop rbp
     ret
 
-_leaveCPU:
+usys_leaveCPU:
     push rbp
     mov rbp, rsp
     mov rax, 22
@@ -277,7 +277,7 @@ _leaveCPU:
     pop rbp
     ret
 
-_waitPid:
+usys_waitPid:
     push rbp
     mov rbp, rsp
     mov rax, 23
@@ -286,7 +286,7 @@ _waitPid:
     pop rbp
     ret
 
-_test_mm:
+usys_test_mm:
     push rbp
     mov rbp, rsp
     mov rax, 24
@@ -295,7 +295,7 @@ _test_mm:
     pop rbp
     ret
 
-_test_processes:
+usys_test_processes:
     push rbp
     mov rbp, rsp
     mov rax, 25
@@ -304,7 +304,7 @@ _test_processes:
     pop rbp
     ret
 
-_myExit:
+usys_myExit:
     push rbp
     mov rbp, rsp
     mov rax, 26
@@ -313,7 +313,7 @@ _myExit:
     pop rbp
     ret
 
-_test_prio:
+usys_test_prio:
     push rbp
     mov rbp, rsp
     mov rax, 27
@@ -322,7 +322,7 @@ _test_prio:
     pop rbp
     ret
     
-_my_nice:
+usys_my_nice:
     push rbp
     mov rbp, rsp
     mov rax, 28
@@ -331,7 +331,7 @@ _my_nice:
     pop rbp
     ret
 
-_increase_priority:
+usys_increase_priority:
     push rbp
     mov rbp, rsp
     mov rax, 29
@@ -340,7 +340,7 @@ _increase_priority:
     pop rbp
     ret
 
-_decrease_priority:
+usys_decrease_priority:
     push rbp
     mov rbp, rsp
     mov rax, 30
@@ -349,7 +349,7 @@ _decrease_priority:
     pop rbp
     ret
 
-_print_processes:
+usys_print_processes:
     push rbp
     mov rbp, rsp
     mov rax, 31
@@ -358,7 +358,7 @@ _print_processes:
     pop rbp
     ret
 
-_print_memory:
+usys_print_memory:
     push rbp
     mov rbp, rsp
     mov rax, 32
@@ -367,7 +367,7 @@ _print_memory:
     pop rbp
     ret
 
-_loop_print:
+usys_loop_print:
     push rbp
     mov rbp, rsp
     mov rax, 33
@@ -376,7 +376,7 @@ _loop_print:
     pop rbp
     ret
 
-_test_sync:
+usys_test_sync:
     push rbp
     mov rbp, rsp
     mov rax, 34
@@ -385,7 +385,7 @@ _test_sync:
     pop rbp
     ret
 
-_createProcess:
+usys_createProcess:
     push rbp
     mov rbp, rsp
     mov rax, 35

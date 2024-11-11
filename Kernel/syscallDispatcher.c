@@ -143,6 +143,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_loop_print();
     case 34:
         return ksys_testsync(rdi, (char **)rsi);
+    case 35:
+        return ksys_createProcess((void * )rdi, rsi, (char) rdx);
     }
 
     return 0;
