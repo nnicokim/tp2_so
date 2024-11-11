@@ -204,5 +204,5 @@ void udrawFrame(uint32_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_
 
 void udrawArray(uint32_t fontColor, uint32_t backgroundColor, int x, int y, char *arr)
 {
-    _draw_array(fontColor, backgroundColor, (uint64_t)x, (uint64_t)y, (uint64_t)arr);
+    usys_draw_array(fontColor, backgroundColor, (uint64_t)x, (uint64_t)y, (uint64_t)arr);
 }

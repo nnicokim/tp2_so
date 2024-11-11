@@ -88,13 +88,13 @@ void parseCommand(char *str)
     {
         if (strcmp(str, commands[i].name_id) == 0)
         {
-            _createProcess(commands[i].func, argC, argument);
+            usys_createProcess(commands[i].func, argC, argument);
             // (*commands[i].func)(argument);
             return;
         }
         else if (strcmp(str, commandsNohelp[i].name_id) == 0)
         {
-            _createProcess(commandsNohelp[i].func, argC, argument);
+            usys_createProcess(commandsNohelp[i].func, argC, argument);
             // (*commandsNohelp[i].func)(argument);
             return;
         }
@@ -188,7 +188,7 @@ void invopcode()
 void time()
 {
     printColor(GREEN, "ART (Argentine Time): UTC/GMT -3 horas\n");
-    _get_time();
+    usys_get_time();
     usys_myExit();
 }
 
