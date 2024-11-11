@@ -36,7 +36,6 @@ void test_sync2();
 void handleCommands(char * str, int * fd);
 void handleRegularCommand(char * str, int * fd);
 
-
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
 static int currentFontSize;
@@ -94,9 +93,9 @@ void parseCommand(char *str) // TODO: dependiendo de si es BG o FG, se envia el 
     int cmdLen = strlen(str);
     char lastChar = str[cmdLen-2]; 
 
-    if (lastChar == '&')
-        return handleCommands(str, bgFD);
-    else
+    // if (lastChar == '&')
+    //     return handleCommands(str, bgFD);
+    // else
         return handleCommands(str, fgFD);
 }
 
@@ -104,7 +103,6 @@ void handleRegularCommand(char * str, int * fd){
     char *argument[] = { 0 };
 
     if(strcmp(str, "") == 0) return;
-    print("HandleRegularCommand\n");
 
     // TODO: parseCommandArg { char argc, char * argv }
     // char argc = parseCommandArg(str, argv);
@@ -113,17 +111,16 @@ void handleRegularCommand(char * str, int * fd){
     while(*str == ' ') str++;
 
     for (int i = 0; i < COMMAND_COUNT; i++)
-    {   
-        int pid = -1;
+    {
         if (strcmp(str, commands[i].name_id) == 0)
         {
-            pid = usys_createProcess(str, commands[i].func, argC, argument, fd);
-        } else if (strcmp(str, commandsNohelp[i].name_id) == 0) {
-            pid = usys_createProcess(str, commandsNohelp[i].func, argC, argument, fd);
-        }
-
-        if(pid != -1) {
+            char *name;
+            int pid=usys_createProcess(str, commands[i].func, argC, argument, fd);
             usys_waitPid(pid);
+            return;
+        } else if (strcmp(str, commandsNohelp[i].name_id) == 0) {
+           int pid= usys_createProcess(str, commandsNohelp[i].func, argC, argument, fd);
+           usys_waitPid(pid);
             return;
         }
     }
@@ -133,16 +130,15 @@ void handleRegularCommand(char * str, int * fd){
 void handleCommands(char * str, int * fd){
     char * cmds[3] = { str, 0 };
     char * currCMD = str;
-    uint64_t currentID = 1;
-    while(*currCMD != '\n' && currentID < 3){
-        if(*currCMD == '|'){
-            *currCMD = '\0';
-            cmds[currentID] = currCMD + 1;   
-            char * aux = currCMD;
-
-            currentID++;
+    uint64_t currentID = 0;
+    while (*currCMD != '\0' && *currCMD != '\n' && currentID < 3) {
+        if (*currCMD == '|') {
+            *currCMD = '\0';             // Terminate current command
+            currentID++;                 // Move to the next command
+            if (currentID < 3) {         // Check bounds before assignment
+                cmds[currentID] = currCMD + 1; // Set the next command start
+            }
         }
-
         currCMD++;
     }
 
@@ -150,7 +146,7 @@ void handleCommands(char * str, int * fd){
         printError("Demasiados comandos en la linea de comandos.\n");
         return;
     };
-    for(int i = 0; i < currentID; i++)
+    for(int i = 0; i <= currentID; i++)
         handleRegularCommand(cmds[i], fd);
 }
 
@@ -203,12 +199,8 @@ void init_shell()
                 putChar(c);
                 buffer[bufferIndex++] = c;
             }
-            //else if ( c == 3 ) {
-             // usys_killProcess();
-            //}
-
-            //else if ( c == 4 ) {
-             // usys_sendEOF();   
+            //else if ( c == ) {
+             //   
             //}
         }
     }
@@ -263,6 +255,7 @@ void zoomin()
             ;
         if (c == 'N' || c == 'n')
         {
+            usys_myExit();
             return;
         }
         else if (c == 'S' || c == 's')
@@ -270,10 +263,12 @@ void zoomin()
             if (currentFontSize >= 3)
             {
                 printColor(RED, "No se puede agrandar mas.\n");
+                usys_myExit();
                 return;
             }
             usys_change_font_size(++currentFontSize);
             clear_shell();
+            usys_myExit();
             return;
         }
         else
@@ -296,6 +291,7 @@ void zoomout()
             ;
         if (c == 'N' || c == 'n')
         {
+            usys_myExit();
             return;
         }
         else if (c == 'S' || c == 's')
@@ -303,10 +299,12 @@ void zoomout()
             if (currentFontSize <= 1)
             {
                 printColor(RED, "No se puede achicar mas.\n");
+                usys_myExit();
                 return;
             }
             usys_change_font_size(--currentFontSize);
             clear_shell();
+            usys_myExit();
             return;
         }
         else
@@ -719,6 +717,7 @@ void kill_process_pid()
                     print("\n");
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (i > 3)
@@ -726,6 +725,7 @@ void kill_process_pid()
                     print("\n");
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (c == '\n')
@@ -741,12 +741,14 @@ void kill_process_pid()
         {
             print("\n");
             printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            usys_myExit();
             return;
         }
         if (kill_pid == 0 || kill_pid == 1)
         {
             print("\n");
             printColor(RED, "No se puede matar el proceso SHELL o IDLE. Ingrese otro PID.\n");
+            usys_myExit();
             return;
         }
 
@@ -758,6 +760,7 @@ void kill_process_pid()
             intToStr(kill_pid, pid);
             print(pid);
             print("\n");
+            usys_myExit();
             return;
         }
         else
@@ -766,6 +769,7 @@ void kill_process_pid()
             intToStr(kill_pid, pid);
             print(pid);
             print("\n");
+            usys_myExit();
             return;
         }
     }
@@ -793,6 +797,7 @@ void block_process_pid()
                     print("\n");
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (i > 3)
@@ -800,6 +805,7 @@ void block_process_pid()
                     print("\n");
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (c == '\n')
@@ -814,11 +820,13 @@ void block_process_pid()
         if (block_pid < 0 || block_pid > MAX_PROCESS)
         {
             printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            usys_myExit();
             return;
         }
         if (block_pid == 0 || block_pid == 1)
         {
             printColor(RED, "No se puede bloquear el proceso SHELL o IDLE. Ingrese otro PID.\n");
+            usys_myExit();
             return;
         }
 
@@ -830,6 +838,7 @@ void block_process_pid()
             intToStr(block_pid, pid);
             print(pid);
             print("\n");
+            usys_myExit();
             return;
         }
         else
@@ -838,6 +847,7 @@ void block_process_pid()
             intToStr(block_pid, pid);
             print(pid);
             print("\n");
+            usys_myExit();
             return;
         }
     }
@@ -1000,6 +1010,7 @@ void nice_pid()
                     print("\n");
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (i > 3)
@@ -1007,6 +1018,7 @@ void nice_pid()
                     print("\n");
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (c == ' ')
@@ -1022,6 +1034,7 @@ void nice_pid()
                         print("\n");
                         printColor(RED, "ERROR. Ingrese un espacio entre el PID y la prioridad.\n");
                         printColor(YELLOW, "Vuelva a intentarlo.\n");
+                        usys_myExit();
                         return;
                     }
                     nice_pid = stringToInt(pid);
@@ -1041,11 +1054,13 @@ void nice_pid()
         if (nice_pid < 0 || nice_pid > MAX_PROCESS)
         {
             printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            usys_myExit();
             return;
         }
         if (newPrio < 0 || newPrio > 5)
         {
             printColor(RED, "Prioridad invalida. Ingrese una prioridad valida.\n");
+            usys_myExit();
             return;
         }
         printColor(ORANGE, "Cambiando la prioridad del proceso...\n");
@@ -1054,6 +1069,7 @@ void nice_pid()
         {
             print("ups\n");
             printColor(RED, "No se pudo cambiar la prioridad del proceso.\n");
+            usys_myExit();
             return;
         }
         else
@@ -1066,6 +1082,7 @@ void nice_pid()
             print(prio);
             printColor(GREEN, " !!! :) \n");
             print("\n");
+            usys_myExit();
             return;
         }
     }

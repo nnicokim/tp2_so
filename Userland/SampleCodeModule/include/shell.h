@@ -6,6 +6,8 @@
 #include <eliminator.h>
 
 void init_shell();
+void handleCommands(char * str, int * fd);
+void handleRegularCommand(char * str, int * fd);
 
 typedef struct Command {
     char* name_id;

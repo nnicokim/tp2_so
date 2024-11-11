@@ -118,10 +118,10 @@ uint64_t killProcess(int pid)
 
 int blockProcess(int pid)
 {
-    if (pid == 0 || pid == 1)
-    {
-        return -1;
-    }
+    // if (pid == 0 || pid == 1)
+    // {
+    //     return -1;
+    // }
     PCB *pcb = PCB_array[pid];
     if (pcb->state == BLOCKED || pcb->state == FINISHED || pcb == NULL)
     {
