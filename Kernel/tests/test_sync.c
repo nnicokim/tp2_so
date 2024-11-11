@@ -35,26 +35,33 @@ void *slowInc(int64_t *p, int64_t inc)
 
 void *my_process_inc(int argc, char *argv[])
 {
-  printArray("LLAMADO A FUNCION DE INCREMENTO\n");
+  printArray("ENTRO A: my_process_inc\n");
   uint64_t n;
   int8_t inc;
   int8_t use_sem;
 
   if (argc != 3)
+  {
+    printArray("Sale por argc != 3\n");
+    my_exit();
     return 0;
+  }
 
   if ((n = satoi(argv[0])) <= 0)
   {
+    printArray("Sale por n = satoi(argv[0])) <= 0 n\n");
     my_exit();
     return 0;
   }
   if ((inc = satoi(argv[1])) == 0)
   {
+    printArray("Sale por inc = satoi(argv[1])) == 0\n");
     my_exit();
     return 0;
   }
   if ((use_sem = satoi(argv[2])) < 0)
   {
+    printArray("Sale por use_sem = satoi(argv[2])) < 0\n");
     my_exit();
     return 0;
   }
@@ -65,6 +72,13 @@ void *my_process_inc(int argc, char *argv[])
       my_exit();
       return 0;
     }
+
+  printArray("use_sem: ");
+  printDec(use_sem);
+  printArray("\n");
+  printArray("Valor de n:");
+  printDec(n);
+  printArray("\n");
 
   uint64_t i;
   for (i = 0; i < n; i++)
@@ -78,6 +92,8 @@ void *my_process_inc(int argc, char *argv[])
 
   if (use_sem)
     semClose(SEM_ID);
+
+  printArray("SALIENDO de my_process_inc...\n");
   my_exit();
 
   return 0;
@@ -85,25 +101,32 @@ void *my_process_inc(int argc, char *argv[])
 
 void *my_process_inc_no_sem(int argc, char *argv[])
 {
-  printArray("LLAMADO A FUNCION DE INCREMENTO\n");
+  printArray("ENTRO A: my_process_inc_no_sem\n");
   uint64_t n;
   int8_t inc;
 
   if (argc != 3)
+  {
+    printArray("Sale por argc != 3\n");
+    my_exit();
     return 0;
+  }
 
   if ((n = satoi(argv[0])) <= 0)
   {
+    printArray("Sale por n = satoi(argv[0])) <= 0\n");
     my_exit();
     return 0;
   }
   if ((inc = satoi(argv[1])) == 0)
   {
+    printArray("Sale por inc = satoi(argv[1])) == 0\n");
     my_exit();
     return 0;
   }
   if ((satoi(argv[2])) < 0)
   {
+    printArray("Sale por satoi(argv[2])) < 0\n");
     my_exit();
     return 0;
   }
@@ -113,6 +136,7 @@ void *my_process_inc_no_sem(int argc, char *argv[])
     slowInc(&global, inc);
   }
 
+  printArray("SALIENDO de my_process_inc_no_sem...\n");
   my_exit();
 
   return 0;
@@ -124,7 +148,10 @@ uint64_t test_sync(uint64_t argc, char *argv[])
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
   if (argc != 3)
+  {
+    my_exit();
     return 0;
+  }
 
   char *argvDec[] = {argv[0], "-1", argv[1], 0};
   char *argvInc[] = {argv[0], "1", argv[1], 0};
@@ -140,11 +167,18 @@ uint64_t test_sync(uint64_t argc, char *argv[])
       pids[i + TOTAL_PAIR_PROCESSES] = createProcess(namBuf[i], (void *)my_process_inc, 3, argvInc);
     }
 
+    printArray("Waiting for processes to finish del (strcmp(argv[2], 0) == 0)...\n");
+
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
     {
-      ksys_waitPid(pids[i]);
-      ksys_waitPid(pids[i + TOTAL_PAIR_PROCESSES]);
+      if (ksys_waitPid(pids[i]) == -1)
+        printArray("ERROR WAITING FOR PROCESS\n");
+
+      if (ksys_waitPid(pids[i + TOTAL_PAIR_PROCESSES]) == -1)
+        printArray("ERROR WAITING FOR PROCESS\n");
     }
+
+    printArray("Termino de esperar a los procesos...\n");
   }
   else
   {
@@ -154,16 +188,25 @@ uint64_t test_sync(uint64_t argc, char *argv[])
       pids[i + TOTAL_PAIR_PROCESSES] = createProcess(namBuf[i], (void *)my_process_inc_no_sem, 3, argvInc);
     }
 
+    printArray("Waiting for processes to finish (en el ELSE)...\n");
+
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
     {
-      ksys_waitPid(pids[i]);
-      ksys_waitPid(pids[i + TOTAL_PAIR_PROCESSES]);
+      if (ksys_waitPid(pids[i]) == -1)
+        printArray("ERROR WAITING FOR PROCESS\n");
+
+      if (ksys_waitPid(pids[i + TOTAL_PAIR_PROCESSES]) == -1)
+        printArray("ERROR WAITING FOR PROCESS\n");
     }
+
+    printArray("Termino de esperar a los procesos...\n");
   }
 
   printArray("Final value: ");
   printDec(global);
   printArray("\n");
+
+  printArray("SALIENDO del test_sync...\n");
   my_exit();
   return 0;
 }

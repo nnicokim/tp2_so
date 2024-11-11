@@ -351,8 +351,13 @@ static void printBase(uint64_t value, uint32_t base)
 	printArray(buff);
 }
 
-void printDec(uint64_t value)
+void printDec(int64_t value)
 {
+	if (value < 0)
+	{
+		printArray("-");
+		value = -value;
+	}
 	printBase(value, 10);
 }
 

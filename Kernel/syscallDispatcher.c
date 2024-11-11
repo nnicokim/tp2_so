@@ -376,6 +376,9 @@ uint64_t wait_Pid(int pid)
 
 uint64_t ksys_testsync(uint64_t argc, char *argv[])
 {
-    test_sync(argc, argv);
-    return 0;
+    int sync_pid = createProcess("Sync_Test", (void *)test_sync, argc, argv);
+    return sync_pid;
+
+    // test_sync(argc, argv);
+    // return 0;
 }

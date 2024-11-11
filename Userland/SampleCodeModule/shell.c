@@ -1,6 +1,6 @@
 #include <shell.h>
 
-#define INPUT_SIZE 100
+#define INPUT_SIZE 50
 // #define COMMAND_COUNT 10
 #define CANT_REGS 18
 #define MAX_PROCESS 192
@@ -16,6 +16,9 @@ void zoomout();
 void inforeg();
 void clear_shell();
 void beep();
+void victory();
+void mario_bros_song();
+void easteregg();
 void test_processes();
 void test_mm();
 void test_prio();
@@ -46,7 +49,9 @@ static Command commands[] = {
     {"zoomin", zoomin, "Aumenta el tamanio de la letra"},
     {"zoomout", zoomout, "Disminuye el tamanio de la letra"},
     {"clear", clear_shell, "Limpia la shell"},
-    {"beep", beep, "Emite un beep"},
+    {"beep", beep, "Emite un usys_beep"},
+    {"victory", victory, "VAMOS CARAJO!!!"},
+    {"mario", mario_bros_song, "Canta el himno de Mario Bros"},
     {"tpr", test_processes, "Testea los procesos"},
     {"tmm", test_mm, "Testea el gestor de memoria"},
     {"tprio", test_prio, "Testea la prioridad de los procesos"},
@@ -63,7 +68,9 @@ static Command commands[] = {
 static Command commandsNohelp[] = {
     {"mem", print_memory, "Imprime la memoria"},
     {"tsync1", test_sync1, "Testea la sincronizacion con semaforos"},
-    {"tsync2", test_sync2, "Testea la sincronizacion sin semaforos"}};
+    {"tsync2", test_sync2, "Testea la sincronizacion sin semaforos"},
+    {"egg", easteregg, "Easter egg song"},
+};
 
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
 #define COMMAND_COUNT sizeofArr(commands)
@@ -88,13 +95,13 @@ void parseCommand(char *str)
     {
         if (strcmp(str, commands[i].name_id) == 0)
         {
-            _createProcess(str, commands[i].func, argC, argument);
+            usys_createProcess(str, commands[i].func, argC, argument);
             // (*commands[i].func)(argument);
             return;
         }
         else if (strcmp(str, commandsNohelp[i].name_id) == 0)
         {
-            _createProcess(str, commandsNohelp[i].func, argC, argument);
+            usys_createProcess(str, commandsNohelp[i].func, argC, argument);
             // (*commandsNohelp[i].func)(argument);
             return;
         }
@@ -291,8 +298,271 @@ void clear_shell()
 
 void beep()
 {
-    printColor(GREEN, "BEEP!!\n");
-    usys_beep(1000, 10);
+    printColor(GREEN, "usys_BEEP!!\n");
+    usys_beep(500, 10);
+    usys_myExit();
+}
+
+void victory() // Ejecutar despues de cada victoria
+{
+    printColor(GREEN, "Paso el Test!!!!!!!\n");
+    usys_beep(659, 50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(523, 50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(784, 50);
+    usys_wait(375);
+    usys_beep(392, 50);
+    usys_wait(375);
+    usys_beep(523, 50);
+    usys_wait(250);
+    usys_beep(392, 50);
+    usys_wait(250);
+    usys_beep(330, 50);
+    usys_wait(250);
+    usys_beep(440, 50);
+    usys_wait(50);
+    usys_beep(494, 50);
+    usys_wait(50);
+    usys_beep(466, 50);
+    usys_wait(42);
+    usys_beep(440, 50);
+    usys_wait(50);
+    usys_beep(392, 50);
+    usys_wait(50);
+    usys_myExit();
+}
+
+void mario_bros_song()
+{
+    printColor(GREEN, "Mario Bros\n");
+
+    usys_beep(659, 50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(523, 50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(784, 50);
+    usys_wait(375);
+    usys_beep(392, 50);
+    usys_wait(375);
+    usys_beep(523, 50);
+    usys_wait(250);
+    usys_beep(392, 50);
+    usys_wait(250);
+    usys_beep(330, 50);
+    usys_wait(250);
+    usys_beep(440, 50);
+    usys_wait(50);
+    usys_beep(494, 50);
+    usys_wait(50);
+    usys_beep(466, 50);
+    usys_wait(42);
+    usys_beep(440, 50);
+    usys_wait(50);
+    usys_beep(392, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(784, 50);
+    usys_wait(50);
+    usys_beep(880, 50);
+    usys_wait(50);
+    usys_beep(698, 50);
+    usys_beep(784, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(523, 50);
+    usys_wait(50);
+    usys_beep(587, 50);
+    usys_beep(494, 50);
+    usys_wait(50);
+    usys_beep(523, 50);
+    usys_wait(250);
+    usys_beep(392, 50);
+    usys_wait(250);
+    usys_beep(330, 50);
+    usys_wait(250);
+    usys_beep(440, 50);
+    usys_wait(50);
+    usys_beep(494, 50);
+    usys_wait(50);
+    usys_beep(466, 50);
+    usys_wait(42);
+    usys_beep(440, 50);
+    usys_wait(50);
+    usys_beep(392, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(784, 50);
+    usys_wait(50);
+    usys_beep(880, 50);
+    usys_wait(50);
+    usys_beep(698, 50);
+    usys_beep(784, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(523, 50);
+    usys_wait(50);
+    usys_beep(587, 50);
+    usys_beep(494, 50);
+    usys_wait(375);
+    usys_beep(784, 50);
+    usys_beep(740, 50);
+    usys_beep(698, 50);
+    usys_wait(42);
+    usys_beep(622, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(415, 50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_wait(50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_beep(587, 50);
+    usys_wait(250);
+    usys_beep(784, 50);
+    usys_beep(740, 50);
+    usys_beep(698, 50);
+    usys_wait(42);
+    usys_beep(622, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(698, 50);
+    usys_wait(50);
+    usys_beep(698, 50);
+    usys_beep(698, 50);
+    usys_wait(625);
+    usys_beep(784, 50);
+    usys_beep(740, 50);
+    usys_beep(698, 50);
+    usys_wait(42);
+    usys_beep(622, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(415, 50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_wait(50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_beep(587, 50);
+    usys_wait(250);
+    usys_beep(622, 50);
+    usys_wait(250);
+    usys_beep(587, 50);
+    usys_wait(250);
+    usys_beep(523, 50);
+    usys_wait(150);
+    usys_beep(784, 50);
+    usys_beep(740, 50);
+    usys_beep(698, 50);
+    usys_wait(42);
+    usys_beep(622, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(415, 50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_wait(50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_beep(587, 50);
+    usys_wait(250);
+    usys_beep(784, 50);
+    usys_beep(740, 50);
+    usys_beep(698, 50);
+    usys_wait(42);
+    usys_beep(622, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(698, 50);
+    usys_wait(50);
+    usys_beep(698, 50);
+    usys_beep(698, 50);
+    usys_wait(625);
+    usys_beep(784, 50);
+    usys_beep(740, 50);
+    usys_beep(698, 50);
+    usys_wait(42);
+    usys_beep(622, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(415, 50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_wait(50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_beep(587, 50);
+    usys_wait(250);
+    usys_beep(622, 50);
+    usys_wait(250);
+    usys_beep(587, 50);
+    usys_wait(250);
+    usys_beep(523, 50);
+    usys_wait(150);
+    usys_myExit();
+}
+
+void easteregg()
+{
+    printColor(GREEN, "Guess who's sinphony...\n");
+
+    usys_beep(523, 250);
+    usys_wait(100);
+    usys_beep(523, 250);
+    usys_wait(100);
+    usys_beep(523, 250);
+    usys_wait(100);
+    usys_beep(415, 750);
+    usys_wait(250);
+
+    usys_beep(466, 250);
+    usys_wait(100);
+    usys_beep(466, 250);
+    usys_wait(100);
+    usys_beep(466, 250);
+    usys_wait(100);
+    usys_beep(392, 750);
+    usys_wait(250);
+
+    usys_beep(523, 250);
+    usys_wait(100);
+    usys_beep(523, 250);
+    usys_wait(100);
+    usys_beep(523, 250);
+    usys_wait(100);
+    usys_beep(415, 750);
+    usys_wait(250);
+
+    usys_beep(466, 250);
+    usys_wait(100);
+    usys_beep(466, 250);
+    usys_wait(100);
+    usys_beep(466, 250);
+    usys_wait(100);
+    usys_beep(392, 750);
+
+    printColor(TURQUOISE, "Encontraron el easter egg oculto!!!\n");
+    usys_myExit();
 }
 
 void play_eliminator()
@@ -324,7 +594,7 @@ void test_prio()
 void test_mm()
 {
     printColor(ORANGE, "Testeando MM...\n");
-    char *argvmm[] = {"1000"};
+    char *argvmm[] = {"500"};
     usys_test_mm(1, argvmm);
     usys_myExit();
 }
@@ -652,6 +922,95 @@ void decrease_prio_pid()
 
 void nice_pid()
 {
-    print("Falta hacer, lo hago mañana\n");
+    printColor(ORANGE, "Ingrese el PID del proceso y la nueva prioridad: ");
+    char pid[5] = {"0"};
+    char prio[5] = {"0"};
+    int i = 0;
+    char c;
+    int nice_pid;
+    int newPrio;
+    int flag = 0;
+    while (TRUE)
+    {
+        while (TRUE)
+        {
+            c = getChar();
+            if (c != 0)
+            {
+                putChar(c);
+                if ((c < '0' || c > '9') && c != '\n' && c != ' ')
+                {
+                    print("\n");
+                    printColor(RED, "ERROR. Ingrese un digito valido.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    return;
+                }
+                if (i > 3)
+                {
+                    print("\n");
+                    printColor(RED, "ERROR. PID muy largo.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    return;
+                }
+                if (c == ' ')
+                {
+                    flag = 1;
+                    i = 0;
+                    continue;
+                }
+                if (c == '\n')
+                {
+                    if (flag == 0)
+                    {
+                        print("\n");
+                        printColor(RED, "ERROR. Ingrese un espacio entre el PID y la prioridad.\n");
+                        printColor(YELLOW, "Vuelva a intentarlo.\n");
+                        return;
+                    }
+                    nice_pid = stringToInt(pid);
+                    newPrio = stringToInt(prio);
+                    break;
+                }
+                if (flag == 0)
+                {
+                    pid[i++] = c;
+                }
+                else
+                {
+                    prio[i++] = c;
+                }
+            }
+        }
+        if (nice_pid < 0 || nice_pid > MAX_PROCESS)
+        {
+            printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            return;
+        }
+        if (newPrio < 0 || newPrio > 5)
+        {
+            printColor(RED, "Prioridad invalida. Ingrese una prioridad valida.\n");
+            return;
+        }
+        printColor(ORANGE, "Cambiando la prioridad del proceso...\n");
+        int resultado = usys_my_nice(nice_pid, newPrio);
+        if (resultado == -1)
+        {
+            print("ups\n");
+            printColor(RED, "No se pudo cambiar la prioridad del proceso.\n");
+            return;
+        }
+        else
+        {
+            printColor(GREEN, "Se cambio la prioridad del proceso: \n");
+            intToStr(nice_pid, pid);
+            print(pid);
+            printColor(GREEN, " a la prioridad: ");
+            intToStr(newPrio, prio);
+            print(prio);
+            printColor(GREEN, " !!! :) \n");
+            print("\n");
+            return;
+        }
+    }
     usys_myExit();
 }

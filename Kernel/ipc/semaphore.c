@@ -27,7 +27,7 @@ typedef struct
 } semEntry_t;
 
 static semEntry_t semTable[MAX_SEM];
-static int semLock = 0; //Mi mutex para la tabla de semaforos
+static int semLock = 0; // Mi mutex para la tabla de semaforos
 
 static int findAvailableSpace();
 static int enqueueProcess(int pid, sem_t *sem);
@@ -138,7 +138,8 @@ int semWait(int semIndex)
             }
 
             change(&sem->lock, 0);
-            // forceTick();
+            forceTimerTick();
+
         } while (!flag);
     }
     return 0;

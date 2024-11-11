@@ -106,14 +106,10 @@ uint64_t killProcess(int pid)
     }
 
     // Liberamos stack y pcb
-    // int pid = pcb->pid;
+    removeFromCircularList(&round_robin, pid);      // OJO el orden
     myfree(pcb->baseAddress - PAGE + sizeof(char)); // Libera el stack
     myfree(pcb);
-    removeFromCircularList(&round_robin, pid); // OJO el orden
     PCB_array[pid] = NULL;
-    // printArray("killProcess: Process with PID: ");
-    // printDec(pid);
-    // printArray(" killed\n");
     return 0; // que devuelva el codigo de exit
 }
 
