@@ -1,5 +1,7 @@
 #include <user_syscalls.h>
 #include <user_lib.h>
+#include <stdarg.h>
+#include <stdint.h>
 
 char getChar()
 {
@@ -205,4 +207,59 @@ void udrawFrame(uint32_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_
 void udrawArray(uint32_t fontColor, uint32_t backgroundColor, int x, int y, char *arr)
 {
     usys_draw_array(fontColor, backgroundColor, (uint64_t)x, (uint64_t)y, (uint64_t)arr);
+}
+
+
+int printf(const char * format, ...){
+    va_list args;
+    va_start(args, format);
+
+    while (*format != '\0') {
+        if (*format == '%') {
+            format++;
+            int padd = 0;
+            while(*format >= '0' && *format <= '9'){ padd = padd*10 + *format++ - '0'; }
+            switch (*format++) {
+                case 'd': {
+                    int64_t int_arg = va_arg(args, int64_t);
+                    // char * toPrint = (char *)myMalloc(sizeof(int64_t)*5);
+                    char toPrint[20] = { 0 };
+                    uintToBase(int_arg, toPrint, 10);
+
+                    while(padd > 20 || (padd > 0 && toPrint[padd - 1] == 0)){
+                        putChar('0');
+                        padd--;
+                    }
+                    puts(toPrint);
+                                    // myFree(toPrint);
+                    break;
+                }
+                case 's': {
+                    char* s_arg = va_arg(args, char*);
+                    puts(s_arg);
+                    break;
+                }
+                case 'c': {
+                    char c_arg = va_arg(args, int);
+                    putChar(c_arg);
+                    break;
+                }
+                case 'x': {
+                    uint64_t hex_arg = va_arg(args, uint64_t);
+                    // char * toPrint = (char *)myMalloc(sizeof(uint64_t)*5);
+                    char toPrint[16] = { 0 };
+                    uintToBase(hex_arg, toPrint,16);
+                    puts(toPrint);
+                                // myFree(toPrint);
+                    break;
+                }
+                default:
+                    break;
+            }
+        } else {
+                putChar(*format++);
+        }
+    }
+    va_end(args);
+    return 0;
 }
