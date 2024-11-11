@@ -128,6 +128,7 @@ void keyboard_handler()
         }
         else if (scanCodeTable[scanCode] == 'd' || scanCodeTable[scanCode] == 'D')
         {
+            printArray("^D = EOF\n");
             addToBuffer(EOF);
         }
     }

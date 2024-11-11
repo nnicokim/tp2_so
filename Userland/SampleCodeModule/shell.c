@@ -209,7 +209,6 @@ void init_shell()
             }
             else if (c == "^")
             {
-                putChar(c);
                 if ((c = getChar()) == 0)
                     continue;
                 if (c == 'c') // Ctrl+C
@@ -678,7 +677,6 @@ void print_processes()
 {
     printColor(ORANGE, "Imprimiendo procesos...\n");
     usys_print_processes();
-    printPromptIcon();
     usys_myExit();
 }
 
@@ -686,7 +684,6 @@ void print_memory()
 {
     printColor(ORANGE, "Imprimiendo memoria...\n");
     usys_print_memory();
-    printPromptIcon();
     usys_myExit();
 }
 
