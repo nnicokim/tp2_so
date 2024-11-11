@@ -46,7 +46,8 @@ uint64_t ksys_getTime();
 uint64_t ksys_draw_square(uint64_t color, uint64_t x, uint64_t y, uint64_t size);
 uint64_t ksys_draw_rect(uint64_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_t size_y);
 uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t x, uint64_t y, uint64_t arr);
-uint64_t ksys_createProcess();
+uint64_t ksys_createOneProcess();
+uint64_t ksys_createProcess(void *process, int argc, char **argv);
 uint64_t ksys_blockProcess(int pid);
 uint64_t ksys_unblockProcess(int pid);
 uint64_t ksys_getCurrentpid();
@@ -104,7 +105,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
 
     // Syscalls nuevas (SO)
     case 16:
-        return ksys_createProcess();
+        return ksys_createOneProcess();
     case 17:
         return ksys_blockProcess(rdi);
     case 18:
@@ -264,10 +265,14 @@ uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t 
     return 0;
 }
 
-uint64_t ksys_createProcess()
+uint64_t ksys_createOneProcess()
 {
-
     return createOneProcess();
+}
+
+uint64_t ksys_createProcess(void *process, int argc, char **argv)
+{
+    return createProcess((char *)process, argc, argv);
 }
 
 uint64_t ksys_blockProcess(int pid)
@@ -355,7 +360,8 @@ uint64_t ksys_loop_print()
     return 0;
 }
 
-uint64_t wait_Pid(int pid){
+uint64_t wait_Pid(int pid)
+{
     PCB *childProcess = PCB_array[pid];
     if (childProcess->state == FINISHED)
     {
@@ -366,7 +372,8 @@ uint64_t wait_Pid(int pid){
     return 0;
 }
 
-uint64_t ksys_testsync(uint64_t argc, char *argv[]){
-   test_sync(argc, argv);
+uint64_t ksys_testsync(uint64_t argc, char *argv[])
+{
+    test_sync(argc, argv);
     return 0;
 }

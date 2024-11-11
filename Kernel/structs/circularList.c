@@ -78,8 +78,8 @@ void removeFromCircularList(CircularList *list, int pid)
 
         return;
     }
-    printArray("El proceso con pid: ");
-    printDec(pid);
-    printArray(" -> No se encontro del circularList.\n");
+    // printArray("El proceso con pid: ");
+    // printDec(pid);
+    // printArray(" -> No se encontro del circularList.\n");
     return;
 }

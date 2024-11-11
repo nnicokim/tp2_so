@@ -46,7 +46,7 @@ uint64_t createProcess(char *program, int argc, char **argv)
 
     newPCB->stack = initStackFrame(newStack + PAGE - sizeof(char), argc, argv, (void *)program, processID);
     processID++;
-    newPCB->baseAddress = newStack + PAGE - sizeof(char); //A chequear
+    newPCB->baseAddress = newStack + PAGE - sizeof(char); // A chequear
     newPCB->limit = PAGE;
 
     addCircularList(&round_robin, newPCB->pid);
@@ -60,15 +60,15 @@ void randomFunction()
     while (TRUE)
         ;
 
-    //int i = 0;
-    // while (i < 1000000)
-    // {
-    //     i++;
-    // }
-    // printArray("Random function FINISHED \n");
-    // PCB *pcb = PCB_array[getCurrentPid()];
-    // pcb->state = FINISHED;
-    // my_exit();
+    // int i = 0;
+    //  while (i < 1000000)
+    //  {
+    //      i++;
+    //  }
+    //  printArray("Random function FINISHED \n");
+    //  PCB *pcb = PCB_array[getCurrentPid()];
+    //  pcb->state = FINISHED;
+    //  my_exit();
 }
 
 uint64_t createOneProcess()
@@ -93,9 +93,9 @@ uint64_t killProcess(int pid)
     PCB *pcb = PCB_array[pid];
     if (pcb == NULL)
     {
-        printArray("killProcess: ERROR: Process with PID: ");
-        printDec(pid);
-        printArray(" not found :( \n");
+        // printArray("killProcess: ERROR: Process with PID: ");
+        // printDec(pid);
+        // printArray(" not found :( \n");
         return -1;
     }
 
@@ -105,12 +105,14 @@ uint64_t killProcess(int pid)
     }
 
     // Liberamos stack y pcb
-    removeFromCircularList(&round_robin, pcb->pid); // OJO el orden
+    // int pid = pcb->pid;
     myfree(pcb->baseAddress - PAGE + sizeof(char)); // Libera el stack
     myfree(pcb);
-    printArray("killProcess: Process with PID: ");
-    printDec(pid);
-    printArray(" killed\n");
+    removeFromCircularList(&round_robin, pid); // OJO el orden
+    PCB_array[pid] = NULL;
+    // printArray("killProcess: Process with PID: ");
+    // printDec(pid);
+    // printArray(" killed\n");
     return 0; // que devuelva el codigo de exit
 }
 
@@ -182,7 +184,8 @@ void *schedule(void *rsp)
         killProcess(pcb->pid);
         return change_context(current->pid);
     }
-    if(pcb->state == BLOCKED){ //Esto es para que no se quede en un proceso bloqueado y tampoco lo desbloqueo
+    if (pcb->state == BLOCKED)
+    { // Esto es para que no se quede en un proceso bloqueado y tampoco lo desbloqueo
         current = current->next;
         return change_context(current->pid);
     }
@@ -247,7 +250,7 @@ int increase_priority(int pid)
 int decrease_priority(int pid)
 {
     PCB *pcb = PCB_array[pid];
-    if (pcb->priority == 0)
+    if (pcb->priority == 0 || pid == 0 || pid == 1)
         return pcb->priority;
     removeFromCircularList(&round_robin, pid);
     pcb->priority--;
@@ -255,17 +258,23 @@ int decrease_priority(int pid)
     return pcb->priority;
 }
 
-void my_exit()
+void tryToExit()
 {
-    PCB *pcb = PCB_array[getCurrentPid()];
-    if (pcb == NULL || pcb->state == FINISHED || pcb->pid == 0 || pcb->pid == 1)
+    int pid = getCurrentPid();
+    PCB *pcb = PCB_array[pid];
+    if (pcb->state == FINISHED || pid == 0 || pid == 1)
     {
         printArray("Could not exit process\n");
-        forceTimerTick();
         return;
     }
-    killProcess(pcb->pid);
     unblockProcess(pcb->ppid);
+
+    killProcess(pid);
+}
+
+void my_exit()
+{
+    tryToExit();
     forceTimerTick();
 }
 
@@ -273,7 +282,7 @@ void print_processes()
 {
     for (int i = 0; i < processID; i++)
     {
-        if (PCB_array[i] != NULL || PCB_array[i]->state != FINISHED)
+        if (PCB_array[i] != NULL && PCB_array[i]->state != FINISHED)
         {
             printPCB(PCB_array[i]);
         }
