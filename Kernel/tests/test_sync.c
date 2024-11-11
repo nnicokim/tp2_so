@@ -43,18 +43,21 @@ void *my_process_inc(int argc, char *argv[])
   if (argc != 3)
     return 0;
 
-  if ((n = satoi(argv[0])) <= 0){
-        my_exit();
+  if ((n = satoi(argv[0])) <= 0)
+  {
+    my_exit();
     return 0;
   }
-  if ((inc = satoi(argv[1])) == 0){
-        my_exit();
+  if ((inc = satoi(argv[1])) == 0)
+  {
+    my_exit();
     return 0;
   }
-  if ((use_sem = satoi(argv[2])) < 0){
-        my_exit();
+  if ((use_sem = satoi(argv[2])) < 0)
+  {
+    my_exit();
     return 0;
-    }
+  }
   if (use_sem)
     if (semOpen(SEM_ID, 1) == -1)
     {
@@ -89,16 +92,19 @@ void *my_process_inc_no_sem(int argc, char *argv[])
   if (argc != 3)
     return 0;
 
-  if ((n = satoi(argv[0])) <= 0){
-      my_exit();
-    return 0;
-    }
-  if ((inc = satoi(argv[1])) == 0){
-      my_exit();
+  if ((n = satoi(argv[0])) <= 0)
+  {
+    my_exit();
     return 0;
   }
-  if ((satoi(argv[2])) < 0){
-      my_exit();
+  if ((inc = satoi(argv[1])) == 0)
+  {
+    my_exit();
+    return 0;
+  }
+  if ((satoi(argv[2])) < 0)
+  {
+    my_exit();
     return 0;
   }
   uint64_t i;
@@ -130,8 +136,8 @@ uint64_t test_sync(uint64_t argc, char *argv[])
   {
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
     {
-      pids[i] = createProcess((char*) my_process_inc, 3, argvDec);
-      pids[i + TOTAL_PAIR_PROCESSES] = createProcess((char*) my_process_inc, 3, argvInc);
+      pids[i] = createProcess(namBuf[i], (void *)my_process_inc, 3, argvDec);
+      pids[i + TOTAL_PAIR_PROCESSES] = createProcess(namBuf[i], (void *)my_process_inc, 3, argvInc);
     }
 
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
@@ -144,8 +150,8 @@ uint64_t test_sync(uint64_t argc, char *argv[])
   {
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
     {
-      pids[i] = createProcess((char*)my_process_inc_no_sem, 3, argvDec);
-      pids[i + TOTAL_PAIR_PROCESSES] = createProcess((char*)my_process_inc_no_sem, 3, argvInc);
+      pids[i] = createProcess(namBuf[i], (void *)my_process_inc_no_sem, 3, argvDec);
+      pids[i + TOTAL_PAIR_PROCESSES] = createProcess(namBuf[i], (void *)my_process_inc_no_sem, 3, argvInc);
     }
 
     for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)

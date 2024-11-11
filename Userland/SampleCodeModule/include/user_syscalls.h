@@ -40,7 +40,7 @@ void flush_buffer();
 
 int usys_createOneProcess();
 
-int usys_createProcess(void *process, int argc, char **argv);
+int usys_createProcess(char *pr_name, void *process, int argc, char **argv);
 
 int usys_blockProcess(int pid);
 

@@ -83,9 +83,9 @@ int usys_createOneProcess()
     return _createOneProcess();
 }
 
-int usys_createProcess(void *process, int argc, char **argv)
+int usys_createProcess(char *pr_name, void *process, int argc, char **argv)
 {
-    return _createProcess(process, argc, argv);
+    return _createProcess(pr_name, process, argc, argv);
 }
 
 int usys_blockProcess(int pid)

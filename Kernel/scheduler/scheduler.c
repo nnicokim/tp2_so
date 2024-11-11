@@ -14,14 +14,14 @@ void initScheduler()
 {
     initializeCircularList(&round_robin);
 
-    createProcess((char *)_setUser, 0, NULL);
-    createProcess((char *)idleProcess, 0, NULL);
+    createProcess("SHELL", (void *)_setUser, 0, NULL);
+    createProcess("IDLE", (void *)idleProcess, 0, NULL);
 
     isSchedulerActive = 1;
 }
 
 // uint64_t createProcess(void (*program)(int, char **), int argc, char **argv)
-uint64_t createProcess(char *program, int argc, char **argv)
+uint64_t createProcess(char *pr_name, void *program, int argc, char **argv)
 {
     void *newStack = mymalloc(PAGE);
     if (newStack == NULL)
@@ -46,6 +46,7 @@ uint64_t createProcess(char *program, int argc, char **argv)
 
     newPCB->stack = initStackFrame(newStack + PAGE - sizeof(char), argc, argv, (void *)program, processID);
     processID++;
+    newPCB->name = pr_name;
     newPCB->baseAddress = newStack + PAGE - sizeof(char); // A chequear
     newPCB->limit = PAGE;
 
@@ -73,7 +74,7 @@ void randomFunction()
 
 uint64_t createOneProcess()
 {
-    return createProcess((char *)randomFunction, 0, NULL);
+    return createProcess("DUMMY Function", (void *)randomFunction, 0, NULL);
 }
 
 void idleProcess()
@@ -296,6 +297,6 @@ void loop_print()
         printArray("PID: ");
         printDec(current->pid);
         printArray("\n");
-        timer_wait(1);
+        timer_wait(2);
     }
 }

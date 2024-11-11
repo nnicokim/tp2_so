@@ -47,7 +47,7 @@ uint64_t ksys_draw_square(uint64_t color, uint64_t x, uint64_t y, uint64_t size)
 uint64_t ksys_draw_rect(uint64_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_t size_y);
 uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t x, uint64_t y, uint64_t arr);
 uint64_t ksys_createOneProcess();
-uint64_t ksys_createProcess(void *process, int argc, char **argv);
+uint64_t ksys_createProcess(char *pr_name, void *process, int argc, char **argv);
 uint64_t ksys_blockProcess(int pid);
 uint64_t ksys_unblockProcess(int pid);
 uint64_t ksys_getCurrentpid();
@@ -143,6 +143,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_loop_print();
     case 34:
         return ksys_testsync(rdi, (char **)rsi);
+    case 35:
+        return ksys_createProcess((char *)rdi, (void *)rsi, rdx, (char **)rcx);
     }
 
     return 0;
@@ -270,9 +272,9 @@ uint64_t ksys_createOneProcess()
     return createOneProcess();
 }
 
-uint64_t ksys_createProcess(void *process, int argc, char **argv)
+uint64_t ksys_createProcess(char *pr_name, void *process, int argc, char **argv)
 {
-    return createProcess((char *)process, argc, argv);
+    return createProcess((char *)pr_name, (void *)process, argc, argv);
 }
 
 uint64_t ksys_blockProcess(int pid)

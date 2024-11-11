@@ -88,13 +88,13 @@ void parseCommand(char *str)
     {
         if (strcmp(str, commands[i].name_id) == 0)
         {
-            _createProcess(commands[i].func, argC, argument);
+            _createProcess(str, commands[i].func, argC, argument);
             // (*commands[i].func)(argument);
             return;
         }
         else if (strcmp(str, commandsNohelp[i].name_id) == 0)
         {
-            _createProcess(commandsNohelp[i].func, argC, argument);
+            _createProcess(str, commandsNohelp[i].func, argC, argument);
             // (*commandsNohelp[i].func)(argument);
             return;
         }

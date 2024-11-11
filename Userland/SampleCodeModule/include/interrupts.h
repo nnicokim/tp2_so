@@ -37,7 +37,7 @@ extern uint64_t _flush_buffer();
 
 extern uint64_t _createOneProcess();
 
-extern uint64_t _createProcess(void *process, int argc, char **argv);
+extern uint64_t _createProcess(char *pr_name, void *process, int argc, char **argv);
 
 extern uint64_t _blockProcess(int pid);
 
