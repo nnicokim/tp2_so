@@ -24,6 +24,7 @@ typedef struct PCB
     unsigned int pid;  // Process ID
     unsigned int ppid; // Parent Process ID
     int state;         // Process state
+    char *name;
     StackFrame *stack; // Stack pointer de cada proceso
     int priority;      // Process priority
     int priorityLife;
@@ -41,5 +42,6 @@ PCB *copyPCB(PCB *pcb, PCB *newPCB);
 void freePCB(PCB *pcb);
 int compare_PCB(const PCB *pcb1, const PCB *pcb2);
 void printPCB(PCB *pcb);
+void printVars(PCB *pcb);
 
 #endif
