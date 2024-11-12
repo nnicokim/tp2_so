@@ -1,5 +1,6 @@
 #include <shell.h>
 #include <interrupts.h>
+#include <songs.h>
 
 #define INPUT_SIZE 50
 #define CANT_REGS 18
@@ -72,7 +73,7 @@ static Command commandsNohelp[] = {
     {"tsync1", test_sync1, "Testea la sincronizacion con semaforos"},
     {"tsync2", test_sync2, "Testea la sincronizacion sin semaforos"},
     {"egg", easteregg, "Easter egg song"},
-    {"rick", usys_rick, "Rick Astley"},
+    {"rick", playRick, "Rick Astley"},
 };
 
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))

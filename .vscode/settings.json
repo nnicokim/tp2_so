@@ -33,9 +33,12 @@
         "semaphore.h": "c",
         "memory.h": "c",
         "lib.h": "c",
+        "pipes.h": "c",
+        "string.h": "c",
         "rick.h": "c",
         "time.h": "c",
-        "pipes.h": "c",
-        "string.h": "c"
+        "sound.h": "c",
+        "pitch.h": "c",
+        "songs.h": "c"
     }
 }

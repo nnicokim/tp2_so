@@ -1,6 +1,9 @@
 #include <rick.h>
+#include <sound.h>
+#include "../scheduler/include/scheduler.h"
 
 int rick() {
+
     const char * frames[FRAMES][HEIGHT] = {
         {
             "======================================================================+++++=================================%",
@@ -605,6 +608,7 @@ int rick() {
     };
 
     changeFontSize(1);
+
     while(1){
         for(int i = 0; i < FRAMES; i++){
             for(int j = 0; j < HEIGHT; j++){
