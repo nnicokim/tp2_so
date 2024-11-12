@@ -13,7 +13,7 @@
 #define MIN_PRIORITY 0
 #define DEFAULT_PRIORITY 1
 
-extern CircularList round_robin; // Lista de los procesos en round-robin
+extern CircularList round_robin;
 extern CircularListNode *current;
 extern int isSchedulerActive;
 
@@ -23,7 +23,7 @@ int unblockProcess(int pid);
 int getCurrentPid();
 int getCurrentPPid();
 CircularListNode *getCurrentProcess();
-uint64_t createProcess(char *pr_name, void *program, int argc, char **argv, int * fds);
+uint64_t createProcess(char *pr_name, void *program, int argc, char **argv, int *fds);
 
 void idleProcess();
 uint64_t createOneProcess();

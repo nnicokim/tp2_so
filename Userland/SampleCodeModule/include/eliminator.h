@@ -2,10 +2,8 @@
 #define ELIMINATOR_H
 
 #include <stdint.h>
-#include <user_lib.h>
 #include <ucolors.h>
-#include <user_syscalls.h>
-
+#include "./user_lib.h"
 
 #define LEFT 0
 #define RIGHT 1
@@ -26,10 +24,10 @@
 
 #define PLAYER_SIZE 4
 #define BORDER_SIZE 8
-#define P1_START_X ((SQUARE_WIDTH-INIT_WIDTH)/2 - 47)
-#define P1_START_Y ((HEIGHT-INIT_HEIGHT)/2)
-#define P2_START_X ((SQUARE_WIDTH-INIT_WIDTH)/2 + 47)
-#define P2_START_Y ((HEIGHT-INIT_HEIGHT)/2)
+#define P1_START_X ((SQUARE_WIDTH - INIT_WIDTH) / 2 - 47)
+#define P1_START_Y ((HEIGHT - INIT_HEIGHT) / 2)
+#define P2_START_X ((SQUARE_WIDTH - INIT_WIDTH) / 2 + 47)
+#define P2_START_Y ((HEIGHT - INIT_HEIGHT) / 2)
 #define P1_COLOR GREEN
 #define P2_COLOR ORANGE
 #define ESC 27
@@ -44,7 +42,6 @@ typedef struct
     int pos_collision;
     int score;
 } Player;
-
 
 void eliminator();
 

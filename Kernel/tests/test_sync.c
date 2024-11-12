@@ -144,7 +144,7 @@ void *my_process_inc_no_sem(int argc, char *argv[])
 
 uint64_t test_sync(uint64_t argc, char *argv[])
 {
-  int fd[]={0,1};
+  int fd[] = {0, 1};
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
 
   if (argc != 3)
@@ -201,10 +201,6 @@ uint64_t test_sync(uint64_t argc, char *argv[])
 
     printArray("Termino de esperar a los procesos...\n");
   }
-
-  printArray("Final value: ");
-  printDec(global);
-  printArray("\n");
 
   printArray("SALIENDO del test_sync...\n");
   my_exit();

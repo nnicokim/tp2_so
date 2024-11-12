@@ -1,6 +1,4 @@
 #include <stdio.h>
-// #include "include/syscall.h"
-// #include "include/test_util.h"
 #include <tests/test_util.h>
 #include <tests/syscall.h>
 #include <videoDriver.h>
@@ -15,7 +13,7 @@ typedef struct P_rq
 
 int64_t test_processes(uint64_t argc, char *argv[])
 {
-    int fd[] = { 0, 1 }; 
+    int fd[] = {0, 1};
     uint8_t rq;
     uint8_t alive = 0;
     uint8_t action;
@@ -110,7 +108,6 @@ int64_t test_processes(uint64_t argc, char *argv[])
                     p_rqs[rq].state = RUNNING;
                 }
         }
-        // break;
 
         printDec(counter);
         printArray("\n");

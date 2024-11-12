@@ -32,7 +32,6 @@ static int semLock = 0; // Mi mutex para la tabla de semaforos
 static int findAvailableSpace();
 static int enqueueProcess(int pid, sem_t *sem);
 static int dequeueProcess(sem_t *sem);
-// void printSemQueue(int semIndex);
 int findSem(char *name);
 char *getSemName(int semIndex);
 
@@ -115,7 +114,7 @@ int semWait(int semIndex)
     }
     else
     {
-        int pid = getCurrentPid(); // Esto hay que cambiarlo por nuestro current que tiene el pid corriendo
+        int pid = getCurrentPid();
         if (enqueueProcess(pid, sem) == -1)
         {
             change(&sem->lock, 0);
@@ -163,7 +162,6 @@ int semPost(int semIndex)
         int pid = 0;
         if ((pid = dequeueProcess(sem)) == -1)
         {
-            // printSemQueue(semIndex);
             change(&sem->lock, 0);
             return -1;
         }
@@ -174,26 +172,6 @@ int semPost(int semIndex)
 
     return 0;
 }
-
-/****************************************************************************************************/
-// void printSemQueue(int semIndex)
-// {
-//     if (semIndex >= MAX_SEM)
-//     {
-//         print("Invalid semaphore index.\n");
-//         return;
-//     }
-
-//     sem_t *sem = &semTable[semIndex].sem;
-//     print("Semaphore: %s\n", sem->name);
-//     print("Queue Size: %d\n", sem->queueSize);
-
-//     int i;
-//     for (i = 0; i < sem->queueSize; i++)
-//     {
-//         print("PID: %d\n", sem->pidQueue[i]);
-//     }
-// }
 
 void initSems()
 {

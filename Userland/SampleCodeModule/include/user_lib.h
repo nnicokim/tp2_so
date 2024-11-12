@@ -2,9 +2,14 @@
 #define USER_LIB_H
 
 #include <stdint.h>
-#include <user_syscalls.h>
 #include <ucolors.h>
+
 #define INPUT_SIZE 100
+
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
+#define LASTIN 3
 
 void print(char *arr);
 

@@ -1,23 +1,26 @@
 // pipes
 #include "./include/pipes.h"
 
-static pipesType * pipes[MAX_PIPES] = { 0 };
+static pipesType *pipes[MAX_PIPES] = {0};
 static int nextPipeId = 1;
 
-int createNamedPipe(char * name){
-    pipesType * pipe = mymalloc(sizeof(pipesType));
-    if(pipe == NULL){
+int createNamedPipe(char *name)
+{
+    pipesType *pipe = mymalloc(sizeof(pipesType));
+    if (pipe == NULL)
+    {
         return -1;
     }
 
     pipe->name = mymalloc(strlen(name) + 1);
-    if(pipe->name == NULL){
+    if (pipe->name == NULL)
+    {
         myfree(pipe);
         return -1;
     }
     strcpy(pipe->name, name);
 
-    /** 
+    /**
      * Initialize the pipe
      */
     pipe->readIndex = 0;
@@ -28,27 +31,31 @@ int createNamedPipe(char * name){
      * Create semaphores for the pipe
      */
     pipe->readSemId = semCreate(name, 0);
-    pipe->writeSemId = semCreate(name, 1); //Ver si conviene inicializarlo en PAGE en vez de 1
+    pipe->writeSemId = semCreate(name, 1); // Ver si conviene inicializarlo en PAGE en vez de 1
 
     pipe->pipeBuffer = mymalloc(PAGE);
-    if(pipe->pipeBuffer == NULL){
+    if (pipe->pipeBuffer == NULL)
+    {
         myfree(pipe->name);
         myfree(pipe);
         return -1;
     }
     pipe->eof = 0;
-    
+
     pipes[nextPipeId++] = pipe;
     return nextPipeId - 1;
 }
 
-int createAnonPipe(){
+int createAnonPipe()
+{
     return createNamedPipe("");
 }
 
-void destroyPipe(int id){
-    const pipesType * pipe = pipes[id];
-    if(pipe == NULL) return;
+void destroyPipe(int id)
+{
+    const pipesType *pipe = pipes[id];
+    if (pipe == NULL)
+        return;
 
     myfree(pipe->pipeBuffer);
     myfree(pipe);
@@ -56,47 +63,57 @@ void destroyPipe(int id){
     return;
 }
 
-void putEOF(int id){
+void putEOF(int id)
+{
     pipes[id]->eof = 1;
     return;
 }
 
-int getPipeId(char * name){
-    for(int i = 0; i < MAX_PIPES; i++){
-        if(pipes[i] != NULL && strcmp(pipes[i]->name, name) == 0){
+int getPipeId(char *name)
+{
+    for (int i = 0; i < MAX_PIPES; i++)
+    {
+        if (pipes[i] != NULL && strcmp(pipes[i]->name, name) == 0)
+        {
             return i;
         }
     }
 }
 
-int pollPipe(int id, pipeEvent event){
-    const pipesType * pipe = pipes[id];
-    if(pipe == NULL) return -1;
+int pollPipe(int id, pipeEvent event)
+{
+    const pipesType *pipe = pipes[id];
+    if (pipe == NULL)
+        return -1;
 
-    switch(event){
-        case READ_EVENT:
-            return semWait(pipe->readSemId);
-        case WRITE_EVENT:
-            return semWait(pipe->writeSemId);
-        default:
-            return -1;
+    switch (event)
+    {
+    case READ_EVENT:
+        return semWait(pipe->readSemId);
+    case WRITE_EVENT:
+        return semWait(pipe->writeSemId);
+    default:
+        return -1;
     }
 }
 
-int readPipe(int id, char * dest, unsigned int count){
-    pipesType * pipe = pipes[id];
-    if(pipe == NULL){
+int readPipe(int id, char *dest, unsigned int count)
+{
+    pipesType *pipe = pipes[id];
+    if (pipe == NULL)
+    {
         return -1;
     }
 
-    if(pipe->eof || pipe->unreadData <= 0){
-        dest[0] = EOF; // TODO: Chequear si es correcto
+    if (pipe->eof || pipe->unreadData <= 0)
+    {
+        dest[0] = EOF;
         return 0;
     }
-    // semWait(pipe->writeSemId);
+
     uint32_t toRead = count > pipe->unreadData ? pipe->unreadData : count;
     memcpy(dest, pipe->pipeBuffer + pipe->readIndex, toRead);
-    
+
     pipe->readIndex += toRead;
     pipe->unreadData -= toRead;
 
@@ -104,16 +121,16 @@ int readPipe(int id, char * dest, unsigned int count){
     return toRead;
 }
 
-int writePipe(int id, const char * src, unsigned int count){
-    pipesType * pipe = pipes[id];
+int writePipe(int id, const char *src, unsigned int count)
+{
+    pipesType *pipe = pipes[id];
 
-    if(pipe == NULL || pipe->eof) return -1;
+    if (pipe == NULL || pipe->eof)
+        return -1;
 
-    // if(pipe->unreadData > 0) return 0; // Chequear si es correcto
-    // semWait(pipe->readSemId);
     unsigned int toWrite = count > PAGE - pipe->writeIndex ? PAGE - pipe->writeIndex : count;
     memcpy(pipe->pipeBuffer + pipe->writeIndex, src, toWrite);
-    
+
     pipe->writeIndex += toWrite;
     pipe->unreadData += toWrite;
 
@@ -121,10 +138,12 @@ int writePipe(int id, const char * src, unsigned int count){
     return toWrite;
 }
 
-void EOFToCurrentProcess(){
+void EOFToCurrentProcess()
+{
     int pid = getCurrentProcess();
-    PCB * pcb = PCB_array[pid];
-    if (pcb->FD[READ_FD] != -1) {
+    PCB *pcb = PCB_array[pid];
+    if (pcb->FD[READ_FD] != -1)
+    {
         putEOF(pcb->FD[READ_FD]);
     }
     return;

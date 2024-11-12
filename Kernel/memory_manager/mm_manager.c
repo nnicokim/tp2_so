@@ -21,7 +21,6 @@ void *mymalloc(size_t size)
 
 void myfree(void *ptr)
 {
-    // Podemos meter chequeos como si esta dentro del rango para ganar confianza
     if (ptr == NULL || ptr < start)
         return;
     free_ptrs[--currentBlock] = ptr;
@@ -33,7 +32,7 @@ void *my_mm_init(void *ptrs, int s)
     size = s;
     for (int i = 0; i < BLOCK_COUNT; i++)
     {
-        free_ptrs[i] = start + i * BLOCK_SIZE; // Ensure each block is distinct
+        free_ptrs[i] = start + i * BLOCK_SIZE;
     }
     currentBlock = 0;
     return start;
@@ -43,11 +42,12 @@ void mem()
 {
     printArray("Memory map: \n");
     char buffer[BUFFER_SIZE];
-    for (int i = 0; i < BLOCK_COUNT; i++) {
-        uintToBase((uint64_t)free_ptrs[i], buffer, 16); // Convert pointer to hex
+    for (int i = 0; i < BLOCK_COUNT; i++)
+    {
+        uintToBase((uint64_t)free_ptrs[i], buffer, 16);
         printArray("Block:");
         printDec(i);
-        printArray(buffer); // Print the string representation of the pointer
-        putChar('\n'); // New line after each pointer
+        printArray(buffer);
+        putChar('\n');
     }
 }

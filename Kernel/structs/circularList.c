@@ -34,19 +34,6 @@ void addCircularList(CircularList *list, int pid)
         prev_head->prev = newNode;
 
         list->head = newNode;
-
-        // CircularListNode *last = list->head;
-        // list->head = newNode;
-        // last->next = newNode;
-        // newNode->next = last->prev;
-        // last->prev->next = newNode;
-
-        // newNode->prev = last;
-        // last->next = newNode;
-
-        // // newNode->prev = last;
-        // // newNode->next = list->head;
-        // // list->head->prev = newNode;
     }
     list->size++;
 
@@ -78,8 +65,5 @@ void removeFromCircularList(CircularList *list, int pid)
 
         return;
     }
-    // printArray("El proceso con pid: ");
-    // printDec(pid);
-    // printArray(" -> No se encontro del circularList.\n");
-    return;
+    printArray("removeFromCircularList: ERROR pid not found\n");
 }

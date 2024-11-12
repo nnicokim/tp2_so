@@ -1,7 +1,6 @@
 #include <shell.h>
 
 #define INPUT_SIZE 50
-// #define COMMAND_COUNT 10
 #define CANT_REGS 18
 #define MAX_PROCESS 192
 #define TRUE 1
@@ -51,7 +50,7 @@ static Command commands[] = {
     {"zoomin", zoomin, "Aumenta el tamanio de la letra"},
     {"zoomout", zoomout, "Disminuye el tamanio de la letra"},
     {"clear", clear_shell, "Limpia la shell"},
-    {"beep", beep, "Emite un usys_beep"},
+    {"beep", beep, "Emite un beep"},
     {"victory", victory, "VAMOS CARAJO!!!"},
     {"mario", mario_bros_song, "Canta el himno de Mario Bros"},
     {"tpr", test_processes, "Testea los procesos"},
@@ -77,7 +76,7 @@ static Command commandsNohelp[] = {
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
 #define COMMAND_COUNT sizeofArr(commands)
 
-void parseCommand(char *str) // TODO: dependiendo de si es BG o FG, se envia el FD correspondiente
+void parseCommand(char *str)
 {
     int fgFD[] = {0, 1};
     int bgFD[] = {-1, -1};
@@ -92,9 +91,6 @@ void parseCommand(char *str) // TODO: dependiendo de si es BG o FG, se envia el 
     int cmdLen = strlen(str);
     char lastChar = str[cmdLen - 2];
 
-    // if (lastChar == '&')
-    //     return handleCommands(str, bgFD);
-    // else
     return handleCommands(str, fgFD);
 }
 
@@ -104,9 +100,6 @@ void handleRegularCommand(char *str, int *fd)
 
     if (strcmp(str, "") == 0)
         return;
-
-    // TODO: parseCommandArg { char argc, char * argv }
-    // char argc = parseCommandArg(str, argv);
 
     int argC = parseCommandArg(str);
     while (*str == ' ')
@@ -206,23 +199,6 @@ void init_shell()
             {
                 putChar(c);
                 buffer[bufferIndex++] = c;
-            }
-            else if (c == "^")
-            {
-                if ((c = getChar()) == 0)
-                    continue;
-                if (c == 'c') // Ctrl+C
-                {
-                    print("^C\n");
-                    usys_myExit();
-                }
-                else if (c == 'd') // Ctrl+D
-                {
-                    print("^D\n");
-                    // usys_sendEOF();
-                }
-                bufferIndex = 0; // Reset the buffer for the next command
-                printPromptIcon();
             }
         }
     }
@@ -541,7 +517,7 @@ void mario_bros_song()
     usys_beep(587, 50);
     usys_wait(250);
     usys_beep(523, 50);
-    usys_wait(150);
+    usys_wait(130);
     usys_beep(784, 50);
     usys_beep(740, 50);
     usys_beep(698, 50);
@@ -634,6 +610,7 @@ void easteregg()
     usys_beep(466, 250);
     usys_wait(80);
     usys_beep(392, 750);
+    usys_beep(392, 750);
 
     printColor(TURQUOISE, "Encontraron el easter egg oculto!!!\n");
     usys_myExit();
@@ -660,7 +637,6 @@ void test_processes()
 void test_prio()
 {
     printColor(ORANGE, "Testeando prioridades...\n");
-    print("Testeando prioridades...\n");
     usys_test_prio();
     usys_myExit();
 }
@@ -704,7 +680,7 @@ void loop_print()
 void test_sync1()
 {
     printColor(ORANGE, "Testeando sincronizacion con sincro...\n");
-    char *argv1[] = {"10", "1", "0"}; // Para usar el de sync y el argc=3
+    char *argv1[] = {"10", "1", "0"};
     usys_test_sync(3, argv1);
     usys_myExit();
 }
@@ -712,7 +688,7 @@ void test_sync1()
 void test_sync2()
 {
     printColor(ORANGE, "Testeando sincronizacion sin sincro...\n");
-    char *argv2[] = {"10", "1", "1"}; // Para usar el de no sync y el argc=3
+    char *argv2[] = {"10", "1", "1"};
     usys_test_sync(3, argv2);
     usys_myExit();
 }

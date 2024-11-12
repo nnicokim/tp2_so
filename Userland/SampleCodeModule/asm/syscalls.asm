@@ -15,6 +15,9 @@ GLOBAL usys_get_time
 GLOBAL usys_draw_array
 GLOBAL usys_flush_buffer
 
+; SO syscalls
+
+; Process
 GLOBAL usys_createOneProcess
 GLOBAL usys_createProcess
 GLOBAL usys_blockProcess
@@ -24,19 +27,21 @@ GLOBAL usys_getCurrentPpid
 GLOBAL usys_killProcess
 GLOBAL usys_leaveCPU
 GLOBAL usys_waitPid
-GLOBAL usys_test_mm
-GLOBAL usys_test_processes
 GLOBAL usys_myExit
-GLOBAL usys_test_prio
 GLOBAL usys_my_nice
 GLOBAL usys_increase_priority
 GLOBAL usys_decrease_priority
 GLOBAL usys_print_processes
 GLOBAL usys_print_memory
 GLOBAL usys_loop_print
+
+; Tests
+GLOBAL usys_test_mm
+GLOBAL usys_test_processes
+GLOBAL usys_test_prio
 GLOBAL usys_test_sync
 
-
+; Pipes
 GLOBAL usys_pollPipe
 GLOBAL usys_readPipe
 GLOBAL usys_writePipe

@@ -49,7 +49,7 @@ uint64_t ksys_draw_rect(uint64_t color, uint64_t x, uint64_t y, uint64_t size_x,
 uint64_t ksys_draw_array(uint64_t fontColor, uint64_t backgroundColor, uint64_t x, uint64_t y, uint64_t arr);
 // SO
 uint64_t ksys_createOneProcess();
-uint64_t ksys_createProcess(char *pr_name, void *process, int argc, char **argv, int * fds);
+uint64_t ksys_createProcess(char *pr_name, void *process, int argc, char **argv, int *fds);
 uint64_t ksys_blockProcess(int pid);
 uint64_t ksys_unblockProcess(int pid);
 uint64_t ksys_getCurrentpid();
@@ -64,12 +64,11 @@ uint64_t ksys_decrease_priority(int pid);
 uint64_t ksys_print_processes();
 uint64_t ksys_print_memory();
 uint64_t ksys_loop_print();
-// uint64_t wait_Pid(int pid);
 uint64_t ksys_testsync(uint64_t argc, char **argv);
 
 uint64_t ksys_pollPipe(uint64_t id, uint64_t event);
-uint64_t ksys_readPipe(uint64_t id, char * dest, uint64_t count);
-uint64_t ksys_writePipe(uint64_t id, char * src, uint64_t count);
+uint64_t ksys_readPipe(uint64_t id, char *dest, uint64_t count);
+uint64_t ksys_writePipe(uint64_t id, char *src, uint64_t count);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -283,7 +282,7 @@ uint64_t ksys_createOneProcess()
     return createOneProcess();
 }
 
-uint64_t ksys_createProcess(char *pr_name, void *process, int argc, char **argv, int * fds)
+uint64_t ksys_createProcess(char *pr_name, void *process, int argc, char **argv, int *fds)
 {
     return createProcess((char *)pr_name, (void *)process, argc, argv, fds);
 }
@@ -322,11 +321,11 @@ uint64_t ksys_leaveCPU()
 uint64_t ksys_waitPid(int pid)
 {
     PCB *childProcess = PCB_array[pid];
-    if(!childProcess) return -1;
-    while(childProcess->state != FINISHED) forceTimerTick();
+    if (!childProcess)
+        return -1;
+    while (childProcess->state != FINISHED)
+        forceTimerTick();
 
-    // int parentProcess = getCurrentPid();
-    // blockProcess(parentProcess);
     return 0;
 }
 
@@ -370,34 +369,24 @@ uint64_t ksys_loop_print()
     return 0;
 }
 
-// uint64_t wait_Pid(int pid)
-// {
-//     PCB *childProcess = PCB_array[pid];
-//     if (childProcess->state == FINISHED)
-//     {
-//         return -1;
-//     }
-//     childProcess->state = BLOCKED;
-//     forceTimerTick();
-//     return 0;
-// }
-
 uint64_t ksys_testsync(uint64_t argc, char *argv[])
 {
     int fds[] = {0, 1};
     int sync_pid = createProcess("Sync_Test", (void *)test_sync, argc, argv, fds);
     return sync_pid;
-
 }
 
-uint64_t ksys_pollPipe(uint64_t id, uint64_t event){
+uint64_t ksys_pollPipe(uint64_t id, uint64_t event)
+{
     return pollPipe(id, event);
 }
 
-uint64_t ksys_readPipe(uint64_t id, char * dest, uint64_t count){
+uint64_t ksys_readPipe(uint64_t id, char *dest, uint64_t count)
+{
     return readPipe(id, dest, count);
 }
 
-uint64_t ksys_writePipe(uint64_t id, char * src, uint64_t count){
+uint64_t ksys_writePipe(uint64_t id, char *src, uint64_t count)
+{
     return writePipe(id, src, count);
 }

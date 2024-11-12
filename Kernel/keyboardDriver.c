@@ -141,7 +141,6 @@ void flushBuffer()
     readIndex = 0;
 }
 
-// Funcion que al llegar Ctrl+C, se mata al proceso actual (si es un proceso foreground y no es el shell ni idle)
 void killWithCtrlC()
 {
     int currentPID = getCurrentPid();

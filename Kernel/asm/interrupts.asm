@@ -264,11 +264,11 @@ _irq00Handler:
 	pushState   
 
 	mov rdi, 0
-	call irqDispatcher   ; int 20h (timer handler) en irqDispatcher.c
+	call irqDispatcher   
 
 	mov rdi, rsp
 	mov rsi, [rsp+15*8]
-	call schedule        ; El schedule esta causando el loop del qemu
+	call schedule        
 
 	mov rsp, rax
 
@@ -341,7 +341,6 @@ haltcpu:
 SECTION .rodata
 
 userland_direc equ 0x400000
-
 
 
 section .data
