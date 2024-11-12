@@ -74,4 +74,10 @@ extern uint64_t usys_print_memory();
 extern uint64_t usys_loop_print();
 
 extern uint64_t usys_test_sync(uint64_t argc, char *argv[]);
+
+extern uint64_t usys_malloc(uint64_t size);
+
+extern uint64_t usys_free(uint64_t ptr);
+
+extern uint64_t usys_rick();
 #endif

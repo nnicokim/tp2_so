@@ -49,4 +49,6 @@ void udrawArray(uint32_t fontColor, uint32_t backgroundColor, int x, int y, char
 
 void udrawFrame(uint32_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_t size_y, uint64_t thickness);
 
+int puts(const char *str);
+int printf(const char *format, ...);
 #endif

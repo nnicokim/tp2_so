@@ -46,6 +46,8 @@ GLOBAL usys_pollPipe
 GLOBAL usys_readPipe
 GLOBAL usys_writePipe
 
+
+GLOBAL usys_rick
 section .text
 
 usys_write:
@@ -426,6 +428,15 @@ usys_writePipe:
     push rbp
     mov rbp, rsp
     mov rax, 38
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_rick:
+    push rbp
+    mov rbp, rsp
+    mov rax, 39
     int 80h
     mov rsp, rbp
     pop rbp

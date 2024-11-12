@@ -17,6 +17,8 @@
 #include <tests/test_processes.h>
 #include <tests/test_prio.h>
 #include <tests/test_sync.h>
+
+#include <rick.h>
 #include "./ipc/include/semaphore.h"
 
 #define STDIN 0
@@ -69,6 +71,10 @@ uint64_t ksys_testsync(uint64_t argc, char **argv);
 uint64_t ksys_pollPipe(uint64_t id, uint64_t event);
 uint64_t ksys_readPipe(uint64_t id, char *dest, uint64_t count);
 uint64_t ksys_writePipe(uint64_t id, char *src, uint64_t count);
+
+uint64_t ksys_malloc(uint64_t size);
+uint64_t ksys_free(uint64_t ptr);
+
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -156,6 +162,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_readPipe(rdi, (char *)rsi, rdx);
     case 38:
         return ksys_writePipe(rdi, (char *)rsi, rdx);
+    case 39:
+        return rick();
     }
 
     return 0;
@@ -389,4 +397,12 @@ uint64_t ksys_readPipe(uint64_t id, char *dest, uint64_t count)
 uint64_t ksys_writePipe(uint64_t id, char *src, uint64_t count)
 {
     return writePipe(id, src, count);
+}
+uint64_t ksys_malloc(uint64_t size){
+    return (uint64_t) mymalloc(size);
+}
+
+uint64_t ksys_free(uint64_t ptr){
+    myfree((void *) ptr);
+    return 0;
 }

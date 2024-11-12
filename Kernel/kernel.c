@@ -6,6 +6,7 @@
 #include <videoDriver.h>
 #include <idtLoader.h>
 
+#include <rick.h>
 #include <keyboardDriver.h>
 #include "include/idtLoader.h"
 #include <interrupts.h>

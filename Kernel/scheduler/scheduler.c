@@ -2,6 +2,7 @@
 #include <videoDriver.h>
 #include "./include/scheduler.h"
 #include "../include/time.h"
+#include <rick.h>
 
 extern void forceTimerTick();
 
