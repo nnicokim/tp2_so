@@ -36,6 +36,8 @@ void test_sync1();
 void test_sync2();
 void handleCommands(char *str, int *fd);
 void handleRegularCommand(char *str, int *fd);
+void wc(char **params);
+void cat(char **params);
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -65,6 +67,8 @@ static Command commands[] = {
     {"incp", increase_prio_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"decp", decrease_prio_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"nice", nice_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
+    {"wc", wc, "Cuenta la cantidad de saltos de linea."},
+    {"cat", cat, "Imprime el contenido de un archivo."},
 };
 
 static Command commandsNohelp[] = {
@@ -1085,5 +1089,70 @@ void nice_pid()
             return;
         }
     }
+    usys_myExit();
+}
+
+void wc(char **params)
+{
+    int c, lineCount = 0;
+    char buffer[3];
+    putChar('\n');
+
+    while ((c = getChar()) != EOF)
+    {
+        if (c == '\n')
+        {
+            lineCount++;
+            putChar('\n');
+        }
+        else if (c >= 32 && c <= 126)
+        {
+            putChar(c);
+        }
+    }
+
+    printColor(GREEN, "\nNumber of lines: \n");
+    intToStr(lineCount, buffer);
+    print(lineCount);
+    print('\n');
+    usys_myExit();
+}
+
+void cat(char **params)
+{
+    char buffer[PAGE] = {0}; // Buffer para almacenar caracteres
+    char c;
+    int idx = 0, pos = 0;
+
+    while ((c = getChar()) != (char)EOF)
+    {
+        if (c == '\b')
+        { // Manejo de backspace
+            if (idx > 0)
+            {
+                putChar('\b');
+                idx--;
+            }
+        }
+        else if (c == '\n')
+        {
+            putChar('\n');
+            for (pos = 0; pos < idx; pos++)
+            {
+                putchar(buffer[pos]);
+            }
+            idx = 0;
+            putChar('\n');
+        }
+        else if (c >= 32 && c <= 126)
+        {
+            if (idx < PAGE)
+            {
+                buffer[idx++] = c;
+                putChar(c);
+            }
+        }
+    }
+    putChar('\n');
     usys_myExit();
 }
