@@ -2,7 +2,7 @@
 #include <interrupts.h>
 #include <songs.h>
 
-#define INPUT_SIZE 50
+// #define INPUT_SIZE 50
 #define CANT_REGS 18
 #define MAX_PROCESS 192
 #define TRUE 1
@@ -86,17 +86,17 @@ static Command commandsNohelp[] = {
 void parseCommand(char *str)
 {
     int fgFD[] = {0, 1};
-    int bgFD[] = {-1, -1};
+    // int bgFD[] = {-1, -1};
 
-    char argument[] = {0};
+    // char argument[] = {0};
     if (strcmp_u(str, "") == 0)
     {
         return;
     }
 
-    int argC = parseCommandArg(str);
-    int cmdLen = strlen_u(str);
-    char lastChar = str[cmdLen - 2];
+    // int argC = parseCommandArg(str);
+    // int cmdLen = strlen_u(str);
+    // char lastChar = str[cmdLen - 2];
 
     return handleCommands(str, fgFD);
 }
@@ -116,7 +116,7 @@ void handleRegularCommand(char *str, int *fd)
     {
         if (strcmp_u(str, commands[i].name_id) == 0)
         {
-            char *name;
+            // char *name;
             int pid = usys_createProcess(str, commands[i].func, argC, argument, fd);
             usys_waitPid(pid);
             return;
@@ -337,7 +337,7 @@ void inforeg()
             printColor(GREEN, regsNames[i]);
             uintToBase(regs[i], aux, 16);
             print(aux);
-            putChar("\n");
+            putChar('\n');
         }
     }
     else
@@ -716,7 +716,7 @@ void kill_process_pid()
                 putChar(c);
                 if ((c < '0' || c > '9') && c != '\n')
                 {
-                    putChar("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -724,7 +724,7 @@ void kill_process_pid()
                 }
                 if (i > 3)
                 {
-                    putChar("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -748,7 +748,7 @@ void kill_process_pid()
         }
         if (kill_pid == 0 || kill_pid == 1)
         {
-            putChar("\n");
+            putChar('\n');
             printColor(RED, "No se puede matar el proceso SHELL o IDLE. Ingrese otro PID.\n");
             usys_myExit();
             return;
@@ -761,7 +761,7 @@ void kill_process_pid()
             printColor(RED, "No se pudo matar al proceso con PID: ");
             intToStr(kill_pid, pid);
             print(pid);
-            putChar("\n");
+            putChar('\n');
             usys_myExit();
             return;
         }
@@ -770,7 +770,7 @@ void kill_process_pid()
             printColor(GREEN, "Se mato al proceso con PID: ");
             intToStr(kill_pid, pid);
             print(pid);
-            putChar("\n");
+            putChar('\n');
             usys_myExit();
             return;
         }
@@ -796,7 +796,7 @@ void block_process_pid()
                 putChar(c);
                 if ((c < '0' || c > '9') && c != '\n')
                 {
-                    putChar("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -804,7 +804,7 @@ void block_process_pid()
                 }
                 if (i > 3)
                 {
-                    putChar("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -839,7 +839,7 @@ void block_process_pid()
             printColor(RED, "No se pudo bloquear al proceso con PID: ");
             intToStr(block_pid, pid);
             print(pid);
-            putChar("\n");
+            putChar('\n');
             usys_myExit();
             return;
         }
@@ -848,7 +848,7 @@ void block_process_pid()
             printColor(GREEN, "Se bloqueo al proceso con PID: ");
             intToStr(block_pid, pid);
             print(pid);
-            putChar("\n");
+            putChar('\n');
             usys_myExit();
             return;
         }
@@ -874,7 +874,7 @@ void increase_prio_pid()
                 putChar(c);
                 if ((c < '0' || c > '9') && c != '\n')
                 {
-                    putChar("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -882,7 +882,7 @@ void increase_prio_pid()
                 }
                 if (i > 3)
                 {
-                    putChar("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -938,7 +938,7 @@ void decrease_prio_pid()
                 putChar(c);
                 if ((c < '0' || c > '9') && c != '\n')
                 {
-                    putChar("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -946,7 +946,7 @@ void decrease_prio_pid()
                 }
                 if (i > 3)
                 {
-                    putChar("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -973,14 +973,14 @@ void decrease_prio_pid()
         if (resultado == -1)
         {
             printColor(RED, "No se pudo decrementar la prioridad del proceso.");
-            putChar("\n");
+            putChar('\n');
             usys_myExit();
             return;
         }
         else
         {
             printColor(GREEN, "Se decremento la prioridad del proceso :) \n");
-            putChar("\n");
+            putChar('\n');
             usys_myExit();
             return;
         }
@@ -1009,7 +1009,7 @@ void nice_pid()
                 putChar(c);
                 if ((c < '0' || c > '9') && c != '\n' && c != ' ')
                 {
-                    putChar("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -1017,7 +1017,7 @@ void nice_pid()
                 }
                 if (i > 3)
                 {
-                    putChar("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -1033,7 +1033,7 @@ void nice_pid()
                 {
                     if (flag == 0)
                     {
-                        putChar("\n");
+                        putChar('\n');
                         printColor(RED, "ERROR. Ingrese un espacio entre el PID y la prioridad.\n");
                         printColor(YELLOW, "Vuelva a intentarlo.\n");
                         usys_myExit();
@@ -1083,7 +1083,7 @@ void nice_pid()
             intToStr(newPrio, prio);
             print(prio);
             printColor(GREEN, " !!! :) \n");
-            putChar("\n");
+            putChar('\n');
             usys_myExit();
             return;
         }
@@ -1112,8 +1112,8 @@ void wc(char **params)
 
     printColor(GREEN, "\nNumber of lines: \n");
     intToStr(lineCount, buffer);
-    print(lineCount);
-    putChar('\n');
+    print(buffer);
+    print("\n");
     usys_myExit();
 }
 

@@ -39,6 +39,7 @@
         "time.h": "c",
         "sound.h": "c",
         "pitch.h": "c",
-        "songs.h": "c"
+        "songs.h": "c",
+        "eliminator.h": "c"
     }
 }

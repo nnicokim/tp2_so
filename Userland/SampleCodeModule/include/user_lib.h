@@ -2,6 +2,7 @@
 #define USER_LIB_H
 
 #include <stdint.h>
+#include <interrupts.h>
 #include "./ucolors.h"
 
 #define INPUT_SIZE 100

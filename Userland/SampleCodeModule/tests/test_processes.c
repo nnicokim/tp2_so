@@ -107,9 +107,10 @@ int64_t test_processes(uint64_t argc, char *argv[])
                     p_rqs[rq].state = RUNNING;
                 }
         }
-
-        // printDec(counter);
-        // printArray("\n");
-        // return 0;
+        char buff[10];
+        intToStr(counter, buff);
+        print("Counter: ");
+        print(buff);
+        print("\n");
     }
 }

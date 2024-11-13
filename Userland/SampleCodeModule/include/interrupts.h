@@ -3,15 +3,15 @@
 
 #include <stdint.h>
 
-extern uint64_t usys_read(uint64_t fd, uint64_t buf, uint64_t size);
+extern uint64_t usys_read(uint64_t fd, char* buff, uint64_t size);
 
-extern uint64_t usys_write(uint64_t fd, uint64_t buf, uint64_t size);
+extern uint64_t usys_write(uint64_t fd, char* buff, uint64_t size);
 
 extern uint64_t usys_change_draw_size(uint64_t size);
 
-extern uint64_t usys_print_array_of_draw_size(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, uint64_t y, uint64_t buf);
+extern uint64_t usys_print_array_of_draw_size(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, uint64_t y, char* buff);
 
-extern uint64_t usys_write_color(uint64_t fontCOlor, uint64_t buf, uint64_t size);
+extern uint64_t usys_write_color(uint64_t fontCOlor, char* buff, uint64_t size);
 
 extern uint64_t usys_getRegisters(uint64_t *registers);
 

@@ -17,9 +17,9 @@ void handleRegularCommand(char *str, int *fd);
 
 typedef struct Command
 {
-    char *name_id;
-    void (*func)(char *param);
-    char *desc;
+    char * name_id;
+    void * func;
+    char * desc;
 } Command;
 
 #endif
