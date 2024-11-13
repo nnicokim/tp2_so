@@ -1,8 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
-// #include "syscall.h"
 #include <tests/syscall.h>
-#include <videoDriver.h>
+#include "../include/tests/test_util.h"
 
 // Random
 static uint32_t m_z = 362436069;

@@ -20,9 +20,9 @@ void beep();
 void victory();
 void mario_bros_song();
 void easteregg();
-void test_processes();
-void test_mm();
-void test_prio();
+void sh_test_processes();
+void sh_test_mm();
+void sh_test_prio();
 void print_processes();
 void print_memory();
 void create_one_process();
@@ -32,8 +32,8 @@ void block_process_pid();
 void increase_prio_pid();
 void decrease_prio_pid();
 void nice_pid();
-void test_sync1();
-void test_sync2();
+void sh_test_sync1();
+void sh_test_sync2();
 void handleCommands(char *str, int *fd);
 void handleRegularCommand(char *str, int *fd);
 void wc(char **params);
@@ -57,9 +57,9 @@ static Command commands[] = {
     {"beep", beep, "Emite un beep"},
     {"victory", victory, "VAMOS CARAJO!!!"},
     {"mario", mario_bros_song, "Canta el himno de Mario Bros"},
-    {"tpr", test_processes, "Testea los procesos"},
-    {"tmm", test_mm, "Testea el gestor de memoria"},
-    {"tprio", test_prio, "Testea la prioridad de los procesos"},
+    {"tpr", sh_test_processes, "Testea los procesos"},
+    {"tmm", sh_test_mm, "Testea el gestor de memoria"},
+    {"tprio", sh_test_prio, "Testea la prioridad de los procesos"},
     {"printp", print_processes, "Imprime los procesos activos"},
     {"loop", loop_print, "Imprime el PID del proceso ejecutandose cada 2 segs"},
     {"kill", kill_process_pid, "Mata un proceso dado un PID"},
@@ -74,8 +74,8 @@ static Command commands[] = {
 static Command commandsNohelp[] = {
     {"cp", create_one_process, "Crea un proceso"},
     {"mem", print_memory, "Imprime la memoria"},
-    {"tsync1", test_sync1, "Testea la sincronizacion con semaforos"},
-    {"tsync2", test_sync2, "Testea la sincronizacion sin semaforos"},
+    {"tsync1", sh_test_sync1, "Testea la sincronizacion con semaforos"},
+    {"tsync2", sh_test_sync2, "Testea la sincronizacion sin semaforos"},
     {"egg", easteregg, "Easter egg song"},
     {"rick", playRick, "Rick Astley"},
 };
@@ -89,13 +89,13 @@ void parseCommand(char *str)
     int bgFD[] = {-1, -1};
 
     char argument[] = {0};
-    if (strcmp(str, "") == 0)
+    if (strcmp_u(str, "") == 0)
     {
         return;
     }
 
     int argC = parseCommandArg(str);
-    int cmdLen = strlen(str);
+    int cmdLen = strlen_u(str);
     char lastChar = str[cmdLen - 2];
 
     return handleCommands(str, fgFD);
@@ -105,7 +105,7 @@ void handleRegularCommand(char *str, int *fd)
 {
     char *argument[] = {0};
 
-    if (strcmp(str, "") == 0)
+    if (strcmp_u(str, "") == 0)
         return;
 
     int argC = parseCommandArg(str);
@@ -114,14 +114,14 @@ void handleRegularCommand(char *str, int *fd)
 
     for (int i = 0; i < COMMAND_COUNT; i++)
     {
-        if (strcmp(str, commands[i].name_id) == 0)
+        if (strcmp_u(str, commands[i].name_id) == 0)
         {
             char *name;
             int pid = usys_createProcess(str, commands[i].func, argC, argument, fd);
             usys_waitPid(pid);
             return;
         }
-        else if (strcmp(str, commandsNohelp[i].name_id) == 0)
+        else if (strcmp_u(str, commandsNohelp[i].name_id) == 0)
         {
             int pid = usys_createProcess(str, commandsNohelp[i].func, argC, argument, fd);
             usys_waitPid(pid);
@@ -633,26 +633,25 @@ void play_eliminator()
     usys_myExit();
 }
 
-void test_processes()
+void sh_test_processes()
 {
-    printColor(ORANGE, "Testeando procesos...\n");
     char *argvAux[] = {"10"};
-    usys_test_processes(1, argvAux);
+    test_processes(1, argvAux);
     usys_myExit();
 }
 
-void test_prio()
+void sh_test_prio()
 {
     printColor(ORANGE, "Testeando prioridades...\n");
-    usys_test_prio();
+    test_prio();
     usys_myExit();
 }
 
-void test_mm()
+void sh_test_mm()
 {
     printColor(ORANGE, "Testeando MM...\n");
     char *argvmm[] = {"500"};
-    usys_test_mm(1, argvmm);
+    test_mm(1, argvmm);
     usys_myExit();
 }
 
@@ -684,19 +683,19 @@ void loop_print()
     usys_myExit();
 }
 
-void test_sync1()
+void sh_test_sync1()
 {
     printColor(ORANGE, "Testeando sincronizacion con sincro...\n");
     char *argv1[] = {"10", "1", "0"};
-    usys_test_sync(3, argv1);
+    test_sync(3, argv1);
     usys_myExit();
 }
 
-void test_sync2()
+void sh_test_sync2()
 {
     printColor(ORANGE, "Testeando sincronizacion sin sincro...\n");
     char *argv2[] = {"10", "1", "1"};
-    usys_test_sync(3, argv2);
+    test_sync(3, argv2);
     usys_myExit();
 }
 

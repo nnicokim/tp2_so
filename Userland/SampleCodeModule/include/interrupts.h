@@ -37,7 +37,7 @@ extern uint64_t usys_flush_buffer();
 
 extern uint64_t usys_createOneProcess();
 
-extern uint64_t usys_createProcess(char *pr_name, void *process, int argc, char **argv, int * fds);
+extern uint64_t usys_createProcess(char *pr_name, void *process, int argc, char **argv, int *fds);
 
 extern uint64_t usys_blockProcess(int pid);
 
@@ -53,11 +53,11 @@ extern uint64_t usys_leaveCPU();
 
 extern uint64_t usys_waitPid(int pid);
 
-extern uint64_t usys_test_mm(uint64_t argc, char *argv[]);
+// extern uint64_t usys_test_mm(uint64_t argc, char *argv[]);
 
-extern uint64_t usys_test_processes(uint64_t argc, char *argv[]);
+// extern uint64_t usys_test_processes(uint64_t argc, char *argv[]);
 
-extern uint64_t usys_test_prio();
+// extern uint64_t usys_test_prio();
 
 extern uint64_t usys_myExit();
 
@@ -73,11 +73,15 @@ extern uint64_t usys_print_memory();
 
 extern uint64_t usys_loop_print();
 
-extern uint64_t usys_test_sync(uint64_t argc, char *argv[]);
+// extern uint64_t usys_test_sync(uint64_t argc, char *argv[]);
 
 extern uint64_t usys_malloc(uint64_t size);
 
 extern uint64_t usys_free(uint64_t ptr);
 
 extern uint64_t usys_rick();
+
+extern uint64_t usys_mymalloc(uint64_t size);
+
+extern uint64_t usys_myfree(uint64_t ptr);
 #endif

@@ -4,7 +4,6 @@
 #include <lib.h>
 #include <string.h>
 #include "../scheduler/include/scheduler.h"
-#include "../include/tests/syscall.h"
 
 extern void forceTimerTick();
 
@@ -43,7 +42,7 @@ int semCreate(char *name, int initValue)
     if ((pos = findAvailableSpace()) != -1)
     {
         // Inicializamos la estructura del semaforo
-        strcpy(semTable[pos].sem.name, name);
+        strcpy_k(semTable[pos].sem.name, name);
         semTable[pos].sem.value = initValue;
         semTable[pos].sem.lock = 0;
         semTable[pos].sem.size = 0;
@@ -201,7 +200,7 @@ int findSem(char *name)
     int i;
     for (i = 0; i < MAX_SEM; i++)
     {
-        if (!semTable[i].available && strcmp(name, semTable[i].sem.name) == 0)
+        if (!semTable[i].available && strcmp_k(name, semTable[i].sem.name) == 0)
         {
             return i;
         }

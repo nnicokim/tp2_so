@@ -13,9 +13,9 @@
 
 void print(char *arr);
 
-int strlen(char *arr);
+int strlen_u(char *arr);
 
-void strcpy(char *destination, const char *source);
+void strcpy_u(char *destination, const char *source);
 
 uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 
@@ -23,7 +23,7 @@ void _invalid_opcode_exception(void);
 
 int parseCommandArg(char *str);
 
-int strcmp(const char *s1, const char *s2);
+int strcmp_u(const char *s1, const char *s2);
 
 char getChar();
 
@@ -50,5 +50,6 @@ void udrawArray(uint32_t fontColor, uint32_t backgroundColor, int x, int y, char
 void udrawFrame(uint32_t color, uint64_t x, uint64_t y, uint64_t size_x, uint64_t size_y, uint64_t thickness);
 
 int puts(const char *str);
+
 int printf(const char *format, ...);
 #endif

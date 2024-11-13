@@ -4,8 +4,11 @@
 #include <user_lib.h>
 #include <ucolors.h>
 #include <eliminator.h>
+#include "./tests/test_processes.h"
+#include "./tests/test_prio.h"
+#include "./tests/test_sync.h"
+#include "./tests/test_mm.h"
 
-#define EOF -1
 #define PAGE 1000
 
 void init_shell();

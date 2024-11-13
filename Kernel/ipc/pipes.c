@@ -12,13 +12,13 @@ int createNamedPipe(char *name)
         return -1;
     }
 
-    pipe->name = mymalloc(strlen(name) + 1);
+    pipe->name = mymalloc(strlen_k(name) + 1);
     if (pipe->name == NULL)
     {
         myfree(pipe);
         return -1;
     }
-    strcpy(pipe->name, name);
+    strcpy_k(pipe->name, name);
 
     /**
      * Initialize the pipe
@@ -73,7 +73,7 @@ int getPipeId(char *name)
 {
     for (int i = 0; i < MAX_PIPES; i++)
     {
-        if (pipes[i] != NULL && strcmp(pipes[i]->name, name) == 0)
+        if (pipes[i] != NULL && strcmp_k(pipes[i]->name, name) == 0)
         {
             return i;
         }

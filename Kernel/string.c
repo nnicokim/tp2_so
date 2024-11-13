@@ -1,7 +1,7 @@
 #include <string.h>
 #include <lib.h>
 
-int strlen(char *str)
+int strlen_k(char *str)
 {
     int i = 0;
     while (str[i] != '\0')
@@ -9,12 +9,12 @@ int strlen(char *str)
     return i;
 }
 
-char *strcpy(char *dest, char *src)
+char *strcpy_k(char *dest, char *src)
 {
-    return memcpy(dest, src, strlen(src));
+    return memcpy(dest, src, strlen_k(src));
 }
 
-int strcmp(char *str1, char *str2)
+int strcmp_k(char *str1, char *str2)
 {
     int i = 0;
     for (int i = 0; str1[i] != '\0' && str2[i] != '\0'; i++)

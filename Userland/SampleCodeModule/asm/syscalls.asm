@@ -34,20 +34,18 @@ GLOBAL usys_decrease_priority
 GLOBAL usys_print_processes
 GLOBAL usys_print_memory
 GLOBAL usys_loop_print
-
-; Tests
-GLOBAL usys_test_mm
-GLOBAL usys_test_processes
-GLOBAL usys_test_prio
-GLOBAL usys_test_sync
+GLOBAL usys_mymalloc
+GLOBAL usys_myfree
 
 ; Pipes
 GLOBAL usys_pollPipe
 GLOBAL usys_readPipe
 GLOBAL usys_writePipe
 
-
+; RICK
 GLOBAL usys_rick
+
+
 section .text
 
 usys_write:
@@ -298,37 +296,11 @@ usys_waitPid:
     pop rbp
     ret
 
-usys_test_mm:
-    push rbp
-    mov rbp, rsp
-    mov rax, 24
-    int 80h
-    mov rsp, rbp
-    pop rbp
-    ret
-
-usys_test_processes:
-    push rbp
-    mov rbp, rsp
-    mov rax, 25
-    int 80h
-    mov rsp, rbp
-    pop rbp
-    ret
 
 usys_myExit:
     push rbp
     mov rbp, rsp
     mov rax, 26
-    int 80h
-    mov rsp, rbp
-    pop rbp
-    ret
-
-usys_test_prio:
-    push rbp
-    mov rbp, rsp
-    mov rax, 27
     int 80h
     mov rsp, rbp
     pop rbp
@@ -388,14 +360,6 @@ usys_loop_print:
     pop rbp
     ret
 
-usys_test_sync:
-    push rbp
-    mov rbp, rsp
-    mov rax, 34
-    int 80h
-    mov rsp, rbp
-    pop rbp
-    ret
 
 usys_createProcess:
     push rbp
@@ -437,6 +401,24 @@ usys_rick:
     push rbp
     mov rbp, rsp
     mov rax, 39
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_mymalloc:
+    push rbp
+    mov rbp, rsp
+    mov rax, 40
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_myfree:
+    push rbp
+    mov rbp, rsp
+    mov rax, 41
     int 80h
     mov rsp, rbp
     pop rbp

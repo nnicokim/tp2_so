@@ -1,13 +1,4 @@
-#include <tests/test_util.h>
-#include <tests/test_mm.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "../memory_manager/include/mm_manager.h"
-#include <videoDriver.h>
-#include "../include/lib.h"
-
-#define MAX_BLOCKS 128
+#include "../include/tests/test_mm.h"
 
 typedef struct MM_rq
 {
@@ -38,7 +29,7 @@ uint64_t test_mm(uint64_t argc, char *argv[])
     while (rq < MAX_BLOCKS && total < max_memory)
     {
       mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
-      mm_rqs[rq].address = mymalloc(mm_rqs[rq].size);
+      mm_rqs[rq].address = usys_mymalloc(mm_rqs[rq].size);
 
       if (mm_rqs[rq].address)
       {
@@ -58,13 +49,13 @@ uint64_t test_mm(uint64_t argc, char *argv[])
       if (mm_rqs[i].address)
         if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size))
         {
-          printArray("test_mm ERROR\n");
+          printColor(RED, "test_mm ERROR\n");
           return -1;
         }
 
     // Free
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
-        myfree(mm_rqs[i].address);
+        usys_myfree(mm_rqs[i].address);
   }
 }

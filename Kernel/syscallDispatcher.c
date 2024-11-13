@@ -13,10 +13,6 @@
 #include "./structs/include/circularList.h"
 #include "./memory_manager/include/mm_manager.h"
 #include "./structs/include/circularList.h"
-#include <tests/test_mm.h>
-#include <tests/test_processes.h>
-#include <tests/test_prio.h>
-#include <tests/test_sync.h>
 
 #include <rick.h>
 #include "./ipc/include/semaphore.h"
@@ -72,9 +68,8 @@ uint64_t ksys_pollPipe(uint64_t id, uint64_t event);
 uint64_t ksys_readPipe(uint64_t id, char *dest, uint64_t count);
 uint64_t ksys_writePipe(uint64_t id, char *src, uint64_t count);
 
-uint64_t ksys_malloc(uint64_t size);
-uint64_t ksys_free(uint64_t ptr);
-
+uint64_t ksys_mymalloc(uint64_t size);
+uint64_t ksys_myfree(uint64_t ptr);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -131,15 +126,15 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_leaveCPU();
     case 23:
         return ksys_waitPid(rdi);
-    case 24:
-        return test_mm(rdi, (char **)rsi);
-    case 25:
-        return test_processes(rdi, (char **)rsi);
+    // case 24:
+    //     return test_mm(rdi, (char **)rsi);
+    // case 25:
+    //     return test_processes(rdi, (char **)rsi);
     case 26:
         return ksys_myExit();
-    case 27:
-        sys_test_prio();
-        return 0;
+    // case 27:
+    //     sys_test_prio();
+    //     return 0;
     case 28:
         return ksys_my_nice(rdi, rsi);
     case 29:
@@ -152,8 +147,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_print_memory();
     case 33:
         return ksys_loop_print();
-    case 34:
-        return ksys_testsync(rdi, (char **)rsi);
+    // case 34:
+    //     return ksys_testsync(rdi, (char **)rsi);
     case 35:
         return ksys_createProcess((char *)rdi, (void *)rsi, rdx, (char **)rcx, r8);
     case 36:
@@ -164,6 +159,10 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_writePipe(rdi, (char *)rsi, rdx);
     case 39:
         return rick();
+    case 40:
+        return ksys_mymalloc(rdi);
+    case 41:
+        return ksys_myfree(rdi);
     }
 
     return 0;
@@ -377,12 +376,12 @@ uint64_t ksys_loop_print()
     return 0;
 }
 
-uint64_t ksys_testsync(uint64_t argc, char *argv[])
-{
-    int fds[] = {0, 1};
-    int sync_pid = createProcess("Sync_Test", (void *)test_sync, argc, argv, fds);
-    return sync_pid;
-}
+// uint64_t ksys_testsync(uint64_t argc, char *argv[])
+// {
+//     int fds[] = {0, 1};
+//     int sync_pid = createProcess("Sync_Test", (void *)test_sync, argc, argv, fds);
+//     return sync_pid;
+// }
 
 uint64_t ksys_pollPipe(uint64_t id, uint64_t event)
 {
@@ -398,11 +397,13 @@ uint64_t ksys_writePipe(uint64_t id, char *src, uint64_t count)
 {
     return writePipe(id, src, count);
 }
-uint64_t ksys_malloc(uint64_t size){
-    return (uint64_t) mymalloc(size);
+uint64_t ksys_mymalloc(uint64_t size)
+{
+    return (uint64_t)mymalloc(size);
 }
 
-uint64_t ksys_free(uint64_t ptr){
-    myfree((void *) ptr);
+uint64_t ksys_myfree(uint64_t ptr)
+{
+    myfree((void *)ptr);
     return 0;
 }
