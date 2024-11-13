@@ -9,22 +9,32 @@ void test_prio()
     char *argv[] = {0};
     uint64_t i;
 
+    printColor(PURPLE, "HOLAAAAA\n");
+
     for (i = 0; i < TOTAL_PROCESSES; i++)
         pids[i] = usys_createProcess("endless_loop_print", endless_loop_print, 0, argv, fd);
 
     bussy_wait(WAIT);
     printColor(ORANGE, "\nCHANGING PRIORITIES...\n");
 
+    printColor(GREEN, "ACA ESTOY\n");
+
     for (i = 0; i < TOTAL_PROCESSES; i++)
         usys_my_nice(pids[i], prio[i]);
 
+    printColor(GREEN, "LLEGUE o no?\n");
+
     bussy_wait(WAIT);
     printColor(ORANGE, "\nKILLING...\n");
+
+    printColor(GREEN, "LLEGUE\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         usys_blockProcess(pids[i]);
 
     printColor(ORANGE, "\nCHANGING PRIORITIES...\n");
+
+    printColor(TURQUOISE, "Y ACA???\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         usys_my_nice(pids[i], MEDIUM);
@@ -39,5 +49,6 @@ void test_prio()
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         usys_killProcess(pids[i]);
+
     printColor(TURQUOISE, "ALL DONE!!!\n");
 }
