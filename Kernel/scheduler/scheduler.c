@@ -6,10 +6,11 @@
 
 extern void forceTimerTick();
 
+CircularListNode *current = NULL;
+
 int isSchedulerActive = 0;
 
-CircularListNode *current = NULL;
-static int processID = 0;
+int processID = 0;
 
 void initScheduler()
 {

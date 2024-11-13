@@ -1139,7 +1139,7 @@ void cat(char **params)
             putChar('\n');
             for (pos = 0; pos < idx; pos++)
             {
-                putchar(buffer[pos]);
+                putChar(buffer[pos]);
             }
             idx = 0;
             putChar('\n');

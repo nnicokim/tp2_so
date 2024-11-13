@@ -6,7 +6,7 @@
 #include <naiveConsole.h>
 #include <interrupts.h>
 #include <lib.h>
-#include "../scheduler//include/scheduler.h"
+#include "../scheduler/include/scheduler.h"
 
 #define ENTER_KEY 0x1C
 #define LSHIFT_KEY 0x2a

@@ -109,8 +109,8 @@ int64_t test_processes(uint64_t argc, char *argv[])
                 }
         }
 
-        printDec(counter);
-        printArray("\n");
-        return 0;
+        // printDec(counter);
+        // printArray("\n");
+        // return 0;
     }
 }

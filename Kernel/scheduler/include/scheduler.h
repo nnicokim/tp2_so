@@ -16,6 +16,7 @@
 extern CircularList round_robin;
 extern CircularListNode *current;
 extern int isSchedulerActive;
+extern int processID;
 
 void initScheduler();
 int blockProcess(int pid);

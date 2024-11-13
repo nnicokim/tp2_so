@@ -150,6 +150,24 @@ void killWithCtrlC()
         printArray("Could not kill foreground process\n");
         return;
     }
-    killProcess(currentPID);
-    printArray("Process in foreground killed with CTRL+C\n");
+
+    // for (int i = processID - 1; i >= currentPID; i--)
+    // {
+    //         killProcess(i);
+    //         if (currentPID == i)
+    //             printArray("Process in foreground killed with CTRL+C\n");
+
+    //         else
+    //             printArray("Child process killed with CTRL+C\n");
+    // }
+
+    for (int i = currentPID; i < processID; i++)
+    {
+        killProcess(i);
+        if (currentPID == i)
+            printArray("Process in foreground killed with CTRL+C\n");
+
+        else
+            printArray("Child process killed with CTRL+C\n");
+    }
 }

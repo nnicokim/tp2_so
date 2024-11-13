@@ -78,6 +78,7 @@ int getPipeId(char *name)
             return i;
         }
     }
+    return -1;
 }
 
 int pollPipe(int id, pipeEvent event)
