@@ -44,7 +44,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
 
             if (p_rqs[rq].pid == -1)
             {
-                printArray("test_processes: ERROR creating process: -");
+                printColor(RED, "test_processes: ERROR creating process \n");
                 return -1;
             }
             else
@@ -52,9 +52,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
                 p_rqs[rq].state = RUNNING;
                 alive++;
             }
-            printArray("test_processes: Process created with PID: ");
-            printDec(p_rqs[rq].pid);
-            printArray("\n");
+            printColor(RED, "test_processes: Process created!\n");
         }
 
         usys_wait(13);

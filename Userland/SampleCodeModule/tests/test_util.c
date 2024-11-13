@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
-#include <tests/syscall.h>
+#include "../include/tests/syscall.h"
 #include "../include/tests/test_util.h"
 
 // Random
@@ -69,7 +69,7 @@ void bussy_wait(uint64_t n)
 
 void endless_loop()
 {
-  printArray("Endless loop\n");
+  printColor(WHITE, "Endless loop\n");
   while (1)
     ;
 }

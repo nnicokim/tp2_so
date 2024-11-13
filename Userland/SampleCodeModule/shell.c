@@ -32,8 +32,8 @@ void block_process_pid();
 void increase_prio_pid();
 void decrease_prio_pid();
 void nice_pid();
-void sh_test_sync1();
-void sh_test_sync2();
+// void sh_test_sync1();
+// void sh_test_sync2();
 void handleCommands(char *str, int *fd);
 void handleRegularCommand(char *str, int *fd);
 void wc(char **params);
@@ -74,8 +74,8 @@ static Command commands[] = {
 static Command commandsNohelp[] = {
     {"cp", create_one_process, "Crea un proceso"},
     {"mem", print_memory, "Imprime la memoria"},
-    {"tsync1", sh_test_sync1, "Testea la sincronizacion con semaforos"},
-    {"tsync2", sh_test_sync2, "Testea la sincronizacion sin semaforos"},
+    // {"tsync1", sh_test_sync1, "Testea la sincronizacion con semaforos"},
+    // {"tsync2", sh_test_sync2, "Testea la sincronizacion sin semaforos"},
     {"egg", easteregg, "Easter egg song"},
     {"rick", playRick, "Rick Astley"},
 };
@@ -683,21 +683,21 @@ void loop_print()
     usys_myExit();
 }
 
-void sh_test_sync1()
-{
-    printColor(ORANGE, "Testeando sincronizacion con sincro...\n");
-    char *argv1[] = {"10", "1", "0"};
-    test_sync(3, argv1);
-    usys_myExit();
-}
+// void sh_test_sync1()
+// {
+//     printColor(ORANGE, "Testeando sincronizacion con sincro...\n");
+//     char *argv1[] = {"10", "1", "0"};
+//     test_sync(3, argv1);
+//     usys_myExit();
+// }
 
-void sh_test_sync2()
-{
-    printColor(ORANGE, "Testeando sincronizacion sin sincro...\n");
-    char *argv2[] = {"10", "1", "1"};
-    test_sync(3, argv2);
-    usys_myExit();
-}
+// void sh_test_sync2()
+// {
+//     printColor(ORANGE, "Testeando sincronizacion sin sincro...\n");
+//     char *argv2[] = {"10", "1", "1"};
+//     test_sync(3, argv2);
+//     usys_myExit();
+// }
 
 void kill_process_pid()
 {

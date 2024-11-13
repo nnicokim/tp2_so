@@ -1,4 +1,3 @@
-#include <tests/test_prio.h>
 #include "../include/tests/test_prio.h"
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
@@ -40,5 +39,5 @@ void test_prio()
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         usys_killProcess(pids[i]);
-    printArray("ALL DONE!!!\n");
+    printColor(TURQUOISE, "ALL DONE!!!\n");
 }
