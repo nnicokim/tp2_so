@@ -106,6 +106,7 @@ uint64_t killProcess(int pid)
     myfree(pcb->baseAddress - PAGE + sizeof(char)); // Libera el stack
     myfree(pcb);
     PCB_array[pid] = NULL;
+    processID--;
     return 0; // que devuelva el codigo de exit
 }
 

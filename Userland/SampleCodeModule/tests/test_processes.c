@@ -31,17 +31,16 @@ int64_t test_processes(uint64_t argc, char *argv[])
     uint8_t action;
     uint64_t max_processes;
     char *argvAux[] = {0};
-
+    int firstime = 1;
 
     if (argc != 1)
         return -1;
 
-    if ((max_processes = satoi(argv[0])) <= 0)
-        return -1;
+    max_processes = 100;
 
     p_rq p_rqs[max_processes];
 
-    while (1)
+    while (1 && firstime)
     {
         // Create max_processes processes
         for (rq = 0; rq < max_processes; rq++)
@@ -66,6 +65,11 @@ int64_t test_processes(uint64_t argc, char *argv[])
         // Randomly kills, blocks or unblocks processes until every one has been killed
         while (alive > 0)
         {
+            if(alive == 1)
+            {
+                firstime=0;
+
+            }
 
             for (rq = 0; rq < max_processes; rq++)
             {
@@ -82,6 +86,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
                             return -1;
                         }
                         p_rqs[rq].state = FINISHED;
+                        
                         alive--;
                     }
                     break;
