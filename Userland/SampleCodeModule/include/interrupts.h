@@ -83,5 +83,5 @@ extern uint64_t usys_rick();
 
 extern uint64_t usys_mymalloc(uint64_t size);
 
-extern uint64_t usys_myfree(uint64_t ptr);
+extern uint64_t usys_myfree(void* ptr);
 #endif

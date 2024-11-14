@@ -9,7 +9,6 @@
 #include "../scheduler/include/scheduler.h" 
 
 #define MAX_PIPES 100
-#define EOF -1
 #define READ_FD  0
 #define WRITE_FD 1
 

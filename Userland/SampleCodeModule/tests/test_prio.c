@@ -2,6 +2,15 @@
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 
+
+void endless_loop_print(uint64_t wait)
+{
+  while (1)
+  {
+    bussy_wait(wait);
+  }
+}
+
 void test_prio()
 {
     int fd[] = {0, 1};
@@ -9,20 +18,14 @@ void test_prio()
     char *argv[] = {0};
     uint64_t i;
 
-    printColor(PURPLE, "HOLAAAAA\n");
-
     for (i = 0; i < TOTAL_PROCESSES; i++)
         pids[i] = usys_createProcess("endless_loop_print", endless_loop_print, 0, argv, fd);
 
     bussy_wait(WAIT);
     printColor(ORANGE, "\nCHANGING PRIORITIES...\n");
 
-    printColor(GREEN, "ACA ESTOY\n");
-
     for (i = 0; i < TOTAL_PROCESSES; i++)
         usys_my_nice(pids[i], prio[i]);
-
-    printColor(GREEN, "LLEGUE o no?\n");
 
     bussy_wait(WAIT);
     printColor(ORANGE, "\nKILLING...\n");
@@ -33,8 +36,6 @@ void test_prio()
         usys_blockProcess(pids[i]);
 
     printColor(ORANGE, "\nCHANGING PRIORITIES...\n");
-
-    printColor(TURQUOISE, "Y ACA???\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         usys_my_nice(pids[i], MEDIUM);
@@ -51,4 +52,5 @@ void test_prio()
         usys_killProcess(pids[i]);
 
     printColor(TURQUOISE, "ALL DONE!!!\n");
+    // usys_myExit();
 }

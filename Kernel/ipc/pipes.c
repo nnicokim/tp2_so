@@ -15,7 +15,7 @@ int createNamedPipe(char *name)
     pipe->name = mymalloc(strlen_k(name) + 1);
     if (pipe->name == NULL)
     {
-        myfree(pipe);
+        myfree((void*)pipe);
         return -1;
     }
     strcpy_k(pipe->name, name);
@@ -58,7 +58,7 @@ void destroyPipe(int id)
         return;
 
     myfree(pipe->pipeBuffer);
-    myfree(pipe);
+    myfree((void*)pipe);
     pipes[id] = NULL;
     return;
 }
@@ -141,7 +141,7 @@ int writePipe(int id, const char *src, unsigned int count)
 
 void EOFToCurrentProcess()
 {
-    int pid = getCurrentProcess();
+    int pid = getCurrentPid();
     PCB *pcb = PCB_array[pid];
     if (pcb->FD[READ_FD] != -1)
     {

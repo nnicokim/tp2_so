@@ -1,6 +1,7 @@
 #include <shell.h>
 #include <interrupts.h>
 #include <songs.h>
+#include "./include/tests/test_prio.h"
 
 // #define INPUT_SIZE 50
 #define CANT_REGS 18
@@ -68,7 +69,7 @@ static Command commands[] = {
     {"decp", decrease_prio_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"nice", nice_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"wc", wc, "Cuenta la cantidad de saltos de linea."},
-    {"cat", cat, "Imprime el contenido de un archivo."},
+    {"cat", cat, "Imprime el contenido de un archivo."}
 };
 
 static Command commandsNohelp[] = {
@@ -76,8 +77,8 @@ static Command commandsNohelp[] = {
     {"mem", print_memory, "Imprime la memoria"},
     // {"tsync1", sh_test_sync1, "Testea la sincronizacion con semaforos"},
     // {"tsync2", sh_test_sync2, "Testea la sincronizacion sin semaforos"},
-    {"egg", easteregg, "Easter egg song"},
-    {"rick", playRick, "Rick Astley"},
+     {"egg", easteregg, "Easter egg song"},
+    {"rick", playRick, "Rick Astley"}
 };
 
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
@@ -108,7 +109,8 @@ void handleRegularCommand(char *str, int *fd)
     if (strcmp_u(str, "") == 0)
         return;
 
-    int argC = parseCommandArg(str);
+    // int argC = parseCommandArg(str); //Esto me da los espacios entre los comandos
+    int argC = 0;
     while (*str == ' ')
         str++;
 

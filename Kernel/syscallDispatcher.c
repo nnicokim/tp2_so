@@ -16,6 +16,7 @@
 
 #include <rick.h>
 #include "./ipc/include/semaphore.h"
+#include "./ipc/include/pipes.h"
 
 #define STDIN 0
 #define STDOUT 1

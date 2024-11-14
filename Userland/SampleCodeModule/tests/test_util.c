@@ -67,17 +67,4 @@ void bussy_wait(uint64_t n)
     ;
 }
 
-void endless_loop()
-{
-  printColor(WHITE, "Endless loop\n");
-  while (1)
-    ;
-}
 
-void endless_loop_print(uint64_t wait)
-{
-  while (1)
-  {
-    bussy_wait(wait);
-  }
-}

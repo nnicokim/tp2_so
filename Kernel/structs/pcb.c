@@ -6,6 +6,7 @@
 #include "../include/naiveConsole.h"
 #include "../memory_manager/include/mm_manager.h"
 #include "./include/stack.h"
+#include "../include/lib.h"
 
 void initPCB(PCB *pcb, int pid, int ppid, int priority, int *fds)
 {

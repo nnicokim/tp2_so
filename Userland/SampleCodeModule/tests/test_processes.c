@@ -14,6 +14,13 @@ typedef struct P_rq
     enum State state;
 } p_rq;
 
+
+void endless_loop()
+{
+  printColor(WHITE, "Endless loop\n");
+  while (1)
+    ;
+}
 int64_t test_processes(uint64_t argc, char *argv[])
 {
     printColor(ORANGE, "Testeando procesos...\n");
@@ -25,7 +32,6 @@ int64_t test_processes(uint64_t argc, char *argv[])
     uint64_t max_processes;
     char *argvAux[] = {0};
 
-    int counter = 0;
 
     if (argc != 1)
         return -1;
@@ -77,7 +83,6 @@ int64_t test_processes(uint64_t argc, char *argv[])
                         }
                         p_rqs[rq].state = FINISHED;
                         alive--;
-                        counter++;
                     }
                     break;
 
@@ -107,10 +112,5 @@ int64_t test_processes(uint64_t argc, char *argv[])
                     p_rqs[rq].state = RUNNING;
                 }
         }
-        char buff[10];
-        intToStr(counter, buff);
-        print("Counter: ");
-        print(buff);
-        print("\n");
     }
 }
