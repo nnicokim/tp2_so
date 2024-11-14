@@ -7,6 +7,7 @@
 #define CANT_REGS 18
 #define MAX_PROCESS 192
 #define TRUE 1
+#define RUNNING 1
 
 void help();
 void divzero();
@@ -33,8 +34,8 @@ void block_process_pid();
 void increase_prio_pid();
 void decrease_prio_pid();
 void nice_pid();
-// void sh_test_sync1();
-// void sh_test_sync2();
+void sh_test_sync1();
+void sh_test_sync2();
 void handleCommands(char *str, int *fd);
 void handleRegularCommand(char *str, int *fd);
 void wc(char **params);
@@ -44,6 +45,8 @@ static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
 static int currentFontSize;
 static int gameActive = 0;
+int fgFD[] = {0, 1};
+int bgFD[] = {-1, -1};
 
 static Command commands[] = {
     {"help", help, "Muestra la lista de comandos"},
@@ -69,48 +72,64 @@ static Command commands[] = {
     {"decp", decrease_prio_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"nice", nice_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"wc", wc, "Cuenta la cantidad de saltos de linea."},
-    {"cat", cat, "Imprime el contenido de un archivo."}
-};
+    {"cat", cat, "Imprime el contenido de un archivo."}};
 
 static Command commandsNohelp[] = {
     {"cp", create_one_process, "Crea un proceso"},
     {"mem", print_memory, "Imprime la memoria"},
-    // {"tsync1", sh_test_sync1, "Testea la sincronizacion con semaforos"},
-    // {"tsync2", sh_test_sync2, "Testea la sincronizacion sin semaforos"},
-     {"egg", easteregg, "Easter egg song"},
-    {"rick", playRick, "Rick Astley"}
-};
+    {"tsync1", sh_test_sync1, "Testea la sincronizacion con semaforos"},
+    {"tsync2", sh_test_sync2, "Testea la sincronizacion sin semaforos"},
+    {"egg", easteregg, "Easter egg song"},
+    {"rick", playRick, "Rick Astley"}};
 
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
 #define COMMAND_COUNT sizeofArr(commands)
 
 void parseCommand(char *str)
 {
-    int fgFD[] = {0, 1};
-    // int bgFD[] = {-1, -1};
-
     // char argument[] = {0};
     if (strcmp_u(str, "") == 0)
     {
         return;
     }
 
-    // int argC = parseCommandArg(str);
-    // int cmdLen = strlen_u(str);
-    // char lastChar = str[cmdLen - 2];
+    if (str[strlen_u(str) - 2] == '&')
+    {
+        str[strlen_u(str) - 1] = '\0';
+        str[strlen_u(str) - 2] = '\0';
+        return handleCommands(str, bgFD);
+    }
 
     return handleCommands(str, fgFD);
 }
 
 void handleRegularCommand(char *str, int *fd)
 {
+    int argC = 0;
     char *argument[] = {0};
 
     if (strcmp_u(str, "") == 0)
         return;
 
-    // int argC = parseCommandArg(str); //Esto me da los espacios entre los comandos
-    int argC = 0;
+    if (fd == bgFD)
+    {
+        str[strlen_u(str) - 2] = '\0';
+        print(str);
+        putChar('\n');
+        for (int i = 0; i < COMMAND_COUNT; i++)
+        {
+            if (strcmp_u(str, commands[i].name_id) == 0)
+            {
+                printColor(ORANGE, "Creating background process\n");
+                usys_createProcess(str, commands[i].func, argC, argument, fd);
+                // printPromptIcon();
+                return;
+            }
+        }
+    }
+
+    // int argC = parseCommandArg(str); // Esto me da los espacios entre los comandos
+
     while (*str == ' ')
         str++;
 
@@ -118,7 +137,6 @@ void handleRegularCommand(char *str, int *fd)
     {
         if (strcmp_u(str, commands[i].name_id) == 0)
         {
-            // char *name;
             int pid = usys_createProcess(str, commands[i].func, argC, argument, fd);
             usys_waitPid(pid);
             return;
@@ -157,6 +175,7 @@ void handleCommands(char *str, int *fd)
         printError("Demasiados comandos en la linea de comandos.\n");
         return;
     };
+
     for (int i = 0; i <= currentID; i++)
         handleRegularCommand(cmds[i], fd);
 }
@@ -182,10 +201,9 @@ void init_shell()
     print("para la descripcion los comandos.\n");
 
     char c;
-    int running = 1;
     currentFontSize = usys_get_font_size();
     printPromptIcon();
-    while (running)
+    while (RUNNING)
     {                  // if ESC
         c = getChar(); // non-blocking read
         if (c != 0)
@@ -198,7 +216,6 @@ void init_shell()
             else if (c == '\n')
             {
                 putChar(c);
-                // printPromptIcon();
                 buffer[bufferIndex] = '\0'; // Null-terminate the command
                 parseCommand(buffer);       // Process the command
                 bufferIndex = 0;            // Reset the buffer for the next command
@@ -578,6 +595,7 @@ void mario_bros_song()
     usys_wait(230);
     usys_beep(523, 50);
     usys_wait(150);
+    usys_beep(523, 50);
     usys_myExit();
 }
 
@@ -685,21 +703,21 @@ void loop_print()
     usys_myExit();
 }
 
-// void sh_test_sync1()
-// {
-//     printColor(ORANGE, "Testeando sincronizacion con sincro...\n");
-//     char *argv1[] = {"10", "1", "0"};
-//     test_sync(3, argv1);
-//     usys_myExit();
-// }
+void sh_test_sync1()
+{
+    printColor(ORANGE, "Testeando sincronizacion con sincro...\n");
+    char *argv1[] = {"10", "1", "0"};
+    test_sync(3, argv1);
+    usys_myExit();
+}
 
-// void sh_test_sync2()
-// {
-//     printColor(ORANGE, "Testeando sincronizacion sin sincro...\n");
-//     char *argv2[] = {"10", "1", "1"};
-//     test_sync(3, argv2);
-//     usys_myExit();
-// }
+void sh_test_sync2()
+{
+    printColor(ORANGE, "Testeando sincronizacion sin sincro...\n");
+    char *argv2[] = {"10", "1", "1"};
+    test_sync(3, argv2);
+    usys_myExit();
+}
 
 void kill_process_pid()
 {

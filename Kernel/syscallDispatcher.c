@@ -64,6 +64,7 @@ uint64_t ksys_print_processes();
 uint64_t ksys_print_memory();
 uint64_t ksys_loop_print();
 uint64_t ksys_testsync(uint64_t argc, char **argv);
+uint64_t ksys_memset(uint64_t address, uint64_t value, uint64_t size);
 
 uint64_t ksys_pollPipe(uint64_t id, uint64_t event);
 uint64_t ksys_readPipe(uint64_t id, char *dest, uint64_t count);
@@ -71,6 +72,13 @@ uint64_t ksys_writePipe(uint64_t id, char *src, uint64_t count);
 
 uint64_t ksys_mymalloc(uint64_t size);
 uint64_t ksys_myfree(uint64_t ptr);
+
+uint64_t ksys_semOpen(char *name, int initValue);
+uint64_t ksys_semClose(char *name);
+uint64_t ksys_semWait(int semIndex);
+uint64_t ksys_semPost(int semIndex);
+uint64_t ksys_findSem(int semIndex);
+uint64_t ksys_yield();
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
 {
@@ -164,6 +172,20 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
         return ksys_mymalloc(rdi);
     case 41:
         return ksys_myfree(rdi);
+    case 42:
+        return ksys_semOpen((char *)rdi, rsi);
+    case 43:
+        return ksys_semClose((char *)rdi);
+    case 44:
+        return ksys_semWait(rdi);
+    case 45:
+        return ksys_semPost(rdi);
+    case 46:
+        return ksys_findSem(rdi);
+    case 47:
+        return ksys_yield();
+    case 48:
+        return ksys_memset(rdi, rsi, rdx);
     }
 
     return 0;
@@ -406,5 +428,42 @@ uint64_t ksys_mymalloc(uint64_t size)
 uint64_t ksys_myfree(uint64_t ptr)
 {
     myfree((void *)ptr);
+    return 0;
+}
+
+uint64_t ksys_semOpen(char *name, int initValue)
+{
+    return semOpen(name, initValue);
+}
+
+uint64_t ksys_semClose(char *name)
+{
+    return semClose(name);
+}
+
+uint64_t ksys_semWait(int semIndex)
+{
+    return semWait(semIndex);
+}
+
+uint64_t ksys_semPost(int semIndex)
+{
+    return semPost(semIndex);
+}
+
+uint64_t ksys_findSem(int semIndex)
+{
+    return findSem(semIndex);
+}
+
+uint64_t ksys_yield()
+{
+    yield();
+    return 0;
+}
+
+uint64_t ksys_memset(uint64_t address, uint64_t value, uint64_t size)
+{
+    memset((void *)address, (int64_t)value, size);
     return 0;
 }

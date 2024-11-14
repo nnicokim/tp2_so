@@ -14,13 +14,13 @@ typedef struct P_rq
     enum State state;
 } p_rq;
 
-
 void endless_loop()
 {
-  printColor(WHITE, "Endless loop\n");
-  while (1)
-    ;
+    printColor(WHITE, "Endless loop\n");
+    while (1)
+        ;
 }
+
 int64_t test_processes(uint64_t argc, char *argv[])
 {
     printColor(ORANGE, "Testeando procesos...\n");
@@ -45,7 +45,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
         // Create max_processes processes
         for (rq = 0; rq < max_processes; rq++)
         {
-            p_rqs[rq].pid = usys_createProcess("endless_lopp", (void *)endless_loop, 0, argvAux, fd);
+            p_rqs[rq].pid = usys_createProcess("endless_loop", (void *)endless_loop, 0, argvAux, fd);
 
             if (p_rqs[rq].pid == -1)
             {
@@ -57,7 +57,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
                 p_rqs[rq].state = RUNNING;
                 alive++;
             }
-            printColor(RED, "test_processes: Process created!\n");
+            printColor(GREEN, "test_processes: Process created!\n");
         }
 
         usys_wait(13);
@@ -65,10 +65,9 @@ int64_t test_processes(uint64_t argc, char *argv[])
         // Randomly kills, blocks or unblocks processes until every one has been killed
         while (alive > 0)
         {
-            if(alive == 1)
+            if (alive == 1)
             {
-                firstime=0;
-
+                firstime = 0;
             }
 
             for (rq = 0; rq < max_processes; rq++)
@@ -86,7 +85,7 @@ int64_t test_processes(uint64_t argc, char *argv[])
                             return -1;
                         }
                         p_rqs[rq].state = FINISHED;
-                        
+
                         alive--;
                     }
                     break;
@@ -118,4 +117,5 @@ int64_t test_processes(uint64_t argc, char *argv[])
                 }
         }
     }
+    return 0;
 }

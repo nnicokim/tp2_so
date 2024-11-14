@@ -2,13 +2,13 @@
 
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 
-
 void endless_loop_print(uint64_t wait)
 {
-  while (1)
-  {
-    bussy_wait(wait);
-  }
+    printColor(YELLOW, "endless loop\n");
+    while (1)
+    {
+        bussy_wait(wait);
+    }
 }
 
 void test_prio()
@@ -30,8 +30,6 @@ void test_prio()
     bussy_wait(WAIT);
     printColor(ORANGE, "\nKILLING...\n");
 
-    printColor(GREEN, "LLEGUE\n");
-
     for (i = 0; i < TOTAL_PROCESSES; i++)
         usys_blockProcess(pids[i]);
 
@@ -46,11 +44,11 @@ void test_prio()
         usys_unblockProcess(pids[i]);
 
     bussy_wait(WAIT);
-    printColor(ORANGE, "\nKILLING...\n");
+    printColor(ORANGE, "KILLING...\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         usys_killProcess(pids[i]);
 
+    putChar('\n');
     printColor(TURQUOISE, "ALL DONE!!!\n");
-    // usys_myExit();
 }

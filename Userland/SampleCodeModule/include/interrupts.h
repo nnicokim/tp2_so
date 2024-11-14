@@ -3,15 +3,15 @@
 
 #include <stdint.h>
 
-extern uint64_t usys_read(uint64_t fd, char* buff, uint64_t size);
+extern uint64_t usys_read(uint64_t fd, char *buff, uint64_t size);
 
-extern uint64_t usys_write(uint64_t fd, char* buff, uint64_t size);
+extern uint64_t usys_write(uint64_t fd, char *buff, uint64_t size);
 
 extern uint64_t usys_change_draw_size(uint64_t size);
 
-extern uint64_t usys_print_array_of_draw_size(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, uint64_t y, char* buff);
+extern uint64_t usys_print_array_of_draw_size(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, uint64_t y, char *buff);
 
-extern uint64_t usys_write_color(uint64_t fontCOlor, char* buff, uint64_t size);
+extern uint64_t usys_write_color(uint64_t fontCOlor, char *buff, uint64_t size);
 
 extern uint64_t usys_getRegisters(uint64_t *registers);
 
@@ -83,5 +83,20 @@ extern uint64_t usys_rick();
 
 extern uint64_t usys_mymalloc(uint64_t size);
 
-extern uint64_t usys_myfree(void* ptr);
+extern uint64_t usys_myfree(void *ptr);
+
+extern uint64_t usys_semOpen(char *name, uint64_t initialValue);
+
+extern uint64_t usys_semClose(char *name);
+
+extern uint64_t usys_semWait(int semIndex);
+
+extern uint64_t usys_semPost(int semIndex);
+
+extern uint64_t usys_findSem(int semIndex);
+
+extern uint64_t usys_yield();
+
+extern uint64_t usys_memset(void *destination, int32_t c, uint64_t length);
+
 #endif

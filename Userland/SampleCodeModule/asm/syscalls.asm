@@ -36,11 +36,20 @@ GLOBAL usys_print_memory
 GLOBAL usys_loop_print
 GLOBAL usys_mymalloc
 GLOBAL usys_myfree
+GLOBAL usys_memset
 
 ; Pipes
 GLOBAL usys_pollPipe
 GLOBAL usys_readPipe
 GLOBAL usys_writePipe
+
+; Semaphores
+GLOBAL usys_semOpen
+GLOBAL usys_semClose
+GLOBAL usys_semWait
+GLOBAL usys_semPost
+GLOBAL usys_findSem
+GLOBAL usys_yield
 
 ; RICK
 GLOBAL usys_rick
@@ -419,6 +428,69 @@ usys_myfree:
     push rbp
     mov rbp, rsp
     mov rax, 41
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_semOpen:
+    push rbp
+    mov rbp, rsp
+    mov rax, 42
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_semClose:
+    push rbp
+    mov rbp, rsp
+    mov rax, 43
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_semWait:
+    push rbp
+    mov rbp, rsp
+    mov rax, 44
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_semPost:
+    push rbp
+    mov rbp, rsp
+    mov rax, 45
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_findSem:
+    push rbp
+    mov rbp, rsp
+    mov rax, 46
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_yield:
+    push rbp  
+    mov rbp, rsp
+    mov rax, 47
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_memset:
+    push rbp  
+    mov rbp, rsp
+    mov rax, 48
     int 80h
     mov rsp, rbp
     pop rbp
