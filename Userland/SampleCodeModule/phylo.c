@@ -7,7 +7,6 @@
 static int philosophersCount = 0;
 static int state[MAX_PHYL] = {0};
 static int phyloPid[MAX_PHYL] = {0};
-static char processBuffer[3] = {0};
 static char *semNames[MAX_PHYL] = {"s0", "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9"};
 
 int queue[MAX_PHYL];
@@ -19,12 +18,12 @@ int foreground[] = {0, 1};
 
 void think()
 {
-    bussy_wait(1000);
+    bussy_wait(10000000);
 }
 
 void eat()
 {
-    bussy_wait(1000);
+    bussy_wait(10000000);
 }
 
 void *phylo(int argc, char *argv[])
@@ -124,7 +123,7 @@ int addPhylo()
         return -1;
     }
 
-    phyloPid[philosophersCount] = usys_createProcess(processBuffer, phylo, philosophersCount, NULL,foreground);
+    phyloPid[philosophersCount] = usys_createProcess("filosofos", phylo, philosophersCount, NULL,foreground);
 
     usys_semOpen(semNames[philosophersCount], 1);
     philosophersCount++;
