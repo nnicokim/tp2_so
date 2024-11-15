@@ -40,6 +40,7 @@ void handleCommands(char *str, int *fd);
 void handleRegularCommand(char *str, int *fd);
 void wc(char **params);
 void cat(char **params);
+void filter(char **params);
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -72,7 +73,8 @@ static Command commands[] = {
     {"decp", decrease_prio_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"nice", nice_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"wc", wc, "Cuenta la cantidad de saltos de linea."},
-    {"cat", cat, "Imprime el contenido de un archivo."}};
+    {"cat", cat, "Imprime el contenido de un input."},
+    {"filter", filter, "Filtra las vocales de un input."}};
 
 static Command commandsNohelp[] = {
     {"cp", create_one_process, "Crea un proceso"},
@@ -1130,10 +1132,10 @@ void wc(char **params)
         }
     }
 
-    printColor(GREEN, "\nNumber of lines: \n");
+    printColor(YELLOW, "\nNumber of lines: \n");
     intToStr(lineCount, buffer);
     print(buffer);
-    print("\n");
+    putChar('\n');
     usys_myExit();
 }
 
@@ -1157,9 +1159,8 @@ void cat(char **params)
         {
             putChar('\n');
             for (pos = 0; pos < idx; pos++)
-            {
                 putChar(buffer[pos]);
-            }
+
             idx = 0;
             putChar('\n');
         }
@@ -1173,5 +1174,46 @@ void cat(char **params)
         }
     }
     putChar('\n');
+    usys_myExit();
+}
+
+void filter(char **params)
+{
+    char buffer[PAGE] = {0};
+    char c;
+    int idx = 0;
+    int pos = 0;
+    while ((c = getChar()) != -1)
+    {
+        if (c > 20 && c < 127)
+        {
+            putChar(c);
+            if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'I' || c == 'E' ||
+                c == 'O' || c == 'U') // Vocales
+                buffer[idx++] = c;
+        }
+        if (c == '\n')
+        {
+            putChar('\n');
+            putChar('\n');
+            printColor(YELLOW, "Vocales: \n");
+            while (pos < idx)
+            {
+                putChar(buffer[pos]);
+                pos++;
+            }
+            idx = 0;
+            pos = 0;
+            putChar('\n');
+        }
+        if (c == '\b')
+        {
+            if (idx != 0)
+            {
+                pos--;
+                putChar('\b');
+            }
+        }
+    }
     usys_myExit();
 }
