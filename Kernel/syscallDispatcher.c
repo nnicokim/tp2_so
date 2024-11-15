@@ -77,7 +77,7 @@ uint64_t ksys_semOpen(char *name, int initValue);
 uint64_t ksys_semClose(char *name);
 uint64_t ksys_semWait(int semIndex);
 uint64_t ksys_semPost(int semIndex);
-uint64_t ksys_findSem(int semIndex);
+uint64_t ksys_findSem(char* name);
 uint64_t ksys_yield();
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
@@ -181,7 +181,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
     case 45:
         return ksys_semPost(rdi);
     case 46:
-        return ksys_findSem(rdi);
+        return ksys_findSem((char*)rdi);
     case 47:
         return ksys_yield();
     case 48:
@@ -451,9 +451,9 @@ uint64_t ksys_semPost(int semIndex)
     return semPost(semIndex);
 }
 
-uint64_t ksys_findSem(int semIndex)
+uint64_t ksys_findSem(char* name)
 {
-    return findSem(semIndex);
+    return findSem(name);
 }
 
 uint64_t ksys_yield()

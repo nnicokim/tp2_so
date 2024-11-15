@@ -2,6 +2,7 @@
 #include <interrupts.h>
 #include <songs.h>
 #include "./include/tests/test_prio.h"
+#include "./include/phylo.h"
 
 // #define INPUT_SIZE 50
 #define CANT_REGS 18
@@ -41,6 +42,7 @@ void handleRegularCommand(char *str, int *fd);
 void wc(char **params);
 void cat(char **params);
 void filter(char **params);
+void phylos();
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -74,7 +76,8 @@ static Command commands[] = {
     {"nice", nice_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"wc", wc, "Cuenta la cantidad de saltos de linea."},
     {"cat", cat, "Imprime el contenido de un input."},
-    {"filter", filter, "Filtra las vocales de un input."}};
+    {"filter", filter, "Filtra las vocales de un input."},
+    {"phylo", phylos, "Inicia el problema de los filosofos"}};
 
 static Command commandsNohelp[] = {
     {"cp", create_one_process, "Crea un proceso"},
@@ -1215,5 +1218,13 @@ void filter(char **params)
             }
         }
     }
+    usys_myExit();
+}
+
+void phylos()
+{
+    printColor(ORANGE, "Testeando sincronizacion con filosofos...\n");
+    char *argv1[] = {"10", "1", "0"};
+    phyloProcess(3, argv1);
     usys_myExit();
 }

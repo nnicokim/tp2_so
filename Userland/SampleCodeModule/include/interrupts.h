@@ -93,7 +93,7 @@ extern uint64_t usys_semWait(int semIndex);
 
 extern uint64_t usys_semPost(int semIndex);
 
-extern uint64_t usys_findSem(int semIndex);
+extern uint64_t usys_findSem(char* name);
 
 extern uint64_t usys_yield();
 

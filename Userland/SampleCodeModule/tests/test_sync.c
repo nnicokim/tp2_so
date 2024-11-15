@@ -162,7 +162,7 @@ uint64_t test_sync(uint64_t argc, char *argv[])
         }
 
         print("Waiting for processes to finish del (strcmp(argv[2], 0) == 0)...\n");
-
+        
         for (i = 0; i < TOTAL_PAIR_PROCESSES; i++)
         {
             if (usys_waitPid(pids[i]) == -1)
