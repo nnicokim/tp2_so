@@ -19,12 +19,12 @@ int foreground[] = {0, 1};
 
 void think()
 {
-    bussy_wait(15);
+    bussy_wait(1000);
 }
 
 void eat()
 {
-    bussy_wait(15);
+    bussy_wait(1000);
 }
 
 void *phylo(int argc, char *argv[])
@@ -56,7 +56,7 @@ void *phyloProcess(int argc, char *argv[])
 
     while (c != ' ')
     {
-        c = getchar();
+        c = getChar();
     }
 
     usys_clear_screen();
@@ -74,7 +74,7 @@ void *phyloProcess(int argc, char *argv[])
 
     while (c != 'q')
     {
-        c = getchar();
+        c = getChar();
         switch (c)
         {
         case 'a':
