@@ -77,7 +77,7 @@ uint64_t ksys_semOpen(char *name, int initValue);
 uint64_t ksys_semClose(char *name);
 uint64_t ksys_semWait(int semIndex);
 uint64_t ksys_semPost(int semIndex);
-uint64_t ksys_findSem(char* name);
+uint64_t ksys_findSem(char *name);
 uint64_t ksys_yield();
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t rax)
@@ -181,7 +181,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
     case 45:
         return ksys_semPost(rdi);
     case 46:
-        return ksys_findSem((char*)rdi);
+        return ksys_findSem((char *)rdi);
     case 47:
         return ksys_yield();
     case 48:
@@ -348,15 +348,47 @@ uint64_t ksys_leaveCPU()
     return 0;
 }
 
+// uint64_t ksys_waitPid(int pid)
+// {
+//     // printArray("Waiting for pid: ");
+//     // printDec(pid);
+//     // printArray("\n");
+
+//     PCB *childProcess = PCB_array[pid];
+
+//     if (!childProcess)
+//     {
+//         printArray("Process not found\n");
+//         return -1;
+//     }
+
+//     blockProcess(childProcess->ppid);
+//     printArray("Parent blocked (wait pid)\n");
+
+//     while (!childProcess || childProcess->state != FINISHED)
+//     {
+//         childProcess = PCB_array[pid];
+//         // printArray(childProcess->name);
+//         // printArray(" is still running\n");
+//         forceTimerTick();
+//     }
+
+//     unblockProcess(childProcess->ppid);
+//     printArray("Parent UNblocked (wait pid)\n");
+
+//     return 0;
+// }
+
 uint64_t ksys_waitPid(int pid)
 {
     PCB *childProcess = PCB_array[pid];
-    if (!childProcess)
+    if (childProcess->state == FINISHED)
+    {
         return -1;
-    while (childProcess->state != FINISHED)
-        forceTimerTick();
-
-    return 0;
+    }
+    int PPid = getCurrentPid();
+    blockProcess(PPid);
+    forceTimerTick();
 }
 
 uint64_t ksys_myExit()
@@ -451,7 +483,7 @@ uint64_t ksys_semPost(int semIndex)
     return semPost(semIndex);
 }
 
-uint64_t ksys_findSem(char* name)
+uint64_t ksys_findSem(char *name)
 {
     return findSem(name);
 }

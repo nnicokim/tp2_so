@@ -168,5 +168,6 @@ void killWithCtrlC()
 
         else
             printArray("Child process killed with CTRL+C\n");
-    }
+        }
+    my_exit();
 }

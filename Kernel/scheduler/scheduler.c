@@ -49,6 +49,7 @@ uint64_t createProcess(char *pr_name, void *program, int argc, char **argv, int 
     {
         newPCB->ppid = getCurrentPid();
     }
+
     initPCB(newPCB, processID, newPCB->ppid, DEFAULT_PRIORITY, (int *)fds);
     PCB_array[processID] = newPCB;
 
@@ -106,7 +107,8 @@ uint64_t killProcess(int pid)
     myfree(pcb->baseAddress - PAGE + sizeof(char)); // Libera el stack
     myfree(pcb);
     PCB_array[pid] = NULL;
-    processID--;
+    unblockProcess(pcb->ppid);
+    // processID--; PQ SI RESTO ESTO SE ME MUEREN LOS LOOPS
     return 0; // que devuelva el codigo de exit
 }
 
@@ -257,8 +259,7 @@ void tryToExit()
         printArray("Could not exit process\n");
         return;
     }
-    unblockProcess(pcb->ppid);
-
+    // unblockProcess(pcb->ppid);
     killProcess(pid);
 }
 

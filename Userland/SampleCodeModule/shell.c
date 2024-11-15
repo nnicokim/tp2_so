@@ -113,9 +113,6 @@ void handleRegularCommand(char *str, int *fd)
     int argC = 0;
     char *argument[] = {0};
 
-    if (strcmp_u(str, "") == 0)
-        return;
-
     if (fd == bgFD)
     {
         str[strlen_u(str) - 2] = '\0';
@@ -126,7 +123,7 @@ void handleRegularCommand(char *str, int *fd)
             if (strcmp_u(str, commands[i].name_id) == 0)
             {
                 printColor(ORANGE, "Creating background process\n");
-                usys_createProcess(str, commands[i].func, argC, argument, fd);
+                usys_createProcess(commands[i].name_id, commands[i].func, argC, argument, fd);
                 // printPromptIcon();
                 return;
             }
@@ -146,7 +143,8 @@ void handleRegularCommand(char *str, int *fd)
             usys_waitPid(pid);
             return;
         }
-        else if (strcmp_u(str, commandsNohelp[i].name_id) == 0)
+
+        if (strcmp_u(str, commandsNohelp[i].name_id) == 0)
         {
             int pid = usys_createProcess(str, commandsNohelp[i].func, argC, argument, fd);
             usys_waitPid(pid);
@@ -246,7 +244,6 @@ void help()
         print(commands[i].desc);
         putChar('\n');
     }
-
     usys_myExit();
 }
 
@@ -420,7 +417,7 @@ void victory() // Ejecutar despues de cada victoria
 
 void mario_bros_song()
 {
-    printColor(GREEN, "Mario Bros\n");
+    // printColor(GREEN, "Mario Bros\n");
 
     usys_beep(659, 50);
     usys_beep(659, 50);
