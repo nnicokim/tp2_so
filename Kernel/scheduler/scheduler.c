@@ -259,7 +259,6 @@ void tryToExit()
         printArray("Could not exit process\n");
         return;
     }
-    // unblockProcess(pcb->ppid);
     killProcess(pid);
 }
 
