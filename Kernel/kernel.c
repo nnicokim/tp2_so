@@ -13,7 +13,7 @@
 #include <sound.h>
 #include <time.h>
 #include "./memory_manager/include/mm_manager.h"
-// #include "./memory_manager/include/buddyAllocator.h"
+#include "./memory_manager/include/buddyAllocator.h"
 #include "./structs/include/stack.h"
 #include "./structs/include/pcb.h"
 #include "./scheduler/include/scheduler.h"
@@ -68,10 +68,10 @@ int main()
 
 	load_idt(); // Cargar la tabla de descriptores de interrupciones (IDT)
 
-	my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); // Inicializar el gestor de memoria (tenemos memoria de sobra)
+	// my_mm_init(HEAP_START, BLOCK_COUNT * BLOCK_SIZE); // Inicializar el gestor de memoria (tenemos memoria de sobra)
 
 	// size_t total_memory = 1024; // Memoria total disponible para el buddy allocator
-	// init_buddy_allocator(HEAP_START, total_memory);
+	my_mm_init(HEAP_START, 1 << 24);
 
 	initScheduler();
 

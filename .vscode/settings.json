@@ -41,6 +41,7 @@
         "pitch.h": "c",
         "songs.h": "c",
         "eliminator.h": "c",
-        "cstring": "c"
+        "cstring": "c",
+        "__locale": "c"
     }
 }

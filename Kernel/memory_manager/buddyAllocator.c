@@ -1,147 +1,157 @@
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <stdbool.h>
-// #include <math.h>
-// #include "./include/buddyAllocator.h"
-// #include <stdint.h>
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+#include "./include/buddyAllocator.h"
+#include <lib.h>
+#include <stdint.h>
 
-// void *heap_start;
-// size_t heap_size;
 
-// // Lista de bloques libres organizada por niveles de tamaño
-// Block *free_list[MAX_LEVELS];
+#define MIN_EXP    5
+#define MAX_BLOCKS 32
 
-// // Función para encontrar el nivel de tamaño mas chico que puede contener el tamaño size
-// int find_level(size_t size)
-// {
-//     int level = 0;
-//     while ((MIN_BLOCK_SIZE << level) < size)
-//     {}
-//         level++;
-//     }
-//     return level;
-// }
+typedef struct Block {
+	uint8_t exp;
+	bool is_used;
+	struct Block * prev;
+	struct Block * next;
+} Block;
 
-// void init_buddy_allocator(void *ptr, size_t s)
-// {
-//     heap_start = ptr;
-//     heap_size = s;
+void * firstAddress;
+uint8_t maxExp;
+Block * blocks[MAX_BLOCKS];
 
-//     for (int i = 0; i < MAX_LEVELS; i++)
-//     {
-//         free_list[i] = NULL;
-//     }
+memoryData memory_data;
 
-//     Block *initial_block = (Block *)heap_start;
-//     initial_block->size = heap_size;
-//     initial_block->is_free = true;
-//     initial_block->next = NULL;
+Block * createBlock(void * address, uint8_t exp, Block * next);
 
-//     int level = find_level(heap_size);
-//     free_list[level] = initial_block;
-// }
+Block * removeBlock(Block * block);
 
-// // Divide un bloque en dos buddies
-// void split_block(int level)
-// {
-//     Block *block = free_list[level];
-//     if (block == NULL)
-//         return;
+Block * join(Block * block, Block * buddy);
 
-//     free_list[level] = block->next; // Elimina el bloque de la lista
+void divide(uint8_t index);
 
-//     size_t new_size = block->size / 2;
+void * my_mm_init(void * ptr, size_t size) {
+	printArray("Using Buddy Memory Manager\n\n");
+	firstAddress = (void *) ptr;
+	maxExp = log(size, 2);
 
-//     Block *buddy1 = block;
-//     buddy1->size = new_size;
-//     buddy1->is_free = true;
+	if (MIN_EXP > maxExp)
+		return;
 
-//     Block *buddy2 = (Block *)((char *)block + new_size);
-//     buddy2->size = new_size;
-//     buddy2->is_free = true;
+	memset(blocks, 0, sizeof(Block *) * MAX_BLOCKS);
 
-//     // Coloca los buddies en la lista de bloques libres del nivel inferior
-//     buddy1->next = buddy2;
-//     buddy2->next = free_list[level - 1];
-//     free_list[level - 1] = buddy1;
-// }
+	memory_data.free = size;
+	memory_data.total = size;
+	memory_data.used = 0;
 
-// // Reserva un bloque de memoria de tamaño size
-// void *buddy_allocate(size_t size)
-// {
-//     int level = find_level(size);
+	blocks[maxExp - 1] = createBlock(firstAddress, maxExp, NULL);
+    return firstAddress;
+}
 
-//     for (int i = level; i < MAX_LEVELS; i++)
-//     {
-//         if (free_list[i] != NULL)
-//         {
-//             // Encontramos un bloque en el nivel i
-//             while (i > level)
-//             {
-//                 split_block(i); // Divide los bloques hasta llegar al tamaño adecuado
-//                 i--;
-//             }
+void * mymalloc(uint64_t size) {
+	uint8_t newBlockIndex = log(size + sizeof(Block), 2);
 
-//             Block *block = free_list[level];
-//             free_list[level] = block->next;
-//             block->is_free = false;
-//             return (void *)block;
-//         }
-//     }
+	newBlockIndex = (newBlockIndex < MIN_EXP - 1) ? (MIN_EXP - 1) : newBlockIndex;
 
-//     // No hay bloques libres suficientemente grandes
-//     return NULL;
-// }
+	if (newBlockIndex >= maxExp)
+		return NULL;
 
-// // Combina buddies cuando ambos están libres
-// void coalesce(int level)
-// {
-//     Block *block = free_list[level];
-//     Block *buddy;
+	if (blocks[newBlockIndex] == NULL) {
+		uint8_t closestId = 0;
+		for (uint8_t i = newBlockIndex + 1; i < maxExp && !closestId; i++) {
+			if (blocks[i] != NULL)
+				closestId = i;
+		}
+		if (closestId == 0)
+			return NULL;
 
-//     while (block != NULL)
-//     {
-//         // Determina si el bloque está en una posición par o impar
-//         size_t block_size = block->size;
-//         uintptr_t block_address = (uintptr_t)block; // Dirección de memoria del bloque
+		while (closestId > newBlockIndex)
+			divide(closestId--);
+	}
+	Block * block = blocks[newBlockIndex];
+	removeBlock(block);
+	block->prev = NULL;
+	block->next = NULL;
+	block->is_used = true;
 
-//         if ((block_address / block_size) % 2 == 0)
-//         {
-//             // Si está en una posición par, el buddy está justo después
-//             buddy = (Block *)((char *)block + block_size);
-//         }
-//         else
-//         {
-//             // Si está en una posición impar, el buddy está justo antes
-//             buddy = (Block *)((char *)block - block_size);
-//         }
+	uint64_t blockSize = 1L << block->exp;
+	memory_data.used += blockSize;
+	memory_data.free -= blockSize;
 
-//         // Verifica si el buddy está libre
-//         if (buddy->is_free)
-//         {
-//             // Combina ambos bloques
-//             Block *next = block->next;
-//             block->size *= 2; // El tamaño se duplica al combinar buddies
-//             block->next = free_list[level + 1];
-//             free_list[level + 1] = block;
-//             return;
-//         }
+	return (void *) block + sizeof(Block);
+}
 
-//         // Continúa con el siguiente bloque en la lista
-//         block = block->next;
-//     }
-// }
+void myfree(void * address) {
+	Block * block = (Block *) (address - sizeof(Block));
+	if (!block->is_used)
+		return;
+	block->is_used = false;
 
-// // Libera un bloque de memoria
-// void buddy_free(void *ptr)
-// {
-//     Block *block = (Block *)ptr;
-//     block->is_free = true;
+	uint64_t blockSize = 1L << block->exp;
+	memory_data.free += blockSize;
+	memory_data.used -= blockSize;
 
-//     int level = find_level(block->size);
-//     block->next = free_list[level];
-//     free_list[level] = block;
+	uint64_t relativePosition = (uint64_t) ((void *) block - firstAddress);
+	Block * buddy = (Block *) ((uint64_t) firstAddress + ((relativePosition) ^ (1L << block->exp)));
+	while (!buddy->is_used && buddy->exp == block->exp && block->exp < maxExp) {
+		block = join(block, buddy);
+		relativePosition = (uint64_t) ((void *) block - firstAddress);
+		buddy = (Block *) ((uint64_t) firstAddress + (relativePosition ^ (1L << block->exp)));
+	}
+	blocks[block->exp - 1] = createBlock(block, block->exp, blocks[block->exp - 1]);
+}
 
-//     // Intento coalescer después de liberar
-//     coalesce(level);
-// }
+Block * join(Block * block, Block * buddy) {
+	removeBlock(buddy);
+	Block * leftBlock = block < buddy ? block : buddy;
+	leftBlock->exp++;
+	return leftBlock;
+}
+
+void divide(uint8_t index) {
+	Block * block = blocks[index];
+	removeBlock(block);
+	Block * buddy = (Block *) ((void *) block + (1L << index));
+	createBlock(buddy, index, blocks[index - 1]);
+	blocks[index - 1] = createBlock(block, index, buddy);
+}
+
+Block * createBlock(void * address, uint8_t exp, Block * next) {
+	Block * block = (Block *) address;
+	block->exp = exp;
+	block->is_used = false;
+	block->prev = NULL;
+	block->next = next;
+	if (next != NULL) {
+		next->prev = block;
+	}
+	return block;
+}
+
+Block * removeBlock(Block * block) {
+	if (block->prev != NULL)
+		block->prev->next = block->next;
+	else
+		blocks[block->exp - 1] = block->next;
+
+	if (block->next != NULL)
+		block->next->prev = block->prev;
+	return block->next;
+}
+
+MemoryDataPtr getMemoryData() {
+	return &memory_data;
+}
+
+void mem()
+{
+    printArray("Memory map: \n");
+    // char buffer[BUFFER_SIZE];
+    // for (int i = 0; i < BLOCK_COUNT; i++)
+    // {
+    //     uintToBase((uint64_t)free_ptrs[i], buffer, 16);
+    //     printArray("Block:");
+    //     printDec(i);
+    //     printArray(buffer);
+    //     putChar('\n');
+    // }
+}

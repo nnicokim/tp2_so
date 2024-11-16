@@ -2,6 +2,7 @@
 #include "../memory_manager/include/mm_manager.h"
 #include "../include/videoDriver.h"
 #include <time.h>
+#include <../memory_manager/include/buddyAllocator.h>
 
 void initializeCircularList(CircularList *list)
 {
