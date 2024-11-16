@@ -4,7 +4,7 @@
 #include <lib.h>
 #include <stdint.h>
 
-
+#ifdef BUDDY_ALLOCATOR
 #define MIN_EXP    5
 #define MAX_BLOCKS 32
 
@@ -155,3 +155,4 @@ void mem()
     //     putChar('\n');
     // }
 }
+#endif
