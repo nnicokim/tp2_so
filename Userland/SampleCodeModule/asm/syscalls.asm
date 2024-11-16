@@ -15,6 +15,9 @@ GLOBAL usys_get_time
 GLOBAL usys_draw_array
 GLOBAL usys_flush_buffer
 
+; SO syscalls
+
+; Process
 GLOBAL usys_createOneProcess
 GLOBAL usys_createProcess
 GLOBAL usys_blockProcess
@@ -24,17 +27,33 @@ GLOBAL usys_getCurrentPpid
 GLOBAL usys_killProcess
 GLOBAL usys_leaveCPU
 GLOBAL usys_waitPid
-GLOBAL usys_test_mm
-GLOBAL usys_test_processes
 GLOBAL usys_myExit
-GLOBAL usys_test_prio
 GLOBAL usys_my_nice
 GLOBAL usys_increase_priority
 GLOBAL usys_decrease_priority
 GLOBAL usys_print_processes
 GLOBAL usys_print_memory
 GLOBAL usys_loop_print
-GLOBAL usys_test_sync
+GLOBAL usys_mymalloc
+GLOBAL usys_myfree
+GLOBAL usys_memset
+
+; Pipes
+GLOBAL usys_pollPipe
+GLOBAL usys_readPipe
+GLOBAL usys_writePipe
+
+; Semaphores
+GLOBAL usys_semOpen
+GLOBAL usys_semClose
+GLOBAL usys_semWait
+GLOBAL usys_semPost
+GLOBAL usys_findSem
+GLOBAL usys_yield
+
+; RICK
+GLOBAL usys_rick
+
 
 section .text
 
@@ -286,37 +305,11 @@ usys_waitPid:
     pop rbp
     ret
 
-usys_test_mm:
-    push rbp
-    mov rbp, rsp
-    mov rax, 24
-    int 80h
-    mov rsp, rbp
-    pop rbp
-    ret
-
-usys_test_processes:
-    push rbp
-    mov rbp, rsp
-    mov rax, 25
-    int 80h
-    mov rsp, rbp
-    pop rbp
-    ret
 
 usys_myExit:
     push rbp
     mov rbp, rsp
     mov rax, 26
-    int 80h
-    mov rsp, rbp
-    pop rbp
-    ret
-
-usys_test_prio:
-    push rbp
-    mov rbp, rsp
-    mov rax, 27
     int 80h
     mov rsp, rbp
     pop rbp
@@ -376,19 +369,128 @@ usys_loop_print:
     pop rbp
     ret
 
-usys_test_sync:
-    push rbp
-    mov rbp, rsp
-    mov rax, 34
-    int 80h
-    mov rsp, rbp
-    pop rbp
-    ret
 
 usys_createProcess:
     push rbp
     mov rbp, rsp
     mov rax, 35
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_pollPipe:
+    push rbp
+    mov rbp, rsp
+    mov rax, 36
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_readPipe:
+    push rbp
+    mov rbp, rsp
+    mov rax, 37
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_writePipe:
+    push rbp
+    mov rbp, rsp
+    mov rax, 38
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_rick:
+    push rbp
+    mov rbp, rsp
+    mov rax, 39
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_mymalloc:
+    push rbp
+    mov rbp, rsp
+    mov rax, 40
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_myfree:
+    push rbp
+    mov rbp, rsp
+    mov rax, 41
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_semOpen:
+    push rbp
+    mov rbp, rsp
+    mov rax, 42
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_semClose:
+    push rbp
+    mov rbp, rsp
+    mov rax, 43
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_semWait:
+    push rbp
+    mov rbp, rsp
+    mov rax, 44
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_semPost:
+    push rbp
+    mov rbp, rsp
+    mov rax, 45
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_findSem:
+    push rbp
+    mov rbp, rsp
+    mov rax, 46
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_yield:
+    push rbp  
+    mov rbp, rsp
+    mov rax, 47
+    int 80h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+usys_memset:
+    push rbp  
+    mov rbp, rsp
+    mov rax, 48
     int 80h
     mov rsp, rbp
     pop rbp

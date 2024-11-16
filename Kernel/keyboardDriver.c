@@ -6,7 +6,7 @@ static char scanCodeTable[] =
         0, ESC_KEY, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b',
         '\t',
         'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',
-        0 /*LCtrl*/,
+        CTRL_PRESSED /*LCtrl*/,
         'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '|',
         LSHIFT_KEY, '\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',
         0 /*RShift*/, '*', 0 /*LAlt*/, ' ' /*Space bar*/, 0 /*Caps Lock*/,
@@ -21,7 +21,7 @@ static char shiftScanCodeTable[] =
         0, ESC_KEY, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '\b',
         '\t',
         'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n',
-        0 /* LCtrl */,
+        CTRL_PRESSED /* LCtrl */,
         'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '|',
         LSHIFT_KEY, '\\', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?',
         0 /* RShift */, '*', 0 /* LAlt */, ' ' /* Space bar */, 0 /* Caps Lock */,
@@ -34,6 +34,7 @@ static int shiftFlag = 0;
 static int capsFlag = 0;
 
 int writeIndex = 0, readIndex = 0;
+int ctrlActivated = 0;
 
 // Buffer circular para almacenar caracteres
 char buffer[BUFFER_SIZE] = {0};
@@ -55,6 +56,7 @@ char getChar()
         return 0;
     if (readIndex >= BUFFER_SIZE)
         readIndex = 0;
+
     return (buffer[readIndex++]);
 }
 
@@ -71,7 +73,6 @@ char getLastChar()
 // Uses a circular array
 void keyboard_handler()
 {
-
     unsigned char scanCode = getScanCode();
 
     if ((scanCode == LSHIFT_KEY) && !shiftFlag)
@@ -79,8 +80,16 @@ void keyboard_handler()
         shiftFlag = 1;
     }
     else if (scanCode == LSHIFT_RELEASE_KEY)
-    { 
+    {
         shiftFlag = 0;
+    }
+    else if (scanCode == CTRL_PRESSED)
+    {
+        ctrlActivated = 1;
+    }
+    else if (scanCode == CTRL_RELEASED)
+    {
+        ctrlActivated = 0;
     }
     else if (scanCode == CAPS_LOCK)
     {
@@ -111,6 +120,17 @@ void keyboard_handler()
             }
         }
     }
+    if (ctrlActivated)
+    {
+        if (scanCodeTable[scanCode] == 'c' || scanCodeTable[scanCode] == 'C')
+        {
+            killWithCtrlC();
+        }
+        else if (scanCodeTable[scanCode] == 'd' || scanCodeTable[scanCode] == 'D')
+        {
+            addToBuffer(EOF);
+        }
+    }
 }
 
 /* Función para vaciar el buffer */
@@ -118,4 +138,36 @@ void flushBuffer()
 {
     writeIndex = 0;
     readIndex = 0;
+}
+
+void killWithCtrlC()
+{
+    int currentPID = getCurrentPid();
+    PCB *pcb = PCB_array[currentPID];
+    if (pcb->FD[0] != 0 || pcb->FD[1] != 1 || pcb->state != RUNNING || currentPID == 0 || currentPID == 1)
+    {
+        printArray("Could not kill foreground process\n");
+        return;
+    }
+
+    // for (int i = processID - 1; i >= currentPID; i--)
+    // {
+    //         killProcess(i);
+    //         if (currentPID == i)
+    //             printArray("Process in foreground killed with CTRL+C\n");
+
+    //         else
+    //             printArray("Child process killed with CTRL+C\n");
+    // }
+
+    for (int i = currentPID; i < processID; i++)
+    {
+        killProcess(i);
+        if (currentPID == i)
+            printArray("Process in foreground killed with CTRL+C\n");
+
+        else
+            printArray("Child process killed with CTRL+C\n");
+        }
+    my_exit();
 }

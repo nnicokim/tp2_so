@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include "../interrupts.h"
+#include "../user_lib.h"
 
 uint32_t GetUint();
 uint32_t GetUniform(uint32_t max);

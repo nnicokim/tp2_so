@@ -95,34 +95,79 @@ void drawCharOfSize(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, ui
 	font_size = aux_font_size;
 }
 
+// void drawChar(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, uint64_t y, char character)
+// {
+// 	uint8_t *charGlyphAddress = getGlyph(character);
+// 	// posiciones donde debo dibujar
+// 	int pos_x = x;
+// 	int pos_y = y;
+// 	char isLetter;
+
+// 	// con i j me muevo dentro del bitmap
+// 	for (int i = 0; i < (CHAR_HEIGHT * font_size); i++, pos_y++)
+// 	{
+// 		for (int j = 0; j < (CHAR_WIDTH * font_size); j++, pos_x++)
+// 		{
+// 			// chequeo si el bit que dibujo es 1 (foreground) o 0 (background),
+// 			isLetter = (1 << (CHAR_WIDTH - (j / font_size) - 1)) & charGlyphAddress[i / font_size];
+
+// 			if (isLetter)
+// 			{
+// 				drawPixel(fontColor, pos_x, pos_y);
+// 			}
+// 			else
+// 			{
+// 				drawPixel(backgroundColor, pos_x, pos_y);
+// 			}
+// 		}
+// 		// resetteo la posicion en x para pasar a la siguiente línea de píxeles de y
+// 		pos_x = x;
+// 	}
+// }
+
+uint64_t getScreenBufferAddress(uint64_t x, uint64_t y){
+	uint64_t aux = (uint64_t)VBE_mode_info->framebuffer;
+	uint8_t *framebuffer = (uint8_t *)aux;
+	uint64_t offset = (x * ((VBE_mode_info->bpp) / 8)) + (y * VBE_mode_info->pitch);
+	return (uint64_t)(framebuffer + offset);
+}
+
 void drawChar(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, uint64_t y, char character)
 {
-	uint8_t *charGlyphAddress = getGlyph(character);
-	// posiciones donde debo dibujar
-	int pos_x = x;
-	int pos_y = y;
-	char isLetter;
+    uint8_t *charGlyphAddress = getGlyph(character);
+    int pos_x, pos_y;
 
-	// con i j me muevo dentro del bitmap
-	for (int i = 0; i < (CHAR_HEIGHT * font_size); i++, pos_y++)
-	{
-		for (int j = 0; j < (CHAR_WIDTH * font_size); j++, pos_x++)
-		{
-			// chequeo si el bit que dibujo es 1 (foreground) o 0 (background),
-			isLetter = (1 << (CHAR_WIDTH - (j / font_size) - 1)) & charGlyphAddress[i / font_size];
+    uint32_t colorBuffer[2][3];  // [0] para background, [1] para font color
+    
+    // Configuración del color en los buffers
+    colorBuffer[0][0] = backgroundColor & 0xFF;
+    colorBuffer[0][1] = (backgroundColor >> 8) & 0xFF;
+    colorBuffer[0][2] = (backgroundColor >> 16) & 0xFF;
+    
+    colorBuffer[1][0] = fontColor & 0xFF;
+    colorBuffer[1][1] = (fontColor >> 8) & 0xFF;
+    colorBuffer[1][2] = (fontColor >> 16) & 0xFF;
 
-			if (isLetter)
-			{
-				drawPixel(fontColor, pos_x, pos_y);
-			}
-			else
-			{
-				drawPixel(backgroundColor, pos_x, pos_y);
-			}
-		}
-		// resetteo la posicion en x para pasar a la siguiente línea de píxeles de y
-		pos_x = x;
-	}
+    // Tamaño del buffer para una línea completa de píxeles en bytes
+    uint8_t lineBuffer[CHAR_WIDTH * font_size * 3];  // *3 para RGB
+
+    for (int i = 0; i < (CHAR_HEIGHT * font_size); i++, y++) {
+        pos_x = x;  // Reiniciar posición en x para cada línea
+        for (int j = 0; j < (CHAR_WIDTH * font_size); j++) {
+            // Usar el bit para seleccionar el color
+            char isLetter = (1 << (CHAR_WIDTH - (j / font_size) - 1)) & charGlyphAddress[i / font_size];
+            uint32_t *selectedColor = colorBuffer[isLetter != 0];
+
+            // Almacenar el color seleccionado en el buffer de línea
+            lineBuffer[j * 3]     = selectedColor[0];  // R
+            lineBuffer[j * 3 + 1] = selectedColor[1];  // G
+            lineBuffer[j * 3 + 2] = selectedColor[2];  // B
+        }
+        
+        // Copiar la línea de píxeles completa a la posición de la pantalla usando memcpy
+        uint8_t *destAddress = (uint8_t *)getScreenBufferAddress(pos_x, y);
+        memcpy(destAddress, lineBuffer, sizeof(lineBuffer));
+    }
 }
 
 void drawArray(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, uint64_t y, char *arr)
@@ -351,8 +396,13 @@ static void printBase(uint64_t value, uint32_t base)
 	printArray(buff);
 }
 
-void printDec(uint64_t value)
+void printDec(int64_t value)
 {
+	if (value < 0)
+	{
+		printArray("-");
+		value = -value;
+	}
 	printBase(value, 10);
 }
 

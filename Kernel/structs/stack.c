@@ -1,9 +1,7 @@
 #include "../scheduler/include/scheduler.h"
 #include <stdio.h>
 
-// void *initStackFrame(void *stackProcess, int argc, char **argv, void (*program)(int, char **), uint64_t pid)
 void *initStackFrame(void *stackProcess, int argc, char **argv, void *program, uint64_t pid)
-
 {
     StackFrame *newStackFrame = stackProcess;
     // Escribe desde la direccion de memoria de stackProcess.
@@ -21,7 +19,7 @@ void *initStackFrame(void *stackProcess, int argc, char **argv, void *program, u
 
     newStackFrame->rsi = (uint64_t)argv;
     newStackFrame->rdi = argc;
-    newStackFrame->rbp = (uint64_t) stackProcess;
+    newStackFrame->rbp = (uint64_t)stackProcess;
     newStackFrame->rdx = (uint64_t)program;
     newStackFrame->rcx = pid;
     newStackFrame->rbx = 0x014;

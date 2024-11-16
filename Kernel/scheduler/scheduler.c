@@ -2,26 +2,29 @@
 #include <videoDriver.h>
 #include "./include/scheduler.h"
 #include "../include/time.h"
+#include <rick.h>
 
 extern void forceTimerTick();
 
+CircularListNode *current = NULL;
+
 int isSchedulerActive = 0;
 
-CircularListNode *current = NULL;
-static int processID = 0;
+int processID = 0;
 
 void initScheduler()
 {
     initializeCircularList(&round_robin);
 
-    createProcess("SHELL", (void *)_setUser, 0, NULL);
-    createProcess("IDLE", (void *)idleProcess, 0, NULL);
+    int shellFD[] = {0, 1};
+    int idleFD[] = {0, 1};
+    createProcess("SHELL", (void *)_setUser, 0, NULL, shellFD);
+    createProcess("IDLE", (void *)idleProcess, 0, NULL, idleFD);
 
     isSchedulerActive = 1;
 }
 
-// uint64_t createProcess(void (*program)(int, char **), int argc, char **argv)
-uint64_t createProcess(char *pr_name, void *program, int argc, char **argv)
+uint64_t createProcess(char *pr_name, void *program, int argc, char **argv, int *fds)
 {
     void *newStack = mymalloc(PAGE);
     if (newStack == NULL)
@@ -29,6 +32,11 @@ uint64_t createProcess(char *pr_name, void *program, int argc, char **argv)
         printArray("createProcess: ERROR creating process. Could not allocate Stack for process: ");
         printDec(processID);
         printArray("\n");
+        return -1;
+    }
+    if (processID >= MAX_PROCESSES)
+    {
+        printArray("createProcess: ERROR creating process. Max number of processes reached.\n");
         return -1;
     }
 
@@ -41,13 +49,14 @@ uint64_t createProcess(char *pr_name, void *program, int argc, char **argv)
     {
         newPCB->ppid = getCurrentPid();
     }
-    initPCB(newPCB, processID, newPCB->ppid, DEFAULT_PRIORITY);
+
+    initPCB(newPCB, processID, newPCB->ppid, DEFAULT_PRIORITY, (int *)fds);
     PCB_array[processID] = newPCB;
 
     newPCB->stack = initStackFrame(newStack + PAGE - sizeof(char), argc, argv, (void *)program, processID);
     processID++;
     newPCB->name = pr_name;
-    newPCB->baseAddress = newStack + PAGE - sizeof(char); // A chequear
+    newPCB->baseAddress = newStack + PAGE - sizeof(char);
     newPCB->limit = PAGE;
 
     addCircularList(&round_robin, newPCB->pid);
@@ -60,21 +69,12 @@ void randomFunction()
 
     while (TRUE)
         ;
-
-    // int i = 0;
-    //  while (i < 1000000)
-    //  {
-    //      i++;
-    //  }
-    //  printArray("Random function FINISHED \n");
-    //  PCB *pcb = PCB_array[getCurrentPid()];
-    //  pcb->state = FINISHED;
-    //  my_exit();
 }
 
 uint64_t createOneProcess()
 {
-    return createProcess("DUMMY Function", (void *)randomFunction, 0, NULL);
+    int dummyFD[] = {0, 1};
+    return createProcess("DUMMY Function", (void *)randomFunction, 0, NULL, dummyFD);
 }
 
 void idleProcess()
@@ -94,9 +94,6 @@ uint64_t killProcess(int pid)
     PCB *pcb = PCB_array[pid];
     if (pcb == NULL)
     {
-        // printArray("killProcess: ERROR: Process with PID: ");
-        // printDec(pid);
-        // printArray(" not found :( \n");
         return -1;
     }
 
@@ -106,23 +103,17 @@ uint64_t killProcess(int pid)
     }
 
     // Liberamos stack y pcb
-    // int pid = pcb->pid;
+    removeFromCircularList(&round_robin, pid);
     myfree(pcb->baseAddress - PAGE + sizeof(char)); // Libera el stack
     myfree(pcb);
-    removeFromCircularList(&round_robin, pid); // OJO el orden
     PCB_array[pid] = NULL;
-    // printArray("killProcess: Process with PID: ");
-    // printDec(pid);
-    // printArray(" killed\n");
+    unblockProcess(pcb->ppid);
+    // processID--; PQ SI RESTO ESTO SE ME MUEREN LOS LOOPS
     return 0; // que devuelva el codigo de exit
 }
 
 int blockProcess(int pid)
 {
-    if (pid == 0 || pid == 1)
-    {
-        return -1;
-    }
     PCB *pcb = PCB_array[pid];
     if (pcb->state == BLOCKED || pcb->state == FINISHED || pcb == NULL)
     {
@@ -168,7 +159,7 @@ void *schedule(void *rsp)
         current = round_robin.head;
         PCB *pcb = PCB_array[IDLE_PID];
         pcb->state = RUNNING;
-        return pcb->stack; // RSP del IDLE
+        return pcb->stack;
     }
 
     PCB *pcb = PCB_array[current->pid];
@@ -268,8 +259,6 @@ void tryToExit()
         printArray("Could not exit process\n");
         return;
     }
-    unblockProcess(pcb->ppid);
-
     killProcess(pid);
 }
 

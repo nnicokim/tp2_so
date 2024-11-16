@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "./include/mm_manager.h"
+#include "./include/buddyAllocator.h"
 
+#ifndef BUDDY_ALLOCATOR
 #define MM_START ((void *)0xA00000) // 10 Mb
 #define BUFFER_SIZE 100
 
 void *start;
-int size, currentBlock;
+size_t size, currentBlock;
 void *free_ptrs[BLOCK_COUNT];
 
 void *mymalloc(size_t size)
@@ -21,19 +22,19 @@ void *mymalloc(size_t size)
 
 void myfree(void *ptr)
 {
-    // Podemos meter chequeos como si esta dentro del rango para ganar confianza
     if (ptr == NULL || ptr < start)
         return;
     free_ptrs[--currentBlock] = ptr;
 }
 
-void *my_mm_init(void *ptrs, int s)
+void * my_mm_init(void *ptrs, size_t s)
 {
+    printArray("Using List Memory Manager\n\n");
     start = ptrs;
     size = s;
     for (int i = 0; i < BLOCK_COUNT; i++)
     {
-        free_ptrs[i] = start + i * BLOCK_SIZE; // Ensure each block is distinct
+        free_ptrs[i] = start + i * BLOCK_SIZE;
     }
     currentBlock = 0;
     return start;
@@ -43,11 +44,13 @@ void mem()
 {
     printArray("Memory map: \n");
     char buffer[BUFFER_SIZE];
-    for (int i = 0; i < BLOCK_COUNT; i++) {
-        uintToBase((uint64_t)free_ptrs[i], buffer, 16); // Convert pointer to hex
+    for (int i = 0; i < BLOCK_COUNT; i++)
+    {
+        uintToBase((uint64_t)free_ptrs[i], buffer, 16);
         printArray("Block:");
         printDec(i);
-        printArray(buffer); // Print the string representation of the pointer
-        putChar('\n'); // New line after each pointer
+        printArray(buffer);
+        putChar('\n');
     }
 }
+#endif

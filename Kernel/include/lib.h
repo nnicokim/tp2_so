@@ -17,4 +17,5 @@ uint8_t inb(uint16_t port);
 
 void _hlt(void);
 
+unsigned int log(uint64_t n, int base);
 #endif

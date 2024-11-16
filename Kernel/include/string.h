@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-int strlen(char *str);
-char *strcpy(char *dest, char *src);
-int strcmp(char *str1, char *str2);
+int strlen_k(char *str);
+char *strcpy_k(char *dest, char *src);
+int strcmp_k(char *str1, char *str2);
 
 #endif

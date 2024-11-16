@@ -1,7 +1,4 @@
 #!/bin/bash
-docker run --rm -v $(PWD):/app -it agodio/itba-so-multi-platform:3.0 bash -c "cd /app/Toolchain && make all" 
-docker run --rm -v $(PWD):/app -it agodio/itba-so-multi-platform:3.0 bash -c "cd /app/ && make all"
-
 # Agrega un parametro para que se ejecute en modo debug
 # Build parameters for debug mode:
 # -d: Builds the kernel in debug mode and runs it in QEMU
@@ -9,6 +6,7 @@ docker run --rm -v $(PWD):/app -it agodio/itba-so-multi-platform:3.0 bash -c "cd
 args=("$@")
 isWindows=false
 debug_params=""
+withBuddy=false
 
 ## Reviso si algún argumento es -d o -w
 for arg in "${args[@]}"; do
@@ -17,7 +15,19 @@ for arg in "${args[@]}"; do
     elif [ "$arg" = "-w" ]; then
         isWindows=true
     fi
+    if [ "$arg" = "-b" ]; then
+        withBuddy=true
+    fi
 done
+
+if [ "$withBuddy" = true ]; then
+    docker run --rm -v $(PWD):/app -it agodio/itba-so-multi-platform:3.0 bash -c "cd /app/Toolchain && make all" 
+    docker run --rm -v $(PWD):/app -it agodio/itba-so-multi-platform:3.0 bash -c "cd /app/ && make buddy"
+else
+    docker run --rm -v $(PWD):/app -it agodio/itba-so-multi-platform:3.0 bash -c "cd /app/Toolchain && make all" 
+    docker run --rm -v $(PWD):/app -it agodio/itba-so-multi-platform:3.0 bash -c "cd /app/ && make all"
+fi
+
 
 if [ isWindows = true ]; then
     qemu-system-x86_64 -hda Image/x64BareBonesImage.qcow2 -m 512 -device intel-hda -device hda-output $debug_params

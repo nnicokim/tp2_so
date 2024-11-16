@@ -1,10 +1,14 @@
 #include <shell.h>
+#include <interrupts.h>
+#include <songs.h>
+#include "./include/tests/test_prio.h"
+#include "./include/phylo.h"
 
-#define INPUT_SIZE 100
-// #define COMMAND_COUNT 10
+// #define INPUT_SIZE 50
 #define CANT_REGS 18
 #define MAX_PROCESS 192
 #define TRUE 1
+#define RUNNING 1
 
 void help();
 void divzero();
@@ -16,9 +20,12 @@ void zoomout();
 void inforeg();
 void clear_shell();
 void beep();
-void test_processes();
-void test_mm();
-void test_prio();
+void victory();
+void mario_bros_song();
+void easteregg();
+void sh_test_processes();
+void sh_test_mm();
+void sh_test_prio();
 void print_processes();
 void print_memory();
 void create_one_process();
@@ -28,13 +35,21 @@ void block_process_pid();
 void increase_prio_pid();
 void decrease_prio_pid();
 void nice_pid();
-void test_sync1();
-void test_sync2();
+void sh_test_sync1();
+void sh_test_sync2();
+void handleCommands(char *str, int *fd);
+void handleRegularCommand(char *str, int *fd);
+void wc(char **params);
+void cat(char **params);
+void filter(char **params);
+void phylos();
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
 static int currentFontSize;
 static int gameActive = 0;
+int fgFD[] = {0, 1};
+int bgFD[] = {-1, -1};
 
 static Command commands[] = {
     {"help", help, "Muestra la lista de comandos"},
@@ -47,59 +62,125 @@ static Command commands[] = {
     {"zoomout", zoomout, "Disminuye el tamanio de la letra"},
     {"clear", clear_shell, "Limpia la shell"},
     {"beep", beep, "Emite un beep"},
-    {"tpr", test_processes, "Testea los procesos"},
-    {"tmm", test_mm, "Testea el gestor de memoria"},
-    {"tprio", test_prio, "Testea la prioridad de los procesos"},
+    {"victory", victory, "VAMOS CARAJO!!!"},
+    {"mario", mario_bros_song, "Canta el himno de Mario Bros"},
+    {"tpr", sh_test_processes, "Testea los procesos"},
+    {"tmm", sh_test_mm, "Testea el gestor de memoria"},
+    {"tprio", sh_test_prio, "Testea la prioridad de los procesos"},
     {"printp", print_processes, "Imprime los procesos activos"},
-    {"cp", create_one_process, "Crea un proceso"},
     {"loop", loop_print, "Imprime el PID del proceso ejecutandose cada 2 segs"},
     {"kill", kill_process_pid, "Mata un proceso dado un PID"},
     {"block", block_process_pid, "Bloquea un proceso dado un PID"},
     {"incp", increase_prio_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"decp", decrease_prio_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"nice", nice_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
-};
+    {"wc", wc, "Cuenta la cantidad de saltos de linea."},
+    {"cat", cat, "Imprime el contenido de un input."},
+    {"filter", filter, "Filtra las vocales de un input."},
+    {"phylo", phylos, "Inicia el problema de los filosofos"}};
 
 static Command commandsNohelp[] = {
+    {"cp", create_one_process, "Crea un proceso"},
     {"mem", print_memory, "Imprime la memoria"},
-    {"tsync1", test_sync1, "Testea la sincronizacion con semaforos"},
-    {"tsync2", test_sync2, "Testea la sincronizacion sin semaforos"}};
+    {"tsync1", sh_test_sync1, "Testea la sincronizacion con semaforos"},
+    {"tsync2", sh_test_sync2, "Testea la sincronizacion sin semaforos"},
+    {"egg", easteregg, "Easter egg song"},
+    {"rick", playRick, "Rick Astley"}};
 
 #define sizeofArr(arr) (sizeof(arr) / sizeof(arr[0]))
 #define COMMAND_COUNT sizeofArr(commands)
 
 void parseCommand(char *str)
 {
-    char argument[] = {0};
-
-    if (strcmp(str, "") == 0)
+    // char argument[] = {0};
+    if (strcmp_u(str, "") == 0)
     {
         return;
     }
 
-    int argC = parseCommandArg(str);
-
-    if (argC > 1)
+    if (str[strlen_u(str) - 2] == '&')
     {
-        printColor(YELLOW, "No puede haber ni un espacio ni mas de 1 argumento. Verificar los comandos de nuevo.\n");
+        str[strlen_u(str) - 1] = '\0';
+        str[strlen_u(str) - 2] = '\0';
+        return handleCommands(str, bgFD);
     }
+
+    return handleCommands(str, fgFD);
+}
+
+void handleRegularCommand(char *str, int *fd)
+{
+    int argC = 0;
+    char *argument[] = {0};
+
+    if (fd == bgFD)
+    {
+        str[strlen_u(str) - 2] = '\0';
+        print(str);
+        putChar('\n');
+        for (int i = 0; i < COMMAND_COUNT; i++)
+        {
+            if (strcmp_u(str, commands[i].name_id) == 0)
+            {
+                printColor(ORANGE, "Creating background process\n");
+                usys_createProcess(commands[i].name_id, commands[i].func, argC, argument, fd);
+                // printPromptIcon();
+                return;
+            }
+        }
+    }
+
+    // int argC = parseCommandArg(str); // Esto me da los espacios entre los comandos
+
+    while (*str == ' ')
+        str++;
 
     for (int i = 0; i < COMMAND_COUNT; i++)
     {
-        if (strcmp(str, commands[i].name_id) == 0)
+        if (strcmp_u(str, commands[i].name_id) == 0)
         {
-            _createProcess(str, commands[i].func, argC, argument);
-            // (*commands[i].func)(argument);
+            int pid = usys_createProcess(str, commands[i].func, argC, argument, fd);
+            usys_waitPid(pid);
             return;
         }
-        else if (strcmp(str, commandsNohelp[i].name_id) == 0)
+
+        if (strcmp_u(str, commandsNohelp[i].name_id) == 0)
         {
-            _createProcess(str, commandsNohelp[i].func, argC, argument);
-            // (*commandsNohelp[i].func)(argument);
+            int pid = usys_createProcess(str, commandsNohelp[i].func, argC, argument, fd);
+            usys_waitPid(pid);
             return;
         }
     }
     printError("Error: comando no diponible. Ingrese \"help\" para ver los comandos disponibles.\n");
+}
+
+void handleCommands(char *str, int *fd)
+{
+    char *cmds[3] = {str, 0};
+    char *currCMD = str;
+    uint64_t currentID = 0;
+    while (*currCMD != '\0' && *currCMD != '\n' && currentID < 3)
+    {
+        if (*currCMD == '|')
+        {
+            *currCMD = '\0'; // Terminate current command
+            currentID++;     // Move to the next command
+            if (currentID < 3)
+            {                                  // Check bounds before assignment
+                cmds[currentID] = currCMD + 1; // Set the next command start
+            }
+        }
+        currCMD++;
+    }
+
+    if (currentID >= 3)
+    {
+        printError("Demasiados comandos en la linea de comandos.\n");
+        return;
+    };
+
+    for (int i = 0; i <= currentID; i++)
+        handleRegularCommand(cmds[i], fd);
 }
 
 void printPromptIcon()
@@ -123,10 +204,9 @@ void init_shell()
     print("para la descripcion los comandos.\n");
 
     char c;
-    int running = 1;
     currentFontSize = usys_get_font_size();
     printPromptIcon();
-    while (running)
+    while (RUNNING)
     {                  // if ESC
         c = getChar(); // non-blocking read
         if (c != 0)
@@ -139,7 +219,6 @@ void init_shell()
             else if (c == '\n')
             {
                 putChar(c);
-                // printPromptIcon();
                 buffer[bufferIndex] = '\0'; // Null-terminate the command
                 parseCommand(buffer);       // Process the command
                 bufferIndex = 0;            // Reset the buffer for the next command
@@ -165,13 +244,12 @@ void help()
         print(commands[i].desc);
         putChar('\n');
     }
-
     usys_myExit();
 }
 
 void divzero()
 {
-    int a = 1; // rax??
+    int a = 1;
     int b = 0;
     if (a / b == 1)
     {
@@ -203,6 +281,7 @@ void zoomin()
             ;
         if (c == 'N' || c == 'n')
         {
+            usys_myExit();
             return;
         }
         else if (c == 'S' || c == 's')
@@ -210,10 +289,12 @@ void zoomin()
             if (currentFontSize >= 3)
             {
                 printColor(RED, "No se puede agrandar mas.\n");
+                usys_myExit();
                 return;
             }
             usys_change_font_size(++currentFontSize);
             clear_shell();
+            usys_myExit();
             return;
         }
         else
@@ -236,6 +317,7 @@ void zoomout()
             ;
         if (c == 'N' || c == 'n')
         {
+            usys_myExit();
             return;
         }
         else if (c == 'S' || c == 's')
@@ -243,10 +325,12 @@ void zoomout()
             if (currentFontSize <= 1)
             {
                 printColor(RED, "No se puede achicar mas.\n");
+                usys_myExit();
                 return;
             }
             usys_change_font_size(--currentFontSize);
             clear_shell();
+            usys_myExit();
             return;
         }
         else
@@ -274,7 +358,7 @@ void inforeg()
             printColor(GREEN, regsNames[i]);
             uintToBase(regs[i], aux, 16);
             print(aux);
-            print("\n");
+            putChar('\n');
         }
     }
     else
@@ -283,6 +367,7 @@ void inforeg()
     }
     usys_myExit();
 }
+
 void clear_shell()
 {
     usys_clear_screen();
@@ -292,7 +377,272 @@ void clear_shell()
 void beep()
 {
     printColor(GREEN, "BEEP!!\n");
-    usys_beep(1000, 10);
+    usys_beep(500, 10);
+    usys_myExit();
+}
+
+void victory() // Ejecutar despues de cada victoria
+{
+    printColor(GREEN, "Paso el Test!!!!!!!\n");
+    usys_beep(659, 50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(523, 50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(784, 50);
+    usys_wait(375);
+    usys_beep(392, 50);
+    usys_wait(375);
+    usys_beep(523, 50);
+    usys_wait(250);
+    usys_beep(392, 50);
+    usys_wait(250);
+    usys_beep(330, 50);
+    usys_wait(250);
+    usys_beep(440, 50);
+    usys_wait(50);
+    usys_beep(494, 50);
+    usys_wait(50);
+    usys_beep(466, 50);
+    usys_wait(42);
+    usys_beep(440, 50);
+    usys_wait(50);
+    usys_beep(392, 50);
+    usys_wait(50);
+    usys_myExit();
+}
+
+void mario_bros_song()
+{
+    // printColor(GREEN, "Mario Bros\n");
+
+    usys_beep(659, 50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(523, 50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(784, 50);
+    usys_wait(375);
+    usys_beep(392, 50);
+    usys_wait(375);
+    usys_beep(523, 50);
+    usys_wait(250);
+    usys_beep(392, 50);
+    usys_wait(250);
+    usys_beep(330, 50);
+    usys_wait(250);
+    usys_beep(440, 50);
+    usys_wait(50);
+    usys_beep(494, 50);
+    usys_wait(50);
+    usys_beep(466, 50);
+    usys_wait(42);
+    usys_beep(440, 50);
+    usys_wait(50);
+    usys_beep(392, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(784, 50);
+    usys_wait(50);
+    usys_beep(880, 50);
+    usys_wait(50);
+    usys_beep(698, 50);
+    usys_beep(784, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(523, 50);
+    usys_wait(50);
+    usys_beep(587, 50);
+    usys_beep(494, 50);
+    usys_wait(50);
+    usys_beep(523, 50);
+    usys_wait(250);
+    usys_beep(392, 50);
+    usys_wait(250);
+    usys_beep(330, 50);
+    usys_wait(250);
+    usys_beep(440, 50);
+    usys_wait(50);
+    usys_beep(494, 50);
+    usys_wait(50);
+    usys_beep(466, 50);
+    usys_wait(42);
+    usys_beep(440, 50);
+    usys_wait(50);
+    usys_beep(392, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(784, 50);
+    usys_wait(50);
+    usys_beep(880, 50);
+    usys_wait(50);
+    usys_beep(698, 50);
+    usys_beep(784, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(50);
+    usys_beep(523, 50);
+    usys_wait(50);
+    usys_beep(587, 50);
+    usys_beep(494, 50);
+    usys_wait(375);
+    usys_beep(784, 50);
+    usys_beep(740, 50);
+    usys_beep(698, 50);
+    usys_wait(42);
+    usys_beep(622, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(415, 50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_wait(50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_beep(587, 50);
+    usys_wait(250);
+    usys_beep(784, 50);
+    usys_beep(740, 50);
+    usys_beep(698, 50);
+    usys_wait(42);
+    usys_beep(622, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(698, 50);
+    usys_wait(50);
+    usys_beep(698, 50);
+    usys_beep(698, 50);
+    usys_wait(625);
+    usys_beep(784, 50);
+    usys_beep(740, 50);
+    usys_beep(698, 50);
+    usys_wait(42);
+    usys_beep(622, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(415, 50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_wait(50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_beep(587, 50);
+    usys_wait(250);
+    usys_beep(622, 50);
+    usys_wait(250);
+    usys_beep(587, 50);
+    usys_wait(250);
+    usys_beep(523, 50);
+    usys_wait(130);
+    usys_beep(784, 50);
+    usys_beep(740, 50);
+    usys_beep(698, 50);
+    usys_wait(42);
+    usys_beep(622, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(415, 50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_wait(50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_beep(587, 50);
+    usys_wait(250);
+    usys_beep(784, 50);
+    usys_beep(740, 50);
+    usys_beep(698, 50);
+    usys_wait(42);
+    usys_beep(622, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(698, 50);
+    usys_wait(50);
+    usys_beep(698, 50);
+    usys_beep(698, 50);
+    usys_wait(625);
+    usys_beep(784, 50);
+    usys_beep(740, 50);
+    usys_beep(698, 50);
+    usys_wait(42);
+    usys_beep(622, 50);
+    usys_wait(50);
+    usys_beep(659, 50);
+    usys_wait(167);
+    usys_beep(415, 50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_wait(50);
+    usys_beep(440, 50);
+    usys_beep(523, 50);
+    usys_beep(587, 50);
+    usys_wait(230);
+    usys_beep(622, 50);
+    usys_wait(250);
+    usys_beep(587, 50);
+    usys_wait(230);
+    usys_beep(523, 50);
+    usys_wait(150);
+    usys_beep(523, 50);
+    usys_myExit();
+}
+
+void easteregg()
+{
+    printColor(GREEN, "Guess who's symphony...\n");
+
+    usys_beep(523, 250);
+    usys_wait(90);
+    usys_beep(523, 250);
+    usys_wait(90);
+    usys_beep(523, 250);
+    usys_wait(800);
+    usys_beep(415, 750);
+    usys_wait(200);
+
+    usys_beep(466, 250);
+    usys_wait(100);
+    usys_beep(466, 250);
+    usys_wait(100);
+    usys_beep(466, 250);
+    usys_wait(100);
+    usys_beep(392, 750);
+    usys_wait(200);
+
+    usys_beep(523, 250);
+    usys_wait(100);
+    usys_beep(523, 250);
+    usys_wait(100);
+    usys_beep(523, 250);
+    usys_wait(100);
+    usys_beep(415, 750);
+    usys_wait(200);
+
+    usys_beep(466, 250);
+    usys_wait(80);
+    usys_beep(466, 250);
+    usys_wait(80);
+    usys_beep(466, 250);
+    usys_wait(80);
+    usys_beep(392, 750);
+    usys_beep(392, 750);
+
+    printColor(TURQUOISE, "Encontraron el easter egg oculto!!!\n");
+    usys_myExit();
 }
 
 void play_eliminator()
@@ -305,27 +655,25 @@ void play_eliminator()
     usys_myExit();
 }
 
-void test_processes()
+void sh_test_processes()
 {
-    printColor(ORANGE, "Testeando procesos...\n");
     char *argvAux[] = {"10"};
-    usys_test_processes(1, argvAux);
+    test_processes(1, argvAux);
     usys_myExit();
 }
 
-void test_prio()
+void sh_test_prio()
 {
     printColor(ORANGE, "Testeando prioridades...\n");
-    print("Testeando prioridades...\n");
-    usys_test_prio();
+    test_prio();
     usys_myExit();
 }
 
-void test_mm()
+void sh_test_mm()
 {
     printColor(ORANGE, "Testeando MM...\n");
-    char *argvmm[] = {"1000"};
-    usys_test_mm(1, argvmm);
+    char *argvmm[] = {"500"};
+    test_mm(1, argvmm);
     usys_myExit();
 }
 
@@ -338,6 +686,7 @@ void print_processes()
 
 void print_memory()
 {
+    printColor(ORANGE, "Imprimiendo memoria...\n");
     usys_print_memory();
     usys_myExit();
 }
@@ -356,19 +705,19 @@ void loop_print()
     usys_myExit();
 }
 
-void test_sync1()
+void sh_test_sync1()
 {
     printColor(ORANGE, "Testeando sincronizacion con sincro...\n");
-    char *argv1[] = {"10", "1", "0"}; // Para usar el de sync y el argc=3
-    usys_test_sync(3, argv1);
+    char *argv1[] = {"10", "1", "0"};
+    test_sync(3, argv1);
     usys_myExit();
 }
 
-void test_sync2()
+void sh_test_sync2()
 {
     printColor(ORANGE, "Testeando sincronizacion sin sincro...\n");
-    char *argv2[] = {"10", "1", "1"}; // Para usar el de no sync y el argc=3
-    usys_test_sync(3, argv2);
+    char *argv2[] = {"10", "1", "1"};
+    test_sync(3, argv2);
     usys_myExit();
 }
 
@@ -389,16 +738,18 @@ void kill_process_pid()
                 putChar(c);
                 if ((c < '0' || c > '9') && c != '\n')
                 {
-                    print("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (i > 3)
                 {
-                    print("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (c == '\n')
@@ -414,12 +765,14 @@ void kill_process_pid()
         {
             print("\n");
             printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            usys_myExit();
             return;
         }
         if (kill_pid == 0 || kill_pid == 1)
         {
-            print("\n");
+            putChar('\n');
             printColor(RED, "No se puede matar el proceso SHELL o IDLE. Ingrese otro PID.\n");
+            usys_myExit();
             return;
         }
 
@@ -430,7 +783,8 @@ void kill_process_pid()
             printColor(RED, "No se pudo matar al proceso con PID: ");
             intToStr(kill_pid, pid);
             print(pid);
-            print("\n");
+            putChar('\n');
+            usys_myExit();
             return;
         }
         else
@@ -438,7 +792,8 @@ void kill_process_pid()
             printColor(GREEN, "Se mato al proceso con PID: ");
             intToStr(kill_pid, pid);
             print(pid);
-            print("\n");
+            putChar('\n');
+            usys_myExit();
             return;
         }
     }
@@ -463,16 +818,18 @@ void block_process_pid()
                 putChar(c);
                 if ((c < '0' || c > '9') && c != '\n')
                 {
-                    print("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (i > 3)
                 {
-                    print("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
                     return;
                 }
                 if (c == '\n')
@@ -487,11 +844,13 @@ void block_process_pid()
         if (block_pid < 0 || block_pid > MAX_PROCESS)
         {
             printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            usys_myExit();
             return;
         }
         if (block_pid == 0 || block_pid == 1)
         {
             printColor(RED, "No se puede bloquear el proceso SHELL o IDLE. Ingrese otro PID.\n");
+            usys_myExit();
             return;
         }
 
@@ -502,7 +861,8 @@ void block_process_pid()
             printColor(RED, "No se pudo bloquear al proceso con PID: ");
             intToStr(block_pid, pid);
             print(pid);
-            print("\n");
+            putChar('\n');
+            usys_myExit();
             return;
         }
         else
@@ -510,7 +870,8 @@ void block_process_pid()
             printColor(GREEN, "Se bloqueo al proceso con PID: ");
             intToStr(block_pid, pid);
             print(pid);
-            print("\n");
+            putChar('\n');
+            usys_myExit();
             return;
         }
     }
@@ -535,7 +896,7 @@ void increase_prio_pid()
                 putChar(c);
                 if ((c < '0' || c > '9') && c != '\n')
                 {
-                    print("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -543,7 +904,7 @@ void increase_prio_pid()
                 }
                 if (i > 3)
                 {
-                    print("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -599,7 +960,7 @@ void decrease_prio_pid()
                 putChar(c);
                 if ((c < '0' || c > '9') && c != '\n')
                 {
-                    print("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. Ingrese un digito valido.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -607,7 +968,7 @@ void decrease_prio_pid()
                 }
                 if (i > 3)
                 {
-                    print("\n");
+                    putChar('\n');
                     printColor(RED, "ERROR. PID muy largo.\n");
                     printColor(YELLOW, "Vuelva a intentarlo.\n");
                     usys_myExit();
@@ -634,14 +995,14 @@ void decrease_prio_pid()
         if (resultado == -1)
         {
             printColor(RED, "No se pudo decrementar la prioridad del proceso.");
-            print("\n");
+            putChar('\n');
             usys_myExit();
             return;
         }
         else
         {
             printColor(GREEN, "Se decremento la prioridad del proceso :) \n");
-            print("\n");
+            putChar('\n');
             usys_myExit();
             return;
         }
@@ -652,6 +1013,215 @@ void decrease_prio_pid()
 
 void nice_pid()
 {
-    print("Falta hacer, lo hago mañana\n");
+    printColor(ORANGE, "Ingrese el PID del proceso y la nueva prioridad: ");
+    char pid[5] = {"0"};
+    char prio[5] = {"0"};
+    int i = 0;
+    char c;
+    int nice_pid;
+    int newPrio;
+    int flag = 0;
+    while (TRUE)
+    {
+        while (TRUE)
+        {
+            c = getChar();
+            if (c != 0)
+            {
+                putChar(c);
+                if ((c < '0' || c > '9') && c != '\n' && c != ' ')
+                {
+                    putChar('\n');
+                    printColor(RED, "ERROR. Ingrese un digito valido.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
+                    return;
+                }
+                if (i > 3)
+                {
+                    putChar('\n');
+                    printColor(RED, "ERROR. PID muy largo.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
+                    return;
+                }
+                if (c == ' ')
+                {
+                    flag = 1;
+                    i = 0;
+                    continue;
+                }
+                if (c == '\n')
+                {
+                    if (flag == 0)
+                    {
+                        putChar('\n');
+                        printColor(RED, "ERROR. Ingrese un espacio entre el PID y la prioridad.\n");
+                        printColor(YELLOW, "Vuelva a intentarlo.\n");
+                        usys_myExit();
+                        return;
+                    }
+                    nice_pid = stringToInt(pid);
+                    newPrio = stringToInt(prio);
+                    break;
+                }
+                if (flag == 0)
+                {
+                    pid[i++] = c;
+                }
+                else
+                {
+                    prio[i++] = c;
+                }
+            }
+        }
+        if (nice_pid < 0 || nice_pid > MAX_PROCESS)
+        {
+            printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            usys_myExit();
+            return;
+        }
+        if (newPrio < 0 || newPrio > 5)
+        {
+            printColor(RED, "Prioridad invalida. Ingrese una prioridad valida.\n");
+            usys_myExit();
+            return;
+        }
+        printColor(ORANGE, "Cambiando la prioridad del proceso...\n");
+        int resultado = usys_my_nice(nice_pid, newPrio);
+        if (resultado == -1)
+        {
+            print("ups\n");
+            printColor(RED, "No se pudo cambiar la prioridad del proceso.\n");
+            usys_myExit();
+            return;
+        }
+        else
+        {
+            printColor(GREEN, "Se cambio la prioridad del proceso: \n");
+            intToStr(nice_pid, pid);
+            print(pid);
+            printColor(GREEN, " a la prioridad: ");
+            intToStr(newPrio, prio);
+            print(prio);
+            printColor(GREEN, " !!! :) \n");
+            putChar('\n');
+            usys_myExit();
+            return;
+        }
+    }
+    usys_myExit();
+}
+
+void wc(char **params)
+{
+    int c, lineCount = 0;
+    char buffer[3];
+    putChar('\n');
+
+    while ((c = getChar()) != EOF)
+    {
+        if (c == '\n')
+        {
+            lineCount++;
+            putChar('\n');
+        }
+        else if (c >= 32 && c <= 126)
+        {
+            putChar(c);
+        }
+    }
+
+    printColor(YELLOW, "\nNumber of lines: \n");
+    intToStr(lineCount, buffer);
+    print(buffer);
+    putChar('\n');
+    usys_myExit();
+}
+
+void cat(char **params)
+{
+    char buffer[PAGE] = {0}; // Buffer para almacenar caracteres
+    char c;
+    int idx = 0, pos = 0;
+
+    while ((c = getChar()) != (char)EOF)
+    {
+        if (c == '\b')
+        { // Manejo de backspace
+            if (idx > 0)
+            {
+                putChar('\b');
+                idx--;
+            }
+        }
+        else if (c == '\n')
+        {
+            putChar('\n');
+            for (pos = 0; pos < idx; pos++)
+                putChar(buffer[pos]);
+
+            idx = 0;
+            putChar('\n');
+        }
+        else if (c >= 32 && c <= 126)
+        {
+            if (idx < PAGE)
+            {
+                buffer[idx++] = c;
+                putChar(c);
+            }
+        }
+    }
+    putChar('\n');
+    usys_myExit();
+}
+
+void filter(char **params)
+{
+    char buffer[PAGE] = {0};
+    char c;
+    int idx = 0;
+    int pos = 0;
+    while ((c = getChar()) != -1)
+    {
+        if (c > 20 && c < 127)
+        {
+            putChar(c);
+            if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'I' || c == 'E' ||
+                c == 'O' || c == 'U') // Vocales
+                buffer[idx++] = c;
+        }
+        if (c == '\n')
+        {
+            putChar('\n');
+            putChar('\n');
+            printColor(YELLOW, "Vocales: \n");
+            while (pos < idx)
+            {
+                putChar(buffer[pos]);
+                pos++;
+            }
+            idx = 0;
+            pos = 0;
+            putChar('\n');
+        }
+        if (c == '\b')
+        {
+            if (idx != 0)
+            {
+                pos--;
+                putChar('\b');
+            }
+        }
+    }
+    usys_myExit();
+}
+
+void phylos()
+{
+    printColor(ORANGE, "Testeando sincronizacion con filosofos...\n");
+    char *argv1[] = {"10", "1", "0"};
+    phyloProcess(3, argv1);
     usys_myExit();
 }

@@ -4,7 +4,6 @@
 #include <lib.h>
 #include <string.h>
 #include "../scheduler/include/scheduler.h"
-#include "../include/tests/syscall.h"
 
 extern void forceTimerTick();
 
@@ -27,12 +26,11 @@ typedef struct
 } semEntry_t;
 
 static semEntry_t semTable[MAX_SEM];
-static int semLock = 0; //Mi mutex para la tabla de semaforos
+static int semLock = 0; // Mi mutex para la tabla de semaforos
 
 static int findAvailableSpace();
 static int enqueueProcess(int pid, sem_t *sem);
 static int dequeueProcess(sem_t *sem);
-// void printSemQueue(int semIndex);
 int findSem(char *name);
 char *getSemName(int semIndex);
 
@@ -44,7 +42,7 @@ int semCreate(char *name, int initValue)
     if ((pos = findAvailableSpace()) != -1)
     {
         // Inicializamos la estructura del semaforo
-        strcpy(semTable[pos].sem.name, name);
+        strcpy_k(semTable[pos].sem.name, name);
         semTable[pos].sem.value = initValue;
         semTable[pos].sem.lock = 0;
         semTable[pos].sem.size = 0;
@@ -115,7 +113,7 @@ int semWait(int semIndex)
     }
     else
     {
-        int pid = getCurrentPid(); // Esto hay que cambiarlo por nuestro current que tiene el pid corriendo
+        int pid = getCurrentPid();
         if (enqueueProcess(pid, sem) == -1)
         {
             change(&sem->lock, 0);
@@ -138,7 +136,8 @@ int semWait(int semIndex)
             }
 
             change(&sem->lock, 0);
-            // forceTick();
+            forceTimerTick();
+
         } while (!flag);
     }
     return 0;
@@ -162,7 +161,6 @@ int semPost(int semIndex)
         int pid = 0;
         if ((pid = dequeueProcess(sem)) == -1)
         {
-            // printSemQueue(semIndex);
             change(&sem->lock, 0);
             return -1;
         }
@@ -173,26 +171,6 @@ int semPost(int semIndex)
 
     return 0;
 }
-
-/****************************************************************************************************/
-// void printSemQueue(int semIndex)
-// {
-//     if (semIndex >= MAX_SEM)
-//     {
-//         print("Invalid semaphore index.\n");
-//         return;
-//     }
-
-//     sem_t *sem = &semTable[semIndex].sem;
-//     print("Semaphore: %s\n", sem->name);
-//     print("Queue Size: %d\n", sem->queueSize);
-
-//     int i;
-//     for (i = 0; i < sem->queueSize; i++)
-//     {
-//         print("PID: %d\n", sem->pidQueue[i]);
-//     }
-// }
 
 void initSems()
 {
@@ -222,7 +200,7 @@ int findSem(char *name)
     int i;
     for (i = 0; i < MAX_SEM; i++)
     {
-        if (!semTable[i].available && strcmp(name, semTable[i].sem.name) == 0)
+        if (!semTable[i].available && strcmp_k(name, semTable[i].sem.name) == 0)
         {
             return i;
         }

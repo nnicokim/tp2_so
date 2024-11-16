@@ -1,4 +1,3 @@
-#include <user_syscalls.h>
 #include <user_lib.h>
 
 char getChar()
@@ -22,20 +21,20 @@ void putChar(char c)
 
 void printColor(int fontColor, char *string)
 {
-    usys_write_color(fontColor, string, strlen(string));
+    usys_write_color(fontColor, string, strlen_u(string));
 }
 
 void printError(char *string)
 {
-    usys_write(STDERR, string, strlen(string));
+    usys_write(STDERR, string, strlen_u(string));
 }
 
 void print(char *string)
 {
-    usys_write(STDOUT, string, strlen(string));
+    usys_write(STDOUT, string, strlen_u(string));
 }
 
-int strlen(char *arr)
+int strlen_u(char *arr)
 {
     int i = 0;
     while (arr[i++] != '\0')
@@ -43,7 +42,7 @@ int strlen(char *arr)
     return i;
 }
 
-void strcpy(char *destination, const char *source)
+void strcpy_u(char *destination, const char *source)
 {
     while (*source != '\0')
     {
@@ -171,7 +170,7 @@ void printScore(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, uint64
     usys_print_array_of_draw_size(fontColor, backgroundColor, x, y, scoreBuf);
 }
 
-int strcmp(const char *s1, const char *s2)
+int strcmp_u(const char *s1, const char *s2)
 {
     while (*s1 == *s2++)
     {

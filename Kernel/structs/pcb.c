@@ -6,10 +6,9 @@
 #include "../include/naiveConsole.h"
 #include "../memory_manager/include/mm_manager.h"
 #include "./include/stack.h"
+#include "../include/lib.h"
 
-void allvars(PCB *pcb);
-
-void initPCB(PCB *pcb, int pid, int ppid, int priority)
+void initPCB(PCB *pcb, int pid, int ppid, int priority, int *fds)
 {
     pcb->pid = pid;
     pcb->ppid = ppid;
@@ -19,26 +18,10 @@ void initPCB(PCB *pcb, int pid, int ppid, int priority)
     pcb->priorityLife = priority;
     pcb->runningCounter = 0;
 
+    memcpy(pcb->FD, fds, sizeof(int) * 2);
+
     pcb->baseAddress = NULL;
     pcb->limit = 0;
-}
-
-PCB *copyPCB(PCB *pcb, PCB *newPCB)
-{
-    if (!newPCB)
-        newPCB = (PCB *)mymalloc(sizeof(PCB));
-
-    newPCB->pid = pcb->pid;
-    newPCB->ppid = pcb->ppid;
-    newPCB->state = pcb->state;
-    newPCB->name = pcb->name;
-    newPCB->priority = pcb->priority;
-    newPCB->priorityLife = pcb->priorityLife;
-    newPCB->runningCounter = pcb->runningCounter;
-    newPCB->baseAddress = pcb->baseAddress;
-    newPCB->limit = pcb->limit;
-
-    return newPCB;
 }
 
 void freePCB(PCB *pcb)
