@@ -135,7 +135,7 @@ uint64_t getScreenBufferAddress(uint64_t x, uint64_t y){
 void drawChar(uint32_t fontColor, uint32_t backgroundColor, uint64_t x, uint64_t y, char character)
 {
     uint8_t *charGlyphAddress = getGlyph(character);
-    int pos_x, pos_y;
+    int pos_x;
 
     uint32_t colorBuffer[2][3];  // [0] para background, [1] para font color
     

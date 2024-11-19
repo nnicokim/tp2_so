@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <videodriver.h>
+#include "../../include/videoDriver.h"
 
 #define HEAP_START ((void *)0xA00000) // 10 Mb
 #define LIST_SPACE (1 << 27)  // 128 MB

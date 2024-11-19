@@ -1,4 +1,5 @@
 #include <keyboardDriver.h>
+#include <videoDriver.h>
 
 /* Disposición del teclado en inglés (US) */
 static char scanCodeTable[] =

@@ -39,6 +39,7 @@ void putEOF(int id);
 int getPipeId(char * name);
 int readPipe(int id, char * dest, unsigned int count);
 int writePipe(int id, const char * src, unsigned int count);
+int pollPipe(int id, pipeEvent event);
 
 void EOFToCurrentProcess();
 

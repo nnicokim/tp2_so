@@ -17,5 +17,6 @@ int semWait(int semIndex);
 int semPost(int semIndex);
 char *getSemName(int semIndex);
 int findSem(char *name);
+void yield();
 
 #endif
