@@ -32,6 +32,7 @@ void create_one_process();
 void loop_print();
 void kill_process_pid();
 void block_process_pid();
+void unblock_process_pid();
 void increase_prio_pid();
 void decrease_prio_pid();
 void nice_pid();
@@ -43,6 +44,7 @@ void wc(char **params);
 void cat(char **params);
 void filter(char **params);
 void phylos();
+
 
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
@@ -71,13 +73,15 @@ static Command commands[] = {
     {"loop", loop_print, "Imprime el PID del proceso ejecutandose cada 2 segs"},
     {"kill", kill_process_pid, "Mata un proceso dado un PID"},
     {"block", block_process_pid, "Bloquea un proceso dado un PID"},
+    {"unblock", unblock_process_pid, "Desbloquea un proceso dado un PID"},
     {"incp", increase_prio_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"decp", decrease_prio_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"nice", nice_pid, "Cambia la prioridad de un proceso dado un PID y una prioridad"},
     {"wc", wc, "Cuenta la cantidad de saltos de linea."},
     {"cat", cat, "Imprime el contenido de un input."},
     {"filter", filter, "Filtra las vocales de un input."},
-    {"phylo", phylos, "Inicia el problema de los filosofos"}};
+    {"phylo", phylos, "Inicia el problema de los filosofos"}
+    };
 
 static Command commandsNohelp[] = {
     {"cp", create_one_process, "Crea un proceso"},
@@ -666,6 +670,82 @@ void sh_test_prio()
 {
     printColor(ORANGE, "Testeando prioridades...\n");
     test_prio();
+    usys_myExit();
+}
+
+void unblock_process_pid(){
+    printColor(ORANGE, "Ingrese el PID del proceso a desbloquear: ");
+    char pid[5] = {"0"};
+    int i = 0;
+    char c;
+    int unblock_pid;
+    while (TRUE)
+    {
+        while (TRUE)
+        {
+            c = getChar();
+            if (c != 0)
+            {
+                putChar(c);
+                if ((c < '0' || c > '9') && c != '\n')
+                {
+                    putChar('\n');
+                    printColor(RED, "ERROR. Ingrese un digito valido.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
+                    return;
+                }
+                if (i > 3)
+                {
+                    putChar('\n');
+                    printColor(RED, "ERROR. PID muy largo.\n");
+                    printColor(YELLOW, "Vuelva a intentarlo.\n");
+                    usys_myExit();
+                    return;
+                }
+                if (c == '\n')
+                {
+                    unblock_pid = stringToInt(pid);
+                    break;
+                }
+                pid[i++] = c;
+            }
+        }
+
+        if (unblock_pid < 0 || unblock_pid > MAX_PROCESS)
+        {
+            printColor(RED, "PID invalido. Ingrese un PID valido.\n");
+            usys_myExit();
+            return;
+        }
+        if (unblock_pid == 0 || unblock_pid == 1)
+        {
+            printColor(RED, "No se puede desbloquear el proceso SHELL o IDLE. Ingrese otro PID.\n");
+            usys_myExit();
+            return;
+        }
+
+        printColor(ORANGE, "Desbloqueando al proceso...\n");
+        int resultado = usys_unblockProcess(unblock_pid);   
+        if (resultado == -1)
+        {
+            printColor(RED, "No se pudo desbloquear al proceso con PID: ");
+            intToStr(unblock_pid, pid);
+            print(pid);
+            putChar('\n');
+            usys_myExit();
+            return;
+        }
+        else
+        {
+            printColor(GREEN, "Se desbloqueo al proceso con PID: ");
+            intToStr(unblock_pid, pid);
+            print(pid);
+            putChar('\n');
+            usys_myExit();
+            return;
+        }
+    }
     usys_myExit();
 }
 

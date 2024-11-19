@@ -2,18 +2,20 @@
 #include <stdint.h>
 #include "./include/buddyAllocator.h"
 
-#ifndef BUDDY_ALLOCATOR
+
 #define MM_START ((void *)0xA00000) // 10 Mb
 #define BUFFER_SIZE 100
 
 void *start;
 size_t size, currentBlock;
 void *free_ptrs[BLOCK_COUNT];
+size_t espacio=BLOCK_SIZE*BLOCK_COUNT;
 
 void *mymalloc(size_t size)
 {
     if (currentBlock < BLOCK_COUNT && size <= BLOCK_SIZE)
     {
+        espacio -= BLOCK_SIZE;
         return free_ptrs[currentBlock++];
     }
     else
@@ -43,14 +45,19 @@ void * my_mm_init(void *ptrs, size_t s)
 void mem()
 {
     printArray("Memory map: \n");
-    char buffer[BUFFER_SIZE];
-    for (int i = 0; i < BLOCK_COUNT; i++)
-    {
-        uintToBase((uint64_t)free_ptrs[i], buffer, 16);
-        printArray("Block:");
-        printDec(i);
-        printArray(buffer);
-        putChar('\n');
-    }
+    // // char buffer[BUFFER_SIZE];
+    // for (int i = 0; i < BLOCK_COUNT; i++)
+    // {
+    //     if(free_ptrs[i] == NULL){
+    //         continue;
+    //     }
+    //     // uintToBase((uint64_t)free_ptrs[i], buffer, 16);
+    //     // printArray("Block:");
+    //     // printDec(i);
+    //     // printArray(buffer);
+    //     // putChar('\n');
+    // }
+    printArray("Espacio disponible: ");
+    printDec(espacio);
+    printArray("\n");
 }
-#endif
