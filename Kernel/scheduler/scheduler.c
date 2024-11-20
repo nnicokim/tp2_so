@@ -97,18 +97,17 @@ uint64_t killProcess(int pid)
         return -1;
     }
 
-    if (pcb->state != FINISHED) // Esto es por el kill de la shell
+    if (pcb->state != FINISHED)
     {
         pcb->state = FINISHED;
     }
 
     // Liberamos stack y pcb
     removeFromCircularList(&round_robin, pid);
-    myfree(pcb->baseAddress - PAGE + sizeof(char)); // Libera el stack
+    myfree(pcb->baseAddress - PAGE + sizeof(char));
     myfree(pcb);
     PCB_array[pid] = NULL;
     unblockProcess(pcb->ppid);
-    // processID--; PQ SI RESTO ESTO SE ME MUEREN LOS LOOPS
     return 0; // que devuelva el codigo de exit
 }
 
@@ -177,7 +176,7 @@ void *schedule(void *rsp)
         return change_context(current->pid);
     }
     if (pcb->state == BLOCKED)
-    { // Esto es para que no se quede en un proceso bloqueado y tampoco lo desbloqueo
+    {
         current = current->next;
         return change_context(current->pid);
     }

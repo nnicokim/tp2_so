@@ -64,7 +64,7 @@ void *initializeKernelBinary()
 
 int main()
 {
-	_cli(); // Deshabilitar interrupciones
+	_cli();
 
 	load_idt(); // Cargar la tabla de descriptores de interrupciones (IDT)
 
@@ -77,7 +77,7 @@ int main()
 
 	initSems();
 
-	_sti(); // Habilitar interrupciones
+	_sti();
 
 	printArray("You shouldn't be here chief...");
 

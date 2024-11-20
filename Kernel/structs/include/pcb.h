@@ -25,19 +25,19 @@ typedef struct PCB
     unsigned int ppid; // Parent Process ID
     int state;         // Process state
     char *name;
-    StackFrame *stack; // Stack pointer de cada proceso
-    int priority;      // Process priority
+    StackFrame *stack;
+    int priority; // Process priority
     int priorityLife;
     unsigned int runningCounter;
 
-    int FD[2]; // fg & bg
+    int FD[2];
 
     void *baseAddress;
     size_t limit;
 
 } PCB;
 
-extern PCB *PCB_array[MAX_PROCESSES]; // Array de PCBs
+extern PCB *PCB_array[MAX_PROCESSES];
 
 void initPCB(PCB *pcb, int pid, int ppid, int priority, int *fds);
 void freePCB(PCB *pcb);

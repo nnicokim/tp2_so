@@ -134,7 +134,6 @@ void keyboard_handler()
     }
 }
 
-/* Función para vaciar el buffer */
 void flushBuffer()
 {
     writeIndex = 0;
@@ -169,6 +168,6 @@ void killWithCtrlC()
 
         else
             printArray("Child process killed with CTRL+C\n");
-        }
+    }
     my_exit();
 }

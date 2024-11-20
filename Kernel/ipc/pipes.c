@@ -15,7 +15,7 @@ int createNamedPipe(char *name)
     pipe->name = mymalloc(strlen_k(name) + 1);
     if (pipe->name == NULL)
     {
-        myfree((void*)pipe);
+        myfree((void *)pipe);
         return -1;
     }
     strcpy_k(pipe->name, name);
@@ -31,7 +31,7 @@ int createNamedPipe(char *name)
      * Create semaphores for the pipe
      */
     pipe->readSemId = semCreate(name, 0);
-    pipe->writeSemId = semCreate(name, 1); // Ver si conviene inicializarlo en PAGE en vez de 1
+    pipe->writeSemId = semCreate(name, 1);
 
     pipe->pipeBuffer = mymalloc(PAGE);
     if (pipe->pipeBuffer == NULL)
@@ -58,7 +58,7 @@ void destroyPipe(int id)
         return;
 
     myfree(pipe->pipeBuffer);
-    myfree((void*)pipe);
+    myfree((void *)pipe);
     pipes[id] = NULL;
     return;
 }

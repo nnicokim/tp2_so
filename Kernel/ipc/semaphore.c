@@ -13,8 +13,8 @@ typedef struct
     int lock;
     int value;
     int size;
-    int front; // Index del primer elemento en la cola
-    int rear;  // Index del ultimo elemento en la cola
+    int front;
+    int rear;
     int queueSize;
     int pidQueue[MAX_SIZE];
 } sem_t;
@@ -26,7 +26,7 @@ typedef struct
 } semEntry_t;
 
 static semEntry_t semTable[MAX_SEM];
-static int semLock = 0; // Mi mutex para la tabla de semaforos
+static int semLock = 0;
 
 static int findAvailableSpace();
 static int enqueueProcess(int pid, sem_t *sem);

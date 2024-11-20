@@ -224,19 +224,19 @@ _setUser:
 	sub rsp, 32             
 
     mov rax, userland_direc 
-    mov [rsp], rax          ; preparo el salto a userland 
+    mov [rsp], rax          
 
     mov rax, 0x8
-    mov [rsp + 8], rax      ; CS de userland
+    mov [rsp + 8], rax     
 
     mov rax, 0x202
-    mov [rsp + 8*2], rax    ; RFLAGS
+    mov [rsp + 8*2], rax    
 
     call getStackBase       
-    mov [rsp + 8*3], rax    ; sp ahora esta en la base 
+    mov [rsp + 8*3], rax  
 
     mov rax, 0x0
-    mov [rsp + 8*4], rax    ; SS de userland
+    mov [rsp + 8*4], rax   
 	
 	iretq
 
@@ -288,7 +288,7 @@ _irq01Handler:
  
 	in al, 60h 
 
-	cmp al, 0x1D  ; ver bien para que sea ctrl 
+	cmp al, 0x1D 
 	jne .irqHandler
 	saveRegs
 	mov [regsSaved], byte 1

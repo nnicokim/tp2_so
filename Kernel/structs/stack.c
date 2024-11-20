@@ -4,10 +4,7 @@
 void *initStackFrame(void *stackProcess, int argc, char **argv, void *program, uint64_t pid)
 {
     StackFrame *newStackFrame = stackProcess;
-    // Escribe desde la direccion de memoria de stackProcess.
-    // Una vez que termine de asignar el stackFrame, el RSP va a ser la direccion contigua a este stackFrame.
 
-    /*  pushState o popState  */
     newStackFrame->r15 = 0x001;
     newStackFrame->r14 = 0x002;
     newStackFrame->r13 = 0x003;
@@ -25,7 +22,6 @@ void *initStackFrame(void *stackProcess, int argc, char **argv, void *program, u
     newStackFrame->rbx = 0x014;
     newStackFrame->rax = 0x015;
 
-    /*  Procesador  */
     newStackFrame->rip = (uint64_t)program;
     newStackFrame->cs = 0x8;
     newStackFrame->rflags = 0x202;

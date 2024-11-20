@@ -159,7 +159,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rc
     // case 34:
     //     return ksys_testsync(rdi, (char **)rsi);
     case 35:
-        return ksys_createProcess((char *)rdi, (void *)rsi, rdx, (char **)rcx,(int*) r8);
+        return ksys_createProcess((char *)rdi, (void *)rsi, rdx, (char **)rcx, (int *)r8);
     case 36:
         return ksys_pollPipe(rdi, rsi);
     case 37:
@@ -431,13 +431,6 @@ uint64_t ksys_loop_print()
     loop_print();
     return 0;
 }
-
-// uint64_t ksys_testsync(uint64_t argc, char *argv[])
-// {
-//     int fds[] = {0, 1};
-//     int sync_pid = createProcess("Sync_Test", (void *)test_sync, argc, argv, fds);
-//     return sync_pid;
-// }
 
 uint64_t ksys_pollPipe(uint64_t id, uint64_t event)
 {

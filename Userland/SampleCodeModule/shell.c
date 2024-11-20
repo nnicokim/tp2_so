@@ -45,7 +45,6 @@ void cat(char **params);
 void filter(char **params);
 void phylos();
 
-
 static char buffer[INPUT_SIZE] = {0};
 static int bufferIndex = 0;
 static int currentFontSize;
@@ -80,8 +79,7 @@ static Command commands[] = {
     {"wc", wc, "Cuenta la cantidad de saltos de linea."},
     {"cat", cat, "Imprime el contenido de un input."},
     {"filter", filter, "Filtra las vocales de un input."},
-    {"phylo", phylos, "Inicia el problema de los filosofos"}
-    };
+    {"phylo", phylos, "Inicia el problema de los filosofos"}};
 
 static Command commandsNohelp[] = {
     {"cp", create_one_process, "Crea un proceso"},
@@ -134,8 +132,6 @@ void handleRegularCommand(char *str, int *fd)
         }
     }
 
-    // int argC = parseCommandArg(str); // Esto me da los espacios entre los comandos
-
     while (*str == ' ')
         str++;
 
@@ -167,11 +163,11 @@ void handleCommands(char *str, int *fd)
     {
         if (*currCMD == '|')
         {
-            *currCMD = '\0'; // Terminate current command
-            currentID++;     // Move to the next command
+            *currCMD = '\0';
+            currentID++;
             if (currentID < 3)
-            {                                  // Check bounds before assignment
-                cmds[currentID] = currCMD + 1; // Set the next command start
+            {
+                cmds[currentID] = currCMD + 1;
             }
         }
         currCMD++;
@@ -223,9 +219,9 @@ void init_shell()
             else if (c == '\n')
             {
                 putChar(c);
-                buffer[bufferIndex] = '\0'; // Null-terminate the command
-                parseCommand(buffer);       // Process the command
-                bufferIndex = 0;            // Reset the buffer for the next command
+                buffer[bufferIndex] = '\0';
+                parseCommand(buffer);
+                bufferIndex = 0;
                 printPromptIcon();
             }
             else if (c != '\b')
@@ -421,8 +417,6 @@ void victory() // Ejecutar despues de cada victoria
 
 void mario_bros_song()
 {
-    // printColor(GREEN, "Mario Bros\n");
-
     usys_beep(659, 50);
     usys_beep(659, 50);
     usys_wait(50);
@@ -673,7 +667,8 @@ void sh_test_prio()
     usys_myExit();
 }
 
-void unblock_process_pid(){
+void unblock_process_pid()
+{
     printColor(ORANGE, "Ingrese el PID del proceso a desbloquear: ");
     char pid[5] = {"0"};
     int i = 0;
@@ -726,7 +721,7 @@ void unblock_process_pid(){
         }
 
         printColor(ORANGE, "Desbloqueando al proceso...\n");
-        int resultado = usys_unblockProcess(unblock_pid);   
+        int resultado = usys_unblockProcess(unblock_pid);
         if (resultado == -1)
         {
             printColor(RED, "No se pudo desbloquear al proceso con PID: ");
@@ -1221,14 +1216,14 @@ void wc(char **params)
 
 void cat(char **params)
 {
-    char buffer[PAGE] = {0}; // Buffer para almacenar caracteres
+    char buffer[PAGE] = {0};
     char c;
     int idx = 0, pos = 0;
 
     while ((c = getChar()) != (char)EOF)
     {
         if (c == '\b')
-        { // Manejo de backspace
+        {
             if (idx > 0)
             {
                 putChar('\b');

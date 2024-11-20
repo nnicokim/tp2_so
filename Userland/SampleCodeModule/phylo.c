@@ -59,7 +59,7 @@ void *phyloProcess(int argc, char *argv[])
     }
 
     usys_clear_screen();
-    printColor(GREEN,"philosophers sit to have dinner...\n");
+    printColor(GREEN, "philosophers sit to have dinner...\n");
 
     resetState();
     usys_semOpen("mutex", 1);
@@ -79,21 +79,21 @@ void *phyloProcess(int argc, char *argv[])
         case 'a':
             if (addPhylo() == -1)
             {
-                printColor(ROJO,"Error adding phylosopher.\n");
+                printColor(ROJO, "Error adding phylosopher.\n");
             }
             else
             {
-                printColor( GREEN, "New phylosopher added.\n");
+                printColor(GREEN, "New phylosopher added.\n");
             }
             break;
         case 'r':
             if (removePhylo() == -1)
             {
-                printColor(ROJO,"Error removing philosopher.\n");
+                printColor(ROJO, "Error removing philosopher.\n");
             }
             else
             {
-                printColor( GREEN,"philosophers removed.\n");
+                printColor(GREEN, "philosophers removed.\n");
             }
             break;
         case 'c':
@@ -112,10 +112,9 @@ void *phyloProcess(int argc, char *argv[])
     return NULL;
 }
 
-// crea proceso
 int addPhylo()
 {
-    int index=usys_findSem("countMutex");
+    int index = usys_findSem("countMutex");
     usys_semWait(index);
     if (philosophersCount >= MAX_PHYL)
     {
@@ -123,7 +122,7 @@ int addPhylo()
         return -1;
     }
 
-    phyloPid[philosophersCount] = usys_createProcess("filosofos", phylo, philosophersCount, NULL,foreground);
+    phyloPid[philosophersCount] = usys_createProcess("filosofos", phylo, philosophersCount, NULL, foreground);
 
     usys_semOpen(semNames[philosophersCount], 1);
     philosophersCount++;
@@ -132,7 +131,7 @@ int addPhylo()
 }
 int removePhylo()
 {
-    int index=usys_findSem("countMutex");
+    int index = usys_findSem("countMutex");
     usys_semWait(index);
     if (philosophersCount <= MIN_PHYL)
     {
